@@ -32,3 +32,9 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
+
+# SteamVR
+Assets/SteamVR/InteractionSystem
+Assets/SteamVR/Materials
+Assets/SteamVR/Scenes
+Assets/SteamVR/Textures
