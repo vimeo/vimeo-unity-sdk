@@ -35,12 +35,14 @@ namespace Vimeo
 
 		[HideInInspector]
 		public string videoQuality;
+		public string videoTitle;
 
         private VimeoApi api;
 
 		[HideInInspector]
         public VideoController video;
 
+		// Deprecate
         private int[] video_collection = new int[4] { 2, 2998622, 213868, 80924717 };
 
 		private void Start()
@@ -75,6 +77,7 @@ namespace Vimeo
             video.OnVideoStart    -= VideoStarted;
         }	
 
+		// Deprecate
         public void RandomVideo()
         {
            LoadVimeoVideo(video_collection[Random.Range(0, video_collection.Length)]);
@@ -93,6 +96,11 @@ namespace Vimeo
 		public void Pause()
 		{
 			video.Pause ();
+		}
+
+		public void SeekBackward(float seek)
+		{
+			video.SeekBackward(seek);
 		}
 
 		public void SeekForward(float seek)
@@ -138,12 +146,19 @@ namespace Vimeo
             }
         }
 
+
+		// 
         private void OnLoadVimeoVideoComplete(string response)
         {
 			var json = JSON.Parse(response);
 			List<JSONNode> qualities = new List<JSONNode> ();
 			JSONNode progressiveFiles = json["play"]["progressive"];
 
+			// Set the metadata
+			videoTitle = json["name"];
+			Debug.Log(json);
+
+			// Sort the quality
 			for (int i = 0; i < progressiveFiles.Count; i++) {
 				qualities.Add (progressiveFiles [i]);
 			}	

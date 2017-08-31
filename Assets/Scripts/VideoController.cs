@@ -32,7 +32,7 @@
             Setup();
             videoPlayer.url = file_url;            videoPlayer.Play();
             //StartCoroutine("PlayVideo");
-        }		public void SeekBackward(float amount)		{		}		public void SeekForward(float amount)		{			videoPlayer.frame = (long) (videoPlayer.frame + amount);		}		public void Seek(float seek)		{			videoPlayer.frame = (long) (Mathf.Clamp01(seek) * videoPlayer.frameCount);		}
+        }		public void SeekBackward(float amount)		{			videoPlayer.frame = (long) (videoPlayer.frame - amount);		}		public void SeekForward(float amount)		{			videoPlayer.frame = (long) (videoPlayer.frame + amount);		}		public void Seek(float seek)		{			videoPlayer.frame = (long) (Mathf.Clamp01(seek) * videoPlayer.frameCount);		}
 
         IEnumerator PlayVideo()
         {
