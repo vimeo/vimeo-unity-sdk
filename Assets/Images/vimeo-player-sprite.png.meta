@@ -1,11 +1,15 @@
 fileFormatVersion: 2
 guid: 1965cb772a4d8f64d8b48811f798fe02
-timeCreated: 1503346655
+timeCreated: 1504639837
 licenseType: Pro
 TextureImporter:
   fileIDToRecycleName:
     21300000: vimeo-player-sprite_0
     21300002: vimeo-player-sprite_1
+    21300004: vimeo-player-sprite_2
+    21300006: vimeo-player-sprite_4
+    21300008: vimeo-player-sprite_5
+    21300010: vimeo-player-sprite_9
   serializedVersion: 4
   mipmaps:
     mipMapMode: 0
@@ -83,23 +87,75 @@ TextureImporter:
       name: vimeo-player-sprite_0
       rect:
         serializedVersion: 2
-        x: 12
-        y: 99
-        width: 65
-        height: 40
+        x: 5
+        y: 157
+        width: 66
+        height: 41
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 6, y: 0, z: 6, w: 0}
+      border: {x: 5, y: 5, z: 5, w: 5}
       outline: []
       tessellationDetail: 0
     - serializedVersion: 2
       name: vimeo-player-sprite_1
       rect:
         serializedVersion: 2
-        x: 12
-        y: 59
-        width: 788
-        height: 30
+        x: 5
+        y: 117
+        width: 866
+        height: 33
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 4, y: 4, z: 4, w: 4}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: vimeo-player-sprite_2
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 96
+        width: 584
+        height: 12
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 2, y: 2, z: 2, w: 2}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: vimeo-player-sprite_4
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 71
+        width: 59
+        height: 17
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: vimeo-player-sprite_5
+      rect:
+        serializedVersion: 2
+        x: 6
+        y: 48
+        width: 13
+        height: 13
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: vimeo-player-sprite_9
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 5
+        width: 19
+        height: 19
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
