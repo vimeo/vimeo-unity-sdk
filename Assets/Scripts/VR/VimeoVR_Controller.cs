@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Vimeo;
 using Vimeo.VR;
 
@@ -17,6 +18,8 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private Vector2 lastTouchPosition = new Vector2(0, 0);
 
 	private GameObject controls;
+	private GameObject timecode_group; 
+	private GameObject timecode_text; 
 
 	void Start () {
 
@@ -33,24 +36,26 @@ public class VimeoVR_Controller : MonoBehaviour {
 		controller.TriggerClicked += HandleTriggerClicked;
 		controller.PadTouched     += HandlePadTouched;
 		controller.PadUntouched   += HandlePadUntouched;
+		controller.PadClicked     += HandlePadClicked;
 	}
 	
 	void Update () {
 		device = SteamVR_Controller.Input((int)trackedObject.index);
 
 		// Debug
-		Debug.DrawRay(transform.position, transform.up, Color.green);
-		Debug.DrawRay(transform.position, transform.forward, Color.blue);
-		Debug.DrawRay(transform.position, transform.right, Color.red);
+//		Debug.DrawRay(transform.position, transform.up, Color.green);
+//		Debug.DrawRay(transform.position, transform.forward, Color.blue);
+//		Debug.DrawRay(transform.position, transform.right, Color.red);
 
 		if (controls) {
-			Debug.DrawRay (controls.transform.position, controls.transform.up, Color.green);
-			Debug.DrawRay (controls.transform.position, controls.transform.forward, Color.blue);
-			Debug.DrawRay (controls.transform.position, controls.transform.right, Color.red);
+//			Debug.DrawRay (controls.transform.position, controls.transform.up, Color.green);
+//			Debug.DrawRay (controls.transform.position, controls.transform.forward, Color.blue);
+//			Debug.DrawRay (controls.transform.position, controls.transform.right, Color.red);
 
-
-			//controls.transform.right = this.transform.right;
+			// Update controls
+			timecode_text.GetComponent<Text>().text = selectedPlayer.GetTimecode();
 		}
+
 		DrawLineToVideo ();
 		SeekVideo ();
 	}
@@ -65,14 +70,14 @@ public class VimeoVR_Controller : MonoBehaviour {
 			if (distance > 0.01f) {
 				selectedPlayer.Pause ();
 				if (GetInputRotationDirection(input, lastTouchPosition)) {
-					selectedPlayer.SeekForward(distance * 60f);
+					selectedPlayer.SeekForward(distance * 120f);
 				}
 				else {
-					selectedPlayer.SeekBackward(distance * 60f);
+					selectedPlayer.SeekBackward(distance * 120f);
 				}
 			}
 
-			if (input == new Vector2 (0, 0)) {
+			if (input == new Vector2(0, 0)) {
 				selectedPlayer.Play();
 			}
 
@@ -113,10 +118,17 @@ public class VimeoVR_Controller : MonoBehaviour {
 		}
 	} 
 
+	private void HandlePadClicked(object sender, ClickedEventArgs e)
+	{
+		if (selectedPlayer) {
+			selectedPlayer.ToggleVideoPlayback ();
+		}
+	}
+
 	private void HandleTriggerClicked(object sender, ClickedEventArgs e) 
 	{
 		if (highlightedPlayer) {
-			selectedPlayer = highlightedPlayer;
+			selectedPlayer = highlightedPlayer;	
 			SpawnCanvasPlayerControls ();
 		}
 	}
@@ -146,14 +158,46 @@ public class VimeoVR_Controller : MonoBehaviour {
 
 		controls.transform.parent = this.transform;
 		controls.transform.position = this.transform.position;
-		//controls.transform.position.y = 0.001f;
+		controls.transform.Translate(new Vector3(0, -0.002f, 0.04f));
 		controls.transform.rotation = Quaternion.LookRotation(-this.transform.up, this.transform.forward);
 
-		foreach (Transform t in controls.transform) {
-			if (t.name == "TitleText") {
-				t.gameObject.GetComponent<UnityEngine.UI.Text> ().text = selectedPlayer.videoTitle;
+		// Set the Title text and get its width
+		Text txt = GetChild("TitleText", controls.transform).gameObject.GetComponent<UnityEngine.UI.Text> ();
+		txt.text = selectedPlayer.videoTitle;
+		TextGenerationSettings settings = txt.GetGenerationSettings (txt.rectTransform.rect.size);
+		float width = txt.cachedTextGenerator.GetPreferredWidth (txt.text, settings);
+
+		// Adjust bg to be width of text
+		RectTransform rt = GetChild ("Title BG", controls.transform).gameObject.GetComponent<RectTransform> ();
+		rt.sizeDelta = new Vector2 (width + 15, 25);
+
+		timecode_group = GetChild ("Timecode", controls.transform).gameObject; 
+		timecode_text  = GetChild ("TimecodeText", timecode_group.transform).gameObject;
+
+		// Load images
+		StartCoroutine(LoadImage(selectedPlayer.videoThumbnailUrl, GetChild("VideoImage", controls.transform).gameObject));
+		StartCoroutine(LoadImage(selectedPlayer.authorThumbnailUrl, GetChild("UserImage", controls.transform).gameObject));
+	}
+
+	private Transform GetChild(string name, Transform obj)
+	{
+		foreach (Transform t in obj.transform) {
+			if (t.name == name) {
+				return t;
 			}
 		}
+
+		return null;
+	}
+
+	private IEnumerator LoadImage(string url, GameObject obj) {
+		Texture2D tmp = new Texture2D (0, 0);
+		WWW www = new WWW (url);
+		yield return www;
+
+		tmp = www.texture;
+		Sprite sprite = Sprite.Create(tmp, new Rect(0,0,tmp.width, tmp.height), new Vector2(0,0));
+		obj.GetComponent<Image>().sprite = sprite;
 	}
 
 	private void Spawn3DPlayerControls()

@@ -36,6 +36,8 @@ namespace Vimeo
 		[HideInInspector]
 		public string videoQuality;
 		public string videoTitle;
+		public string videoThumbnailUrl;
+		public string authorThumbnailUrl;
 
         private VimeoApi api;
 
@@ -123,6 +125,17 @@ namespace Vimeo
             return video.height;
         }
 
+		public string GetTimecode()
+		{
+			float sec = Mathf.Floor((float)video.videoPlayer.time % 60);
+			float min = Mathf.Floor((float)video.videoPlayer.time / 60f);
+
+			string secZeroPad = sec > 9 ? "": "0";
+			string minZeroPad = min > 9 ? "": "0";
+
+			return minZeroPad + min + ":" + secZeroPad + sec;
+		}
+
         // Events below!
         private void VideoStarted(VideoController controller) {
             if (OnVideoStart != null) {
@@ -156,6 +169,8 @@ namespace Vimeo
 
 			// Set the metadata
 			videoTitle = json["name"];
+			videoThumbnailUrl = json ["pictures"]["sizes"][4]["link"];
+			authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
 			Debug.Log(json);
 
 			// Sort the quality
