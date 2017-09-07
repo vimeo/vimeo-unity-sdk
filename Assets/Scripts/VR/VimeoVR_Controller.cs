@@ -147,7 +147,9 @@ public class VimeoVR_Controller : MonoBehaviour {
 
 		controls.transform.parent = this.transform;
 		controls.transform.position = this.transform.position;
-		controls.transform.Translate(new Vector3(0, -0.002f, 0.04f));
+
+		// Position the controls in front of the 
+		controls.transform.Translate(new Vector3(0, -0.005f, 0.07f));
 		controls.transform.rotation = Quaternion.LookRotation(-this.transform.up, this.transform.forward);
 
 		// Set the Title text and get its width
@@ -167,7 +169,6 @@ public class VimeoVR_Controller : MonoBehaviour {
 		progress_bar   = GetChild ("Bar", timeline_group.transform).gameObject;
 
 		// Load images
-		StartCoroutine(LoadImage(selectedPlayer.videoThumbnailUrl, GetChild("VideoImage", controls.transform).gameObject));
 		StartCoroutine(LoadImage(selectedPlayer.authorThumbnailUrl, GetChild("UserImage", controls.transform).gameObject));
 	}
 
