@@ -44,7 +44,7 @@ public class VimeoVR_Controller : MonoBehaviour {
 		controller.PadClicked     += HandlePadClicked;
 	}
 	
-	void Update () {
+	void FixedUpdate () {
 		device = SteamVR_Controller.Input((int)trackedObject.index);
 
 		// Debug
@@ -70,16 +70,41 @@ public class VimeoVR_Controller : MonoBehaviour {
 			timecodeRect.anchoredPosition = new Vector2(selectedPlayer.GetProgress() * width, timecodeRect.anchoredPosition.y);
 			progressRect.sizeDelta = new Vector2((1 - selectedPlayer.GetProgress()) * -width, progressRect.sizeDelta.y);
 
-			Debug.Log ("padding: " + timeline_group.GetComponent<RectTransform> ().sizeDelta + " width: " + width + " progress: " + selectedPlayer.GetProgress()  + " anchoredPosition: " + timecodeRect.anchoredPosition +  " progresswidth: " + ((1 - selectedPlayer.GetProgress()) * width));
+			//Debug.Log ("padding: " + timeline_group.GetComponent<RectTransform> ().sizeDelta + " width: " + width + " progress: " + selectedPlayer.GetProgress()  + " anchoredPosition: " + timecodeRect.anchoredPosition +  " progresswidth: " + ((1 - selectedPlayer.GetProgress()) * width));
 			//Debug.Log (rect.);
 
 		}
 
 		DrawLineToVideo ();
-		SeekVideo ();
+		SeekVideoByJoystickPosition();
 	}
 
-	private void SeekVideo()
+	private void SeekVideoByJoystickPosition()
+	{
+		if (controller.padTouched && selectedPlayer != null) {
+
+			var input = new Vector2(device.GetAxis ().x, device.GetAxis ().y);
+			Debug.Log (input);
+
+			if (Mathf.Abs(input.x) > 0.01f) {
+				selectedPlayer.Pause();
+				if (input.x > 0) {
+					selectedPlayer.SeekForward(input.x * 60f);
+				}
+				else {
+					selectedPlayer.SeekBackward(Mathf.Abs(input.x) * 60f);
+				}
+			}
+
+			if (input == new Vector2(0, 0) && wasPlaying) {
+				selectedPlayer.Play();
+			}
+		}
+	}
+
+
+	// Deprecated
+	private void SeekVideoByJoystickRotation()
 	{
 		if (controller.padTouched && selectedPlayer != null) {
 
