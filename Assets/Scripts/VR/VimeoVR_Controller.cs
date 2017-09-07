@@ -145,7 +145,9 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private void DrawLineToVideo()
 	{
 		RaycastHit hit;
-		Ray forwardRay = new Ray(transform.position, transform.forward);
+		//Debug.DrawLine (transform.position, transform.position + transform.forward +  new Vector3(0, -0.5f, 0), Color.red);
+		//Debug.DrawLine (transform.position, transform.position + transform.forward +  new Vector3(0, -0.5f, 0), Color.red);
+		Ray forwardRay = new Ray(transform.position, transform.forward +  new Vector3(0, -0.5f, 0));
 
 		line.enabled = false;
 		highlightedPlayer = null;
