@@ -18,8 +18,13 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private Vector2 lastTouchPosition = new Vector2(0, 0);
 
 	private GameObject controls;
+	private GameObject timeline_group;
 	private GameObject timecode_group; 
 	private GameObject timecode_text; 
+	private GameObject progress_bar_group; 
+	private GameObject progress_bar; 
+
+	private bool wasPlaying = true;
 
 	void Start () {
 
@@ -54,6 +59,20 @@ public class VimeoVR_Controller : MonoBehaviour {
 
 			// Update controls
 			timecode_text.GetComponent<Text>().text = selectedPlayer.GetTimecode();
+			//timecode_group.transform.forward = -GameObject.FindObjectOfType<Camera> ().transform.forward;
+
+			var padding = timeline_group.GetComponent<RectTransform> ().sizeDelta.y / 2;
+			var width = progress_bar_group.GetComponent<RectTransform> ().sizeDelta.x - padding * 2;
+
+			var timecodeRect = timecode_group.GetComponent<RectTransform> ();
+			var progressRect = progress_bar.GetComponent<RectTransform> ();
+
+			timecodeRect.anchoredPosition = new Vector2(selectedPlayer.GetProgress() * width, timecodeRect.anchoredPosition.y);
+			progressRect.sizeDelta = new Vector2((1 - selectedPlayer.GetProgress()) * -width, progressRect.sizeDelta.y);
+
+			Debug.Log ("padding: " + timeline_group.GetComponent<RectTransform> ().sizeDelta + " width: " + width + " progress: " + selectedPlayer.GetProgress()  + " anchoredPosition: " + timecodeRect.anchoredPosition +  " progresswidth: " + ((1 - selectedPlayer.GetProgress()) * width));
+			//Debug.Log (rect.);
+
 		}
 
 		DrawLineToVideo ();
@@ -77,7 +96,7 @@ public class VimeoVR_Controller : MonoBehaviour {
 				}
 			}
 
-			if (input == new Vector2(0, 0)) {
+			if (input == new Vector2(0, 0) && wasPlaying) {
 				selectedPlayer.Play();
 			}
 
@@ -118,36 +137,6 @@ public class VimeoVR_Controller : MonoBehaviour {
 		}
 	} 
 
-	private void HandlePadClicked(object sender, ClickedEventArgs e)
-	{
-		if (selectedPlayer) {
-			selectedPlayer.ToggleVideoPlayback ();
-		}
-	}
-
-	private void HandleTriggerClicked(object sender, ClickedEventArgs e) 
-	{
-		if (highlightedPlayer) {
-			selectedPlayer = highlightedPlayer;	
-			SpawnCanvasPlayerControls ();
-		}
-	}
-
-	private void HandlePadTouched(object sender, ClickedEventArgs e) 
-	{
-		if (selectedPlayer != null) {
-			Debug.Log (device.GetAxis ().x + " " + device.GetAxis ().y);
-		}
-	}
-
-	private void HandlePadUntouched(object sender, ClickedEventArgs e) 
-	{
-		if (selectedPlayer != null) {
-			selectedPlayer.Play ();
-			Debug.Log (device.GetAxis ().x + " " + device.GetAxis ().y);
-		}
-	}
-
 	private void SpawnCanvasPlayerControls()
 	{
 		controls = GameObject.Find("VimeoControlsCanvas");
@@ -171,8 +160,11 @@ public class VimeoVR_Controller : MonoBehaviour {
 		RectTransform rt = GetChild ("Title BG", controls.transform).gameObject.GetComponent<RectTransform> ();
 		rt.sizeDelta = new Vector2 (width + 15, 25);
 
-		timecode_group = GetChild ("Timecode", controls.transform).gameObject; 
+		progress_bar_group = GetChild ("ProgressBarContainer", controls.transform).gameObject; 
+		timeline_group = GetChild ("Timeline", progress_bar_group.transform).gameObject; 
+		timecode_group = GetChild ("Timecode", timeline_group.transform).gameObject; 
 		timecode_text  = GetChild ("TimecodeText", timecode_group.transform).gameObject;
+		progress_bar   = GetChild ("Bar", timeline_group.transform).gameObject;
 
 		// Load images
 		StartCoroutine(LoadImage(selectedPlayer.videoThumbnailUrl, GetChild("VideoImage", controls.transform).gameObject));
@@ -210,4 +202,45 @@ public class VimeoVR_Controller : MonoBehaviour {
 
 		controls.GetComponent<VimeoVR_PlayerControls> ().Init (selectedPlayer);
 	}
+
+	private void HandlePadClicked(object sender, ClickedEventArgs e)
+	{
+		if (selectedPlayer) {
+			wasPlaying = false;
+			selectedPlayer.ToggleVideoPlayback();
+		}
+	}
+
+	private void HandleTriggerClicked(object sender, ClickedEventArgs e) 
+	{
+		if (highlightedPlayer) {
+			selectedPlayer = highlightedPlayer;	
+			selectedPlayer.OnPlay += HandleOnPlay;
+			SpawnCanvasPlayerControls ();
+		}
+	}
+
+	private void HandlePadTouched(object sender, ClickedEventArgs e) 
+	{
+		if (selectedPlayer != null) {
+			Debug.Log (device.GetAxis ().x + " " + device.GetAxis ().y);
+		}
+	}
+
+	private void HandlePadUntouched(object sender, ClickedEventArgs e) 
+	{
+		if (selectedPlayer != null) {
+			if (wasPlaying) {
+				selectedPlayer.Play ();
+			}
+			Debug.Log (device.GetAxis ().x + " " + device.GetAxis ().y);
+		}
+	}
+
+	private void HandleOnPlay()
+	{
+		Debug.Log ("HandleOnPlay");
+		wasPlaying = true;
+	}
+
 }

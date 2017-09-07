@@ -33,11 +33,10 @@ namespace Vimeo
         public string vimeoApiToken;
         public string vimeoVideoId;
 
-		[HideInInspector]
-		public string videoQuality;
-		public string videoTitle;
-		public string videoThumbnailUrl;
-		public string authorThumbnailUrl;
+		[HideInInspector] public string videoQuality;
+		[HideInInspector] public string videoTitle;
+		[HideInInspector] public string videoThumbnailUrl;
+		[HideInInspector] public string authorThumbnailUrl;
 
         private VimeoApi api;
 
@@ -125,15 +124,27 @@ namespace Vimeo
             return video.height;
         }
 
+		public float GetProgress()
+		{
+			if (video != null) {
+				return (float)video.videoPlayer.frame / (float)video.videoPlayer.frameCount;
+			}
+			return 0;
+		}
+
 		public string GetTimecode()
 		{
-			float sec = Mathf.Floor((float)video.videoPlayer.time % 60);
-			float min = Mathf.Floor((float)video.videoPlayer.time / 60f);
+			if (video != null) {
+				float sec = Mathf.Floor ((float)video.videoPlayer.time % 60);
+				float min = Mathf.Floor ((float)video.videoPlayer.time / 60f);
 
-			string secZeroPad = sec > 9 ? "": "0";
-			string minZeroPad = min > 9 ? "": "0";
+				string secZeroPad = sec > 9 ? "" : "0";
+				string minZeroPad = min > 9 ? "" : "0";
 
-			return minZeroPad + min + ":" + secZeroPad + sec;
+				return minZeroPad + min + ":" + secZeroPad + sec;
+			}
+
+			return null;
 		}
 
         // Events below!
@@ -159,8 +170,6 @@ namespace Vimeo
             }
         }
 
-
-		// 
         private void OnLoadVimeoVideoComplete(string response)
         {
 			var json = JSON.Parse(response);
