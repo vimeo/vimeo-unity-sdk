@@ -129,11 +129,6 @@ namespace Vimeo
 		{
 			videoPlayer.prepareCompleted -= VideoPlayerStarted;
 		}
-
-		//private void EndReached(VideoPlayer vp)
-		//{
-		//    vp.playbackSpeed = vp.playbackSpeed / 10.0F;
-		//}
 	}
 
 }

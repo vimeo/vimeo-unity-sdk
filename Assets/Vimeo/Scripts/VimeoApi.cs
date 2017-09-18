@@ -36,7 +36,8 @@ namespace Vimeo
             StartCoroutine(GetTicket());
         }
 
-        public void SetVideoViewPrivacy(int vimeo_id, string type) {
+        public void SetVideoViewPrivacy(string vimeo_id, string type) {
+            Debug.Log ("Setting privacy to " + type + " for " + vimeo_id);
             WWWForm form = new WWWForm ();
             form.AddField ("privacy.view", type);
 
@@ -45,8 +46,11 @@ namespace Vimeo
 
         IEnumerator Patch(string url, WWWForm form)
         {
+            Debug.Log ("Patching " + url);
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
+                request.SetRequestHeader ("X-HTTP-Method-Override", "PATCH");
+
                 yield return request.Send ();
 
                 if (request.isNetworkError) {
@@ -120,12 +124,13 @@ namespace Vimeo
                 yield return request.Send ();
 
                 if (request.responseCode == 308) {
-                    Debug.Log ("Verified!!");
-                    Debug.Log (request.GetResponseHeader ("Range"));
-
+                    //Debug.Log ("Verified!!");
+                    //Debug.Log (request.GetResponseHeader ("Range"));
+                    Debug.Log (request.downloadHandler.text);
                     StartCoroutine (CompleteUpload (ticket));
-                } else {
-                    //              Debug.Log (request.downloadHandler.text);
+                } 
+                else {
+                    
                     Debug.Log (request.responseCode);
                 }
             }
@@ -134,15 +139,14 @@ namespace Vimeo
         IEnumerator CompleteUpload(VimeoTicket ticket) 
         {
             Debug.Log ("-----------------------CompleteUpload-------------------------");
-            Debug.Log ("https://api.vimeo.com" + ticket.complete_uri);
+            Debug.Log (API_URL + ticket.complete_uri);
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
 
                 yield return request.Send ();
-                Debug.Log (request.responseCode);
 
                 if (OnUploadComplete != null) {
-                    OnUploadComplete (request.downloadHandler.text);
+                    OnUploadComplete (request.GetResponseHeader("Location"));
                 }
             }
         }

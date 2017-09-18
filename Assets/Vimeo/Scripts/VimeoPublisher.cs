@@ -14,16 +14,16 @@ public class VimeoPublisher : MonoBehaviour {
 
     public enum PrivacyMode
     {
-        Anyone,
-        OnlyMe,
-        OnlyPeopleIFollow,
-        OnlyPeopleIChoose,
-        Password,
-        PrivateLink,
-        Hidden,
+        anybody,
+        contacts,
+        disable,
+        nobody,
+        //password,
+        unlisted,
+        //users,
     }
 
-    [SerializeField] protected PrivacyMode m_privacyMode = PrivacyMode.Anyone;
+    [SerializeField] protected PrivacyMode m_privacyMode = PrivacyMode.anybody;
 
 	void Start () {
 		recorder = camera.GetComponent<MovieRecorder> ();
@@ -45,6 +45,13 @@ public class VimeoPublisher : MonoBehaviour {
 	private void PublishVideo()
 	{
         Debug.Log ("Uploading to Vimeo: " + recorder.outputPath);
+        api.OnUploadComplete += UploadComplete;
         api.UploadVideoFile(recorder.outputPath + ".mp4", vimeoToken);
 	}
+
+    private void UploadComplete(string video_uri)
+    {
+        string[] uri_pieces = video_uri.Split ("/"[0]);
+        api.SetVideoViewPrivacy(uri_pieces[2], PrivacyMode.unlisted.ToString());
+    }
 }
