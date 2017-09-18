@@ -9,15 +9,11 @@ namespace Vimeo
 	[CustomEditor (typeof(VimeoPlayer))]
 	public class VimeoPlayerInspector : Editor
 	{
-		public string[] videoQualities = new [] { "Highest", "1080", "720", "SD" };
-		int currentVideoQuality = 2;
-
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector ();
-			currentVideoQuality = EditorGUILayout.Popup (currentVideoQuality, videoQualities);
 			var player = target as VimeoPlayer;
-			player.videoQuality = videoQualities[currentVideoQuality];
+			player.videoQualityIndex = EditorGUILayout.Popup("Default quality", player.videoQualityIndex, player.videoQualities);
 			EditorUtility.SetDirty(target);
 		}
 	}
@@ -33,7 +29,9 @@ namespace Vimeo
         public string vimeoApiToken;
         public string vimeoVideoId;
 
-		[HideInInspector] public string videoQuality;
+		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "SD" };
+		[HideInInspector] public int videoQualityIndex = 0;
+
 		[HideInInspector] public string videoTitle;
 		[HideInInspector] public string videoThumbnailUrl;
 		[HideInInspector] public string authorThumbnailUrl;
@@ -45,6 +43,17 @@ namespace Vimeo
 
 		// Deprecate
         private int[] video_collection = new int[4] { 2, 2998622, 213868, 80924717 };
+
+//		void OnGUI ()
+//		{
+//			// Choose an option from the list
+//			_choiceIndex = EditorGUILayout.Popup(_choiceIndex, _choices);
+//			// Update the selected option on the underlying instance of SomeClass
+//			var someClass = target as SomeClass;
+//			someClass.choice = _choices[_choiceIndex];
+//			// Custom inspector code goes here
+//			EditorUtility.SetDirty(target);
+//		}
 
 		private void Start()
         {
@@ -172,6 +181,7 @@ namespace Vimeo
 
         private void OnLoadVimeoVideoComplete(string response)
         {
+			Debug.Log (response);
 			var json = JSON.Parse(response);
 			List<JSONNode> qualities = new List<JSONNode> ();
 			JSONNode progressiveFiles = json["play"]["progressive"];
@@ -180,7 +190,7 @@ namespace Vimeo
 			videoTitle = json["name"];
 			videoThumbnailUrl = json ["pictures"]["sizes"][4]["link"];
 			authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
-			Debug.Log(json);
+			//Debug.Log(json);
 
 			// Sort the quality
 			for (int i = 0; i < progressiveFiles.Count; i++) {
@@ -188,13 +198,13 @@ namespace Vimeo
 			}	
 			qualities.Sort(SortByQuality);
 
-			Debug.Log ("Loading " + videoQuality + "p video file");
-
-			if (videoQuality == "Highest") {
+			if (videoQualities[videoQualityIndex] == "Highest") {
 				video.PlayVideoByUrl(qualities[0]["link"]);
-			} else if (videoQuality == "1080") {
+			} 
+			else if (videoQualities[videoQualityIndex] == "1080") {
 				video.PlayVideoByUrl (FindByQuality (qualities, "1080")["link"]);
-			} else if (videoQuality == "720") {
+			} 
+			else if (videoQualities[videoQualityIndex] == "720") {
 				video.PlayVideoByUrl (FindByQuality (qualities, "720")["link"]);
 			}
         }
@@ -203,6 +213,7 @@ namespace Vimeo
 		{
 			for (int i = 0; i < qualities.Count; i++) {
 				if (qualities[i]["height"].ToString() == quality) {
+					Debug.Log ("Loading " + qualities[i]["height"] + "p file");
 					return qualities[i];
 				}
 			}

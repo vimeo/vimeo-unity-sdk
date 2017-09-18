@@ -16,6 +16,7 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private VimeoPlayer selectedPlayer;
 
 	private Vector2 lastTouchPosition = new Vector2(0, 0);
+	private float timeAccelerator = 0;
 
 	private GameObject controls;
 	private GameObject timeline_group;
@@ -27,7 +28,6 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private bool wasPlaying = true;
 
 	void Start () {
-
 		line = gameObject.AddComponent<LineRenderer> ();	
 		line.widthMultiplier = 1;
 		line.startWidth = 0.003f;
@@ -83,22 +83,24 @@ public class VimeoVR_Controller : MonoBehaviour {
 	{
 		if (controller.padTouched && selectedPlayer != null) {
 
-			var input = new Vector2(device.GetAxis ().x, device.GetAxis ().y);
-			Debug.Log (input);
+			var input = new Vector2 (device.GetAxis ().x, device.GetAxis ().y);
+			timeAccelerator += Time.deltaTime;
 
-			if (Mathf.Abs(input.x) > 0.01f) {
+			if (Mathf.Abs (input.x) > 0.01f) {
 				selectedPlayer.Pause();
 				if (input.x > 0) {
-					selectedPlayer.SeekForward(input.x * 60f);
-				}
-				else {
-					selectedPlayer.SeekBackward(Mathf.Abs(input.x) * 60f);
+					//Debug.Log (input.x * (timeAccelerator / 2) * 60f);
+					selectedPlayer.SeekForward (Mathf.Clamp(input.x * (timeAccelerator/2) * 60f, 0, 50));
+				} else {
+					selectedPlayer.SeekBackward (Mathf.Abs (input.x) * 60f);
 				}
 			}
 
-			if (input == new Vector2(0, 0) && wasPlaying) {
-				selectedPlayer.Play();
+			if (input == new Vector2 (0, 0) && wasPlaying) {
+				selectedPlayer.Play ();
 			}
+		} else {
+			timeAccelerator = 0;
 		}
 	}
 
@@ -145,9 +147,9 @@ public class VimeoVR_Controller : MonoBehaviour {
 	private void DrawLineToVideo()
 	{
 		RaycastHit hit;
-		//Debug.DrawLine (transform.position, transform.position + transform.forward +  new Vector3(0, -0.5f, 0), Color.red);
-		//Debug.DrawLine (transform.position, transform.position + transform.forward +  new Vector3(0, -0.5f, 0), Color.red);
-		Ray forwardRay = new Ray(transform.position, transform.forward +  new Vector3(0, -0.5f, 0));
+
+		var startPosition = transform.position + new Vector3(0, -0.05f);
+		Ray forwardRay = new Ray(startPosition, transform.forward +  new Vector3(0, -0.6f, 0));
 
 		line.enabled = false;
 		highlightedPlayer = null;
@@ -156,7 +158,7 @@ public class VimeoVR_Controller : MonoBehaviour {
 			if (hit.transform.GetComponent<TriggerVRControls> () != null) {
 				Debug.Log (highlightedPlayer);
 				line.enabled = true;
-				line.SetPosition (0, transform.position);	
+				line.SetPosition (0, startPosition);	
 				line.SetPosition (1, hit.point);
 
 				highlightedPlayer = hit.transform.GetComponent<TriggerVRControls> ().vimeoPlayer.GetComponent<VimeoPlayer> ();
@@ -172,10 +174,11 @@ public class VimeoVR_Controller : MonoBehaviour {
 			controls.name = "VimeoControlsCanvas";
 		}
 
-		controls.transform.parent = this.transform;
+		controls.transform.parent   = this.transform;
 		controls.transform.position = this.transform.position;
 
-		// Position the controls in front of the 
+		// Position the controls in front of the controller
+		// TODO fix this so it doesnt retranslate if spawned again
 		controls.transform.Translate(new Vector3(0, -0.005f, 0.07f));
 		controls.transform.rotation = Quaternion.LookRotation(-this.transform.up, this.transform.forward);
 
@@ -189,11 +192,12 @@ public class VimeoVR_Controller : MonoBehaviour {
 		RectTransform rt = GetChild ("Title BG", controls.transform).gameObject.GetComponent<RectTransform> ();
 		rt.sizeDelta = new Vector2 (width + 15, 25);
 
-		progress_bar_group = GetChild ("ProgressBarContainer", controls.transform).gameObject; 
-		timeline_group = GetChild ("Timeline", progress_bar_group.transform).gameObject; 
-		timecode_group = GetChild ("Timecode", timeline_group.transform).gameObject; 
-		timecode_text  = GetChild ("TimecodeText", timecode_group.transform).gameObject;
-		progress_bar   = GetChild ("Bar", timeline_group.transform).gameObject;
+		// TODO normalize naming schema
+		progress_bar_group	= GetChild ("ProgressBarContainer", controls.transform).gameObject; 
+		timeline_group 		= GetChild ("Timeline", progress_bar_group.transform).gameObject; 
+		timecode_group 		= GetChild ("Timecode", timeline_group.transform).gameObject; 
+		timecode_text  		= GetChild ("TimecodeText", timecode_group.transform).gameObject;
+		progress_bar   		= GetChild ("Bar", timeline_group.transform).gameObject;
 
 		// Load images
 		StartCoroutine(LoadImage(selectedPlayer.authorThumbnailUrl, GetChild("UserImage", controls.transform).gameObject));
