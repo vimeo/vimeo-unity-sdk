@@ -64,6 +64,9 @@ namespace UTJ.FrameCapturer
         public bool supportVideo { get { return m_encoderConfigs.supportVideo; } }
         public bool supportAudio { get { return m_encoderConfigs.supportAudio; } }
         public RenderTexture scratchBuffer { get { return m_scratchBuffer; } }
+
+
+        public string outputPath;
         #endregion
 
 
@@ -119,12 +122,12 @@ namespace UTJ.FrameCapturer
                 {
                     targetFramerate = m_targetFramerate;
                 }
-                string outPath = m_outputDir.GetFullPath() + "/" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+                outputPath = m_outputDir.GetFullPath() + "/" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
 
                 m_encoderConfigs.captureVideo = m_captureVideo;
                 m_encoderConfigs.captureAudio = m_captureAudio;
                 m_encoderConfigs.Setup(m_scratchBuffer.width, m_scratchBuffer.height, 3, targetFramerate);
-                m_encoder = MovieEncoder.Create(m_encoderConfigs, outPath);
+                m_encoder = MovieEncoder.Create(m_encoderConfigs, outputPath);
                 if (m_encoder == null || !m_encoder.IsValid())
                 {
                     EndRecording();

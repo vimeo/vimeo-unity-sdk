@@ -16,6 +16,7 @@ namespace Vimeo
     {
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
+        public event RequestAction OnUploadComplete;
 
         private string video_file_path;
         public string token;
@@ -35,12 +36,33 @@ namespace Vimeo
             StartCoroutine(GetTicket());
         }
 
+        public void SetVideoViewPrivacy(int vimeo_id, string type) {
+            WWWForm form = new WWWForm ();
+            form.AddField ("privacy.view", type);
+
+            StartCoroutine(Patch(API_URL + "/videos/" + vimeo_id, form));
+        }
+
+        IEnumerator Patch(string url, WWWForm form)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
+                request.SetRequestHeader ("Authorization", "Bearer " + token);
+                yield return request.Send ();
+
+                if (request.isNetworkError) {
+                    Debug.Log (request.error);
+                } else {
+                    Debug.Log (request.downloadHandler.text);
+                }
+            }
+        }
+
         IEnumerator GetTicket()
         {
             WWWForm form = new WWWForm ();
             form.AddField ("type", "streaming");
 
-            using (UnityWebRequest request = UnityWebRequest.Post ("https://api.vimeo.com/me/videos", form)) {
+            using (UnityWebRequest request = UnityWebRequest.Post (API_URL + "/me/videos", form)) {
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
 
                 yield return request.Send ();
@@ -113,11 +135,15 @@ namespace Vimeo
         {
             Debug.Log ("-----------------------CompleteUpload-------------------------");
             Debug.Log ("https://api.vimeo.com" + ticket.complete_uri);
-            using (UnityWebRequest request = UnityWebRequest.Delete("https://api.vimeo.com" + ticket.complete_uri)) {
+            using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
 
                 yield return request.Send ();
                 Debug.Log (request.responseCode);
+
+                if (OnUploadComplete != null) {
+                    OnUploadComplete (request.downloadHandler.text);
+                }
             }
         }
 
