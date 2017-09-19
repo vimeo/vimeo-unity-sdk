@@ -122,7 +122,6 @@ namespace Vimeo
 		{
 			var rend = videoScreenObject.GetComponent<Renderer> ();
 			Debug.Log (rend.material.GetTextureOffset ("_MainTex"));
-
 		}
 
 		private void OnDisable()

@@ -20,7 +20,8 @@ namespace Vimeo
 
 	public class VimeoPlayer : MonoBehaviour 
     {
-        public delegate void VimeoEvent();        public event VimeoEvent OnVideoStart;
+        public delegate void VimeoEvent();
+        public event VimeoEvent OnVideoStart;
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
 
@@ -181,32 +182,34 @@ namespace Vimeo
 
         private void OnLoadVimeoVideoComplete(string response)
         {
-			Debug.Log (response);
 			var json = JSON.Parse(response);
-			List<JSONNode> qualities = new List<JSONNode> ();
-			JSONNode progressiveFiles = json["play"]["progressive"];
+            if (json ["error"] == null) {
+                List<JSONNode> qualities = new List<JSONNode> ();
+                JSONNode progressiveFiles = json ["play"] ["progressive"];
 
-			// Set the metadata
-			videoTitle = json["name"];
-			videoThumbnailUrl = json ["pictures"]["sizes"][4]["link"];
-			authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
-			//Debug.Log(json);
+                // Set the metadata
+                videoTitle = json ["name"];
+                videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
+                authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
+                //Debug.Log(json);
 
-			// Sort the quality
-			for (int i = 0; i < progressiveFiles.Count; i++) {
-				qualities.Add (progressiveFiles [i]);
-			}	
-			qualities.Sort(SortByQuality);
+                // Sort the quality
+                for (int i = 0; i < progressiveFiles.Count; i++) {
+                    qualities.Add (progressiveFiles [i]);
+                }	
+                qualities.Sort (SortByQuality);
 
-			if (videoQualities[videoQualityIndex] == "Highest") {
-				video.PlayVideoByUrl(qualities[0]["link"]);
-			} 
-			else if (videoQualities[videoQualityIndex] == "1080") {
-				video.PlayVideoByUrl (FindByQuality (qualities, "1080")["link"]);
-			} 
-			else if (videoQualities[videoQualityIndex] == "720") {
-				video.PlayVideoByUrl (FindByQuality (qualities, "720")["link"]);
-			}
+                if (videoQualities [videoQualityIndex] == "Highest") {
+                    video.PlayVideoByUrl (qualities [0] ["link"]);
+                } else if (videoQualities [videoQualityIndex] == "1080") {
+                    video.PlayVideoByUrl (FindByQuality (qualities, "1080") ["link"]);
+                } else if (videoQualities [videoQualityIndex] == "720") {
+                    video.PlayVideoByUrl (FindByQuality (qualities, "720") ["link"]);
+                }
+            } 
+            else {
+                Debug.LogError("Video could not be found");
+            }
         }
 
 		private JSONNode FindByQuality(List<JSONNode> qualities, string quality)
@@ -218,7 +221,7 @@ namespace Vimeo
 				}
 			}
 
-			Debug.Log ("Couldnt find quality. defaulting to " + qualities[0]["height"]);
+			Debug.LogWarning("Couldnt find quality. defaulting to " + qualities[0]["height"]);
 			return qualities [0];
 		}
 

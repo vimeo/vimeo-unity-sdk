@@ -17,34 +17,47 @@ namespace Vimeo
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
         public event RequestAction OnUploadComplete;
+        public event RequestAction OnPatchComplete;
 
         private string video_file_path;
-        public string token;
+        public  string token;
         private static string API_URL = "https://api.vimeo.com";
+        private WWWForm form;
+
+        void Start()
+        {
+            form = new WWWForm();
+        }
 
         public void GetVideoFileUrlByVimeoId(int vimeo_id)
         {
             StartCoroutine("Request", "/videos/" + vimeo_id);
         }
 
-        public void UploadVideoFile(string file_path, string vimeo_token)
+        public void SetVideoViewPrivacy(string type) 
+        {
+            form.AddField("privacy.view", type);
+        }
+
+        public void SetVideoName(string name) 
+        {
+            form.AddField("name", name);
+        }
+
+        public void SaveVideo(string vimeo_id)
+        {
+            StartCoroutine(Patch(API_URL + "/videos/" + vimeo_id));
+        }
+
+        public void UploadVideoFile(string file_path)
         {
             video_file_path = file_path;
-            token = vimeo_token;
 
             // Start Upload Process
             StartCoroutine(GetTicket());
         }
 
-        public void SetVideoViewPrivacy(string vimeo_id, string type) {
-            Debug.Log ("Setting privacy to " + type + " for " + vimeo_id);
-            WWWForm form = new WWWForm ();
-            form.AddField ("privacy.view", type);
-
-            StartCoroutine(Patch(API_URL + "/videos/" + vimeo_id, form));
-        }
-
-        IEnumerator Patch(string url, WWWForm form)
+        IEnumerator Patch(string url)
         {
             Debug.Log ("Patching " + url);
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
@@ -57,6 +70,12 @@ namespace Vimeo
                     Debug.Log (request.error);
                 } else {
                     Debug.Log (request.downloadHandler.text);
+                }
+
+                form = new WWWForm();
+
+                if (OnPatchComplete != null) {
+                    OnPatchComplete(request.downloadHandler.text);
                 }
             }
         }
