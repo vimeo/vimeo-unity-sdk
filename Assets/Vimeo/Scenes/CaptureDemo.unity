@@ -233,6 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   camera: {fileID: 665133140}
   vimeoToken: aec26e3ff152d27804476a35af5daab0
+  name: Unity to Vimeo Upload Test
   m_privacyMode: 4
 --- !u!1 &546727434
 GameObject:
@@ -762,7 +763,7 @@ GameObject:
   - component: {fileID: 1127786949}
   - component: {fileID: 1127786948}
   m_Layer: 0
-  m_Name: StopButton (1)
+  m_Name: StopButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -784,7 +785,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -17.4, y: -20}
+  m_AnchoredPosition: {x: -17.400024, y: -20}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 1, y: 1}
 --- !u!114 &1127786948

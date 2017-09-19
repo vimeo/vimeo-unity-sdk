@@ -1,32 +1,35 @@
 fileFormatVersion: 2
-guid: bd2f7d4047c37eb4c9ecd57133724aff
-timeCreated: 1502994523
+guid: ef607864075ac854da54a14410f2a831
+timeCreated: 1505835817
 licenseType: Pro
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
-    100000: Plane_MeshPart0
-    100002: Plane_MeshPart1
-    100004: Plane_MeshPart2
-    100006: Plane_MeshPart3
-    100008: //RootNode
-    400000: Plane_MeshPart0
-    400002: Plane_MeshPart1
-    400004: Plane_MeshPart2
-    400006: Plane_MeshPart3
-    400008: //RootNode
-    2300000: Plane_MeshPart0
-    2300002: Plane_MeshPart1
-    2300004: Plane_MeshPart2
-    2300006: Plane_MeshPart3
-    3300000: Plane_MeshPart0
-    3300002: Plane_MeshPart1
-    3300004: Plane_MeshPart2
-    3300006: Plane_MeshPart3
-    4300000: Plane_MeshPart0
-    4300002: Plane_MeshPart1
-    4300004: Plane_MeshPart2
-    4300006: Plane_MeshPart3
+    100000: //RootNode
+    100002: Sphere_MeshPart0
+    100004: Sphere_MeshPart1
+    100006: Sphere_MeshPart2
+    100008: Sphere_MeshPart3
+    400000: //RootNode
+    400002: Sphere_MeshPart0
+    400004: Sphere_MeshPart1
+    400006: Sphere_MeshPart2
+    400008: Sphere_MeshPart3
+    2300000: Sphere_MeshPart0
+    2300002: Sphere_MeshPart1
+    2300004: Sphere_MeshPart2
+    2300006: Sphere_MeshPart3
+    2300008: //RootNode
+    3300000: Sphere_MeshPart0
+    3300002: Sphere_MeshPart1
+    3300004: Sphere_MeshPart2
+    3300006: Sphere_MeshPart3
+    3300008: //RootNode
+    4300000: Sphere_MeshPart0
+    4300002: Sphere_MeshPart1
+    4300004: Sphere_MeshPart2
+    4300006: Sphere_MeshPart3
+    4300008: Sphere
     7400000: Default Take
     9500000: //RootNode
   materials:
@@ -66,8 +69,8 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
-    keepQuads: 0
+    optimizeMeshForGPU: 0
+    keepQuads: 1
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -78,7 +81,7 @@ ModelImporter:
     normalSmoothAngle: 60
     normalImportMode: 0
     tangentImportMode: 3
-    normalCalculationMode: 0
+    normalCalculationMode: 4
   importAnimation: 0
   copyAvatar: 0
   humanDescription:
