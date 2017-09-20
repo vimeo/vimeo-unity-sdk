@@ -10,13 +10,9 @@ namespace Vimeo.Fun {
 
 		private VimeoPlayer vimeoPlayer;
 
-		public Light topLeftLight;
-		public Light topRightLight;
-		public Light bottomLeftLight;
-		public Light bottomRightLight;
-		public Light screenLight;
+        public Light[] lights;
 
-		private float refreshRate = 0.1f;
+		private float refreshRate = 0.5f;
 		private float timeSinceRefresh = 0f;
 
 		private bool videoReady = false;
@@ -24,52 +20,6 @@ namespace Vimeo.Fun {
 		void Start () {
 			vimeoPlayer = GetComponent<VimeoPlayer>();	
 			vimeoPlayer.OnVideoStart += InitLighting;
-
-			var collider = vimeoPlayer.videoScreen.GetComponent<Collider> ();
-
-			vimeoPlayer.videoScreen.layer = 30;
-			float lightPadding = 0.5f;
-
-			topLeftLight = CreateLight (new Vector3(
-				collider.bounds.min.x + collider.bounds.extents.x * lightPadding,
-				collider.bounds.max.y - collider.bounds.extents.y * lightPadding,
-				collider.bounds.min.z - collider.bounds.extents.z
-			) + transform.forward * 0.1f);
-
-			topRightLight = CreateLight (new Vector3(
-				collider.bounds.max.x - collider.bounds.extents.x * lightPadding,
-				collider.bounds.max.y - collider.bounds.extents.y * lightPadding,
-				collider.bounds.min.z - collider.bounds.extents.z
-			) + transform.forward * 0.1f);
-
-			bottomLeftLight = CreateLight (new Vector3(
-				collider.bounds.min.x + collider.bounds.extents.x * lightPadding,
-				collider.bounds.min.y + collider.bounds.extents.y * lightPadding,
-				collider.bounds.min.z - collider.bounds.extents.z
-			) + transform.forward * 0.1f);
-
-			bottomRightLight = CreateLight (new Vector3(
-				collider.bounds.max.x - collider.bounds.extents.x * lightPadding,
-				collider.bounds.min.y + collider.bounds.extents.y * lightPadding,
-				collider.bounds.min.z - collider.bounds.extents.z
-			) + transform.forward * 0.1f);
-
-			screenLight = CreateLight (new Vector3(
-				collider.bounds.min.x + collider.bounds.extents.x,
-				collider.bounds.min.y + collider.bounds.extents.y,
-				collider.bounds.min.z - collider.bounds.extents.z
-			) + transform.forward * 10f);
-
-			// Cast light onto everything except the video screen object
-			topLeftLight.cullingMask     = ~(1 << 30);
-			topRightLight.cullingMask    = ~(1 << 30);
-			bottomLeftLight.cullingMask  = ~(1 << 30);
-			bottomRightLight.cullingMask = ~(1 << 30);
-
-			// Only light up the screen
-			screenLight.cullingMask = 1 << 30;
-			screenLight.intensity = 2f;
-			screenLight.range = 20f;
 		}
 
 		private void OnDisable()
@@ -79,31 +29,31 @@ namespace Vimeo.Fun {
 
 		private void InitLighting()
 		{
-			Debug.Log ("InitLighting");
 			videoReady = true;
 		}
 		
 		void LateUpdate () {
 			if (videoReady) {
-				RefreshLights();
+                StartCoroutine(RefreshLights());
 			}
 		}
 
-		private void RefreshLights()
+		IEnumerator RefreshLights()
 		{
 			var videoTex = vimeoPlayer.video.videoPlayer.texture as RenderTexture;
 			timeSinceRefresh += Time.deltaTime;
 
 			if (videoTex != null && timeSinceRefresh > refreshRate) {
 				var videoTex2D = RenderTextureToTexture2D (videoTex);
-				bottomLeftLight.color  = GetAverageColorFromRect (videoTex2D, new Rect(0, 0, videoTex2D.width / 2, videoTex2D.height / 2));
-				bottomRightLight.color = GetAverageColorFromRect (videoTex2D, new Rect(videoTex2D.width / 2, 0, videoTex2D.width / 2, videoTex2D.height / 2));
-				topLeftLight.color     = GetAverageColorFromRect (videoTex2D, new Rect(0, videoTex2D.height / 2, videoTex2D.width / 2, videoTex2D.height / 2));
-				topRightLight.color    = GetAverageColorFromRect (videoTex2D, new Rect(videoTex2D.width / 2, videoTex2D.height / 2, videoTex2D.width / 2, videoTex2D.height / 2));
-				Destroy(videoTex2D);
+
+                for (int i = 0; i < lights.Length; i++) {
+                    lights[i].color = GetAverageColorFromRect (videoTex2D, new Rect(0, 0, videoTex2D.width, videoTex2D.height));
+                }
+
+                Destroy(videoTex2D);
 				timeSinceRefresh = 0f;
 			}
-
+            yield return null;
 		}
 
 		private Light CreateLight(Vector3 pos)
@@ -118,8 +68,8 @@ namespace Vimeo.Fun {
 			return light;
 		}
 
-		private Color GetAverageColor(Color[] colors) {
-			int pixelCount = colors.Length;
+        private Color GetAverageColor(Color[] colors) {
+            int pixelCount = colors.Length;
 			float r = 0f, g = 0f, b = 0f;
 			foreach (Color color in colors) {
 				r += color.r;
@@ -135,13 +85,13 @@ namespace Vimeo.Fun {
 			g = Mathf.Round (g * COLOR_MULTIPLIER);
 			b = Mathf.Round (b * COLOR_MULTIPLIER);
 
-			Color averageColor = new Color (r, g, b, 1f);
+            Color averageColor = new Color (r, g, b) * 0.0039f;
 			return averageColor;
 		}
 
-		private Color GetAverageColorFromRect(Texture2D texture, Rect pixelBlock) {
+        private Color GetAverageColorFromRect(Texture2D texture, Rect pixelBlock) {
 			Color[] pixels = GetRectPixelsFromTexture (texture, pixelBlock);
-			return GetAverageColor (pixels);
+            return GetAverageColor(pixels);
 		}
 
 		private Texture2D RenderTextureToTexture2D(RenderTexture texture)
@@ -154,7 +104,7 @@ namespace Vimeo.Fun {
 			return texture2D;
 		}
 
-		private Color[] GetRectPixelsFromTexture(Texture2D texture, Rect pixelBlock) 
+        private Color[] GetRectPixelsFromTexture(Texture2D texture, Rect pixelBlock) 
 		{
 			int pbx = Mathf.FloorToInt (pixelBlock.x);
 			int pby = Mathf.FloorToInt (pixelBlock.y);
