@@ -232,9 +232,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 665133140}
-  vimeoToken: aec26e3ff152d27804476a35af5daab0
-  name: Unity to Vimeo Upload Test
+  videoName: 
   m_privacyMode: 4
+  accessToken: e1c7e907aeda083a1bac709aa4b17b14
+  validAccessToken: 1
+  validAccessTokenCheck: 1
 --- !u!1 &546727434
 GameObject:
   m_ObjectHideFlags: 0
