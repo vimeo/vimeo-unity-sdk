@@ -13,7 +13,7 @@ namespace Vimeo.Misc
 		}
 
 		void Update () {
-			transform.Rotate(new Vector3(2f, 0, 0));
+			transform.Rotate(new Vector3(1f, 0, 0));
 		}
 	}
 }
