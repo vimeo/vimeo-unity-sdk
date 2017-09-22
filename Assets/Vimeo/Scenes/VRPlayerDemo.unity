@@ -150,39 +150,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: b30b62f1cbd5d8547a6bb5ab8be27236, type: 2}
   m_IsPrefabParent: 0
---- !u!21 &286855059
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_Name: Sprites/Default
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - PixelSnap: 0
-    - _EnableExternalAlpha: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &579331967
 Prefab:
   m_ObjectHideFlags: 0
@@ -380,6 +347,39 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bbd1539f8698e134dab17902271350ac, type: 2}
   m_IsPrefabParent: 0
+--- !u!21 &641246660
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1001 &899571968
 Prefab:
   m_ObjectHideFlags: 0
@@ -442,7 +442,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: bd2f7d4047c37eb4c9ecd57133724aff, type: 3}
   m_IsPrefabParent: 0
---- !u!43 &985056414
+--- !u!224 &1220516962 stripped
+RectTransform:
+  m_PrefabParentObject: {fileID: 224405415344290388, guid: bbd1539f8698e134dab17902271350ac,
+    type: 2}
+  m_PrefabInternal: {fileID: 638237570}
+--- !u!43 &1259304669
 Mesh:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
@@ -570,11 +575,6 @@ Mesh:
   m_BakedConvexCollisionMesh: 
   m_BakedTriangleCollisionMesh: 
   m_MeshOptimized: 0
---- !u!224 &1220516962 stripped
-RectTransform:
-  m_PrefabParentObject: {fileID: 224405415344290388, guid: bbd1539f8698e134dab17902271350ac,
-    type: 2}
-  m_PrefabInternal: {fileID: 638237570}
 --- !u!1 &1278024836
 GameObject:
   m_ObjectHideFlags: 0
@@ -606,14 +606,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   videoScreen: {fileID: 2139184371}
   audioSource: {fileID: 2139184371}
-  vimeoApiToken: 93f6a1e01b096a554624c5378f34d59a
-  vimeoVideoId: 82437787
+  vimeoApiToken: e1c7e907aeda083a1bac709aa4b17b14
+  vimeoVideoId: 222545163
   videoQualities:
   - Highest
   - 1080
   - 720
   - SD
-  videoQualityIndex: 0
+  videoQualityIndex: 2
   videoTitle: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
@@ -643,11 +643,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a792c2db51355d44b1575ba47363dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topLeftLight: {fileID: 0}
-  topRightLight: {fileID: 0}
-  bottomLeftLight: {fileID: 0}
-  bottomRightLight: {fileID: 0}
-  screenLight: {fileID: 0}
+  lights: []
 --- !u!114 &1278024840
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -779,11 +775,11 @@ Prefab:
     - target: {fileID: 2348914, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 286855059}
+      objectReference: {fileID: 641246660}
     - target: {fileID: 3380982, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 985056414}
+      objectReference: {fileID: 1259304669}
     m_RemovedComponents:
     - {fileID: 11420968, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 4d293c8e162f3874b982baadd71153d2, type: 2}
@@ -1004,11 +1000,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a792c2db51355d44b1575ba47363dff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  topLeftLight: {fileID: 0}
-  topRightLight: {fileID: 0}
-  bottomLeftLight: {fileID: 0}
-  bottomRightLight: {fileID: 0}
-  screenLight: {fileID: 0}
+  lights: []
 --- !u!114 &1888500427
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1022,7 +1014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   videoScreen: {fileID: 1870756813}
   audioSource: {fileID: 1870756813}
-  vimeoApiToken: 93f6a1e01b096a554624c5378f34d59a
+  vimeoApiToken: e1c7e907aeda083a1bac709aa4b17b14
   vimeoVideoId: 2
   videoQualities:
   - Highest
