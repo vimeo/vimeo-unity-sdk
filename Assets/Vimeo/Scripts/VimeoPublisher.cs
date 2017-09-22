@@ -94,11 +94,13 @@ namespace Vimeo {
             unlisted,
             //users,
         }
+
         public string videoName;
         [SerializeField] protected PrivacyMode m_privacyMode = PrivacyMode.anybody;
         public string accessToken;
         [HideInInspector] public bool validAccessToken;
         [HideInInspector] public bool validAccessTokenCheck;
+        public bool openInBrowser;
 
     	void Start () {
     		recorder = camera.GetComponent<MovieRecorder> ();
@@ -108,6 +110,7 @@ namespace Vimeo {
 
     	public void StartRecording()
     	{
+            Debug.Log ("Recording...");
     		recorder.BeginRecording();
     	}
 
@@ -130,13 +133,17 @@ namespace Vimeo {
             string[] uri_pieces = video_uri.Split ("/"[0]);
             string video_id = uri_pieces[2];
 
-            if (videoName != null) {
+            if (videoName != null && videoName != "") {
                 api.SetVideoName(videoName);
             }
 
             api.SetVideoViewPrivacy(PrivacyMode.unlisted.ToString());
 
             api.SaveVideo(video_id);
+
+            if (openInBrowser == true) {
+                Application.OpenURL("https://vimeo.com/" + video_id);
+            }
         }
 
     }
