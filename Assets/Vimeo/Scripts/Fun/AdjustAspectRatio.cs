@@ -23,8 +23,6 @@ namespace Vimeo.Fun {
 
 		private void OnVideoStart()
 		{
-			Debug.Log("width: " + vimeoPlayer.GetWidth());
-			Debug.Log("height: " + vimeoPlayer.GetHeight());
 			if (vimeoPlayer.GetWidth () > vimeoPlayer.GetHeight ()) {
 				targetHeight = ((float)vimeoPlayer.GetHeight () / vimeoPlayer.GetWidth ()) * transform.localScale.x;
 			} else {

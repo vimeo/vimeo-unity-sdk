@@ -12,7 +12,7 @@ namespace Vimeo.Fun {
 
         public Light[] lights;
 
-		private float refreshRate = 0.5f;
+		private float refreshRate = 0.1f;
 		private float timeSinceRefresh = 0f;
 
 		private bool videoReady = false;
@@ -46,8 +46,9 @@ namespace Vimeo.Fun {
 			if (videoTex != null && timeSinceRefresh > refreshRate) {
 				var videoTex2D = RenderTextureToTexture2D (videoTex);
 
+                Color col = GetAverageColorFromRect(videoTex2D, new Rect(0, 0, videoTex2D.width, videoTex2D.height));
                 for (int i = 0; i < lights.Length; i++) {
-                    lights[i].color = GetAverageColorFromRect (videoTex2D, new Rect(0, 0, videoTex2D.width, videoTex2D.height));
+                    lights [i].color = col;
                 }
 
                 Destroy(videoTex2D);
@@ -106,10 +107,10 @@ namespace Vimeo.Fun {
 
         private Color[] GetRectPixelsFromTexture(Texture2D texture, Rect pixelBlock) 
 		{
-			int pbx = Mathf.FloorToInt (pixelBlock.x);
-			int pby = Mathf.FloorToInt (pixelBlock.y);
-			int pbw = Mathf.FloorToInt (pixelBlock.width);
-			int pbh = Mathf.FloorToInt (pixelBlock.height);
+			int pbx = Mathf.FloorToInt(pixelBlock.x);
+			int pby = Mathf.FloorToInt(pixelBlock.y);
+			int pbw = Mathf.FloorToInt(pixelBlock.width);
+			int pbh = Mathf.FloorToInt(pixelBlock.height);
 
 			if (pbx < 0 || pbx > texture.width || pbw > texture.width || pbh > texture.height) {
 				return null;
