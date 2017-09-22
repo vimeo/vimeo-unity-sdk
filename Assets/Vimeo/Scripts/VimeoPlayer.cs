@@ -13,7 +13,7 @@ namespace Vimeo
 		{
 			DrawDefaultInspector ();
 			var player = target as VimeoPlayer;
-			player.videoQualityIndex = EditorGUILayout.Popup("Default quality", player.videoQualityIndex, player.videoQualities);
+			player.videoQualityIndex = EditorGUILayout.Popup("Max quality", player.videoQualityIndex, player.videoQualities);
 			EditorUtility.SetDirty(target);
 		}
 	}
@@ -30,7 +30,7 @@ namespace Vimeo
         public string vimeoApiToken;
         public string vimeoVideoId;
 
-		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "SD" };
+		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "480", "360" }; 
 		[HideInInspector] public int videoQualityIndex = 0;
 
 		[HideInInspector] public string videoTitle;
@@ -184,6 +184,7 @@ namespace Vimeo
         {
 			var json = JSON.Parse(response);
             if (json ["error"] == null) {
+                Debug.Log (response);
                 List<JSONNode> qualities = new List<JSONNode> ();
                 JSONNode progressiveFiles = json ["play"] ["progressive"];
 
@@ -215,13 +216,13 @@ namespace Vimeo
 		private JSONNode FindByQuality(List<JSONNode> qualities, string quality)
 		{
 			for (int i = 0; i < qualities.Count; i++) {
-				if (qualities[i]["height"].ToString() == quality) {
+                if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
 					Debug.Log ("Loading " + qualities[i]["height"] + "p file");
 					return qualities[i];
 				}
 			}
 
-			Debug.LogWarning("Couldnt find quality. defaulting to " + qualities[0]["height"]);
+			Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
 			return qualities [0];
 		}
 

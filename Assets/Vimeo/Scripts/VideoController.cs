@@ -121,8 +121,8 @@ namespace Vimeo
 
 		void Update()
 		{
-			var rend = videoScreenObject.GetComponent<Renderer> ();
-			Debug.Log (rend.material.GetTextureOffset ("_MainTex"));
+			//var rend = videoScreenObject.GetComponent<Renderer> ();
+			//Debug.Log (rend.material.GetTextureOffset ("_MainTex"));
 		}
 
 		private void OnDisable()
