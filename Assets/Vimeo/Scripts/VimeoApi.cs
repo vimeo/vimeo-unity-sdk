@@ -57,12 +57,28 @@ namespace Vimeo
             StartCoroutine(GetTicket());
         }
 
+        public static bool ValidateToken(string t)
+        {
+            using(UnityWebRequest www = UnityWebRequest.Get(VimeoApi.API_URL + "/?access_token=" + t)) {
+                www.Send();
+
+                // Wait until request is finished
+                while (www.responseCode <=  0) { }
+                if(www.responseCode != 200) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+
         IEnumerator Patch(string url)
         {
             Debug.Log ("Patching " + url);
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
-                request.SetRequestHeader ("Authorization", "Bearer " + token);
-                request.SetRequestHeader ("X-HTTP-Method-Override", "PATCH");
+                request.SetRequestHeader("Authorization", "Bearer " + token);
+                request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
                 yield return request.Send ();
 

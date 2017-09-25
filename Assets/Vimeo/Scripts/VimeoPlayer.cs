@@ -3,18 +3,27 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
+using Vimeo.Auth;
 
 namespace Vimeo
 {
 	[CustomEditor (typeof(VimeoPlayer))]
-	public class VimeoPlayerInspector : Editor
+	public class VimeoPlayerInspector : VimeoLogin
 	{
+        void OnEnable()
+        {
+            var player = target as VimeoPlayer;
+            token = player.accessToken;
+        }
+
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector ();
-			var player = target as VimeoPlayer;
-			player.videoQualityIndex = EditorGUILayout.Popup("Max quality", player.videoQualityIndex, player.videoQualities);
-			EditorUtility.SetDirty(target);
+			var publisher = target as VimeoPlayer;
+            publisher.videoQualityIndex = EditorGUILayout.Popup("Max quality", publisher.videoQualityIndex, publisher.videoQualities);
+
+            DrawVimeoAuth(publisher);
+            EditorUtility.SetDirty(target);
 		}
 	}
 
@@ -27,8 +36,11 @@ namespace Vimeo
 
         public GameObject videoScreen;
         public GameObject audioSource;
-        public string vimeoApiToken;
+        public string accessToken;
         public string vimeoVideoId;
+
+        [HideInInspector] public bool validAccessToken;
+        [HideInInspector] public bool validAccessTokenCheck;
 
 		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "480", "360" }; 
 		[HideInInspector] public int videoQualityIndex = 0;
@@ -58,9 +70,9 @@ namespace Vimeo
 
 		private void Start()
         {
-            if (vimeoApiToken != null) {
+            if (accessToken != null) {
                 api = gameObject.AddComponent<VimeoApi>();
-                api.token = vimeoApiToken;
+                api.token = accessToken;
                 api.OnRequestComplete += OnLoadVimeoVideoComplete;
             }
 
