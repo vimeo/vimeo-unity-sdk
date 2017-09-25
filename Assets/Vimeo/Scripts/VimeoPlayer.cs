@@ -22,10 +22,10 @@ namespace Vimeo
 			var publisher = target as VimeoPlayer;
             publisher.videoQualityIndex = EditorGUILayout.Popup("Max quality", publisher.videoQualityIndex, publisher.videoQualities);
 
-            DrawVimeoAuth(publisher);
+            DrawVimeoAuth(publisher); 
             EditorUtility.SetDirty(target);
 		}
-	}
+    }
 
 	public class VimeoPlayer : MonoBehaviour 
     {
@@ -42,7 +42,7 @@ namespace Vimeo
         [HideInInspector] public bool validAccessToken;
         [HideInInspector] public bool validAccessTokenCheck;
 
-		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "480", "360" }; 
+		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
 		[HideInInspector] public int videoQualityIndex = 0;
 
 		[HideInInspector] public string videoTitle;
@@ -53,20 +53,6 @@ namespace Vimeo
 
 		[HideInInspector]
         public VideoController video;
-
-		// Deprecate
-        private int[] video_collection = new int[4] { 2, 2998622, 213868, 80924717 };
-
-//		void OnGUI ()
-//		{
-//			// Choose an option from the list
-//			_choiceIndex = EditorGUILayout.Popup(_choiceIndex, _choices);
-//			// Update the selected option on the underlying instance of SomeClass
-//			var someClass = target as SomeClass;
-//			someClass.choice = _choices[_choiceIndex];
-//			// Custom inspector code goes here
-//			EditorUtility.SetDirty(target);
-//		}
 
 		private void Start()
         {
@@ -99,12 +85,6 @@ namespace Vimeo
             api.OnRequestComplete -= OnLoadVimeoVideoComplete;
             video.OnVideoStart    -= VideoStarted;
         }	
-
-		// Deprecate
-        public void RandomVideo()
-        {
-           LoadVimeoVideo(video_collection[Random.Range(0, video_collection.Length)]);
-        }
 
         public void LoadVimeoVideo(int id)
         {
@@ -214,10 +194,9 @@ namespace Vimeo
 
                 if (videoQualities [videoQualityIndex] == "Highest") {
                     video.PlayVideoByUrl (qualities [0] ["link"]);
-                } else if (videoQualities [videoQualityIndex] == "1080") {
-                    video.PlayVideoByUrl (FindByQuality (qualities, "1080") ["link"]);
-                } else if (videoQualities [videoQualityIndex] == "720") {
-                    video.PlayVideoByUrl (FindByQuality (qualities, "720") ["link"]);
+                } 
+                else {
+                    video.PlayVideoByUrl (FindByQuality (qualities, videoQualities [videoQualityIndex])["link"]);
                 }
             } 
             else {
