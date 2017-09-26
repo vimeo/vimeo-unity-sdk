@@ -127,7 +127,9 @@ namespace Vimeo
 
 		private void OnDisable()
 		{
-			videoPlayer.prepareCompleted -= VideoPlayerStarted;
+            if (videoPlayer != null) {
+                videoPlayer.prepareCompleted -= VideoPlayerStarted;
+            }
 		}
 	}
 
