@@ -20,7 +20,7 @@ namespace Vimeo
         public event RequestAction OnPatchComplete;
 
         private string video_file_path;
-        public  string token;
+        public string token;
         public static string API_URL = "https://api.vimeo.com";
         private WWWForm form;
 
@@ -59,20 +59,12 @@ namespace Vimeo
 
         public static bool ValidateToken(string t)
         {
-            var timeout = 2f;
-            var time_start = Time.time;
-            using(UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
+            using (UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
                 request.SetRequestHeader("Authorization", "Bearer " + t);
                 request.Send();
 
                 // Wait until request is finished
-                while (request.responseCode <=  0) { 
-//                    if (Time.time - time_start > timeout) {
-//                        Debug.Log (Time.time - time_start );
-//                        Debug.LogWarning("Request timeout: Unable to verify Vimeo token");
-//                        break;
-//                    }
-                }
+                while (request.responseCode <=  0) { }
 
                 if (request.responseCode != 200) {
                     Debug.LogError(request.responseCode + ": " + request.downloadHandler.text);
