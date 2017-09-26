@@ -137,8 +137,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   videoScreen: {fileID: 1774604084}
   audioSource: {fileID: 251272396}
-  accessToken: 
-  vimeoVideoId: 225133231
+  accessToken: 7fd0fe94a12beb932f0a5101226e7adb
+  vimeoVideoId: 234750312
   validAccessToken: 1
   validAccessTokenCheck: 1
   videoQualities:
@@ -147,7 +147,7 @@ MonoBehaviour:
   - 720
   - 480
   - 360
-  videoQualityIndex: 2
+  videoQualityIndex: 0
   videoTitle: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
@@ -639,7 +639,6 @@ GameObject:
   - component: {fileID: 1774604087}
   - component: {fileID: 1774604085}
   - component: {fileID: 1774604089}
-  - component: {fileID: 1774604086}
   m_Layer: 0
   m_Name: Screen
   m_TagString: Untagged
@@ -660,7 +659,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 1ffe957299247ae4ba0ee0bd7e805e6c, type: 2}
+  - {fileID: 2100000, guid: 9c809dbc81ec3354e99f058d91b2e7d1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -679,35 +678,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!114 &1774604086
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1774604084}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ad4f86e0ad84f4380af8f8f22ff0c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  videoScreen: {fileID: 0}
-  audioSource: {fileID: 0}
-  accessToken: 
-  vimeoVideoId: 
-  validAccessToken: 0
-  validAccessTokenCheck: 0
-  videoQualities:
-  - Highest
-  - 1080
-  - 720
-  - 540
-  - 480
-  - 360
-  videoQualityIndex: 0
-  videoTitle: 
-  videoThumbnailUrl: 
-  authorThumbnailUrl: 
-  video: {fileID: 0}
 --- !u!33 &1774604087
 MeshFilter:
   m_ObjectHideFlags: 0
