@@ -13,12 +13,6 @@ namespace Vimeo {
     [CustomEditor (typeof(VimeoPublisher))]
     public class VimeoPublisherInspector : VimeoLogin
     {
-        void OnEnable()
-        {
-            var player = target as VimeoPublisher;
-            token = player.accessToken;
-        }
-
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();

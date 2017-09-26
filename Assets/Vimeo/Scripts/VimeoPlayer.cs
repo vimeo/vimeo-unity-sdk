@@ -10,12 +10,6 @@ namespace Vimeo
 	[CustomEditor (typeof(VimeoPlayer))]
 	public class VimeoPlayerInspector : VimeoLogin
 	{
-        void OnEnable()
-        {
-            var player = target as VimeoPlayer;
-            token = player.accessToken;
-        }
-
 		public override void OnInspectorGUI()
 		{
 			DrawDefaultInspector ();
@@ -176,32 +170,62 @@ namespace Vimeo
         {
 			var json = JSON.Parse(response);
             if (json ["error"] == null) {
-                Debug.Log (response);
-                List<JSONNode> qualities = new List<JSONNode> ();
-                JSONNode progressiveFiles = json ["play"] ["progressive"];
-
-                // Set the metadata
-                videoTitle = json ["name"];
-                videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
-                authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
-                //Debug.Log(json);
-
-                // Sort the quality
-                for (int i = 0; i < progressiveFiles.Count; i++) {
-                    qualities.Add (progressiveFiles [i]);
-                }	
-                qualities.Sort (SortByQuality);
-
-                if (videoQualities [videoQualityIndex] == "Highest") {
-                    video.PlayVideoByUrl (qualities [0] ["link"]);
-                } 
-                else {
-                    video.PlayVideoByUrl (FindByQuality (qualities, videoQualities [videoQualityIndex])["link"]);
-                }
+                video.PlayVideoByUrl (GetVideoFileUrl (json));
             } 
             else {
                 Debug.LogError("Video could not be found");
             }
+        }
+
+        private string GetVideoFileUrl(JSONNode json)
+        {
+            // Set the metadata
+            videoTitle = json ["name"];
+            videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
+            authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
+
+            // New Vimeo file response format
+            if (json ["play"] != null) {
+                List<JSONNode> qualities = new List<JSONNode> ();
+                JSONNode progressiveFiles = json ["play"] ["progressive"];
+
+                // Sort the quality
+                for (int i = 0; i < progressiveFiles.Count; i++) {
+                    qualities.Add (progressiveFiles [i]);
+                }   
+                qualities.Sort (SortByQuality);
+
+                if (videoQualities [videoQualityIndex] == "Highest") {
+                    return qualities [0] ["link"];
+                } 
+                else {
+                    return FindByQuality (qualities, videoQualities [videoQualityIndex])["link"];
+                }
+            }
+
+            // Current Vimeo file response
+            if (json ["files"] != null) {
+                List<JSONNode> qualities = new List<JSONNode> ();
+                JSONNode progressiveFiles = json ["files"];
+
+                for (int i = 0; i < progressiveFiles.Count; i++) {
+                    if (progressiveFiles[i]["height"] != null && progressiveFiles[i]["type"].Value == "video/mp4") {
+                        Debug.Log ("wat");
+                        qualities.Add (progressiveFiles [i]);
+                    }
+                }
+                qualities.Sort(SortByQuality);
+
+                if (videoQualities[videoQualityIndex] == "Highest") {
+                   return qualities [0] ["link_secure"];
+                } 
+                else {
+                    return FindByQuality (qualities, videoQualities [videoQualityIndex])["link_secure"];
+                }
+            }
+
+            Debug.LogError ("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
+            return null;
         }
 
 		private JSONNode FindByQuality(List<JSONNode> qualities, string quality)
