@@ -210,7 +210,6 @@ namespace Vimeo
 
                 for (int i = 0; i < progressiveFiles.Count; i++) {
                     if (progressiveFiles[i]["height"] != null && progressiveFiles[i]["type"].Value == "video/mp4") {
-                        Debug.Log ("wat");
                         qualities.Add (progressiveFiles [i]);
                     }
                 }

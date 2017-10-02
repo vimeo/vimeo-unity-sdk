@@ -7,8 +7,6 @@ namespace Vimeo.Misc
 {
 	public class RotateObject : MonoBehaviour {
 
-		private float animationSpeed = 5f;
-
 		void Start () {
 		}
 
