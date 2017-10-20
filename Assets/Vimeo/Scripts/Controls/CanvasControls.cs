@@ -8,7 +8,6 @@ namespace Vimeo.Controls {
     public class CanvasControls : MonoBehaviour {
 
         public VimeoPlayer vimeoPlayer;
-
         public GameObject playButtonText;
         public GameObject progressBar;
 
@@ -27,6 +26,11 @@ namespace Vimeo.Controls {
         {
             Text txt = playButtonText.GetComponent<Text> ();
             txt.text = "Play";
+        }
+
+        void Update()
+        {
+           // if (vimeoPlayer.play
         }
     }
 }

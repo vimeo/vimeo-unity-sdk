@@ -19,10 +19,14 @@ namespace Vimeo
 		public  VideoPlayer videoPlayer;
 		public  AudioSource audioSource;
 
+        private bool is3D;
+        private string stereoFormat;
+        private MaterialPropertyBlock block;
+
 
 		private void Setup()
 		{  
-			if (videoPlayer == null) {
+            if (videoPlayer == null) {
 				videoPlayer = videoScreenObject.AddComponent<VideoPlayer>();
 
 				if (audioSource == null) {
@@ -40,6 +44,7 @@ namespace Vimeo
 
 				videoPlayer.isLooping = true;
 
+                block = new MaterialPropertyBlock ();
 			}
 			else {
 				Pause();
@@ -47,12 +52,13 @@ namespace Vimeo
 			}
 		}
 
-		public void PlayVideoByUrl(string file_url) 
+		public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat) 
 		{
 			Setup();
+            this.stereoFormat = stereoFormat;
+            this.is3D = is3D;
 			videoPlayer.url = file_url;
 			videoPlayer.Play();
-			//StartCoroutine("PlayVideo");
 		}
 
 		public void SeekBackward(float amount)
@@ -64,7 +70,6 @@ namespace Vimeo
 		{
 			Debug.Log (videoPlayer.frameCount);
 			videoPlayer.frame = (long) (videoPlayer.frame + amount);
-			//Debug.Log (videoPlayer.frame);
 		}
 
 		public void Seek(float seek)
@@ -112,17 +117,26 @@ namespace Vimeo
 		IEnumerator WaitForRenderTexture() {
 			yield return new WaitUntil (() => videoPlayer.texture != null);
 
-			var rend = videoScreenObject.GetComponent<Renderer> ();
-			rend.material.SetTextureOffset ("_MainTex", new Vector2 (0, 0.5f));
-			rend.material.SetTextureScale("_MainTex", new Vector2(1, 0.5f));
+            var rend = videoScreenObject.GetComponent<MeshRenderer> ();
+
+            if (is3D && stereoFormat == "mono") {
+                Debug.Log ("Monoscopic 360 video");
+                block.SetFloat("_Layout", 0f);
+                rend.SetPropertyBlock (block);
+            }
+            else if (is3D && stereoFormat == "top-bottom") {
+                Debug.Log ("Stereoscopic top/bottom 360 video");
+                block.SetFloat("_Layout", 2f);
+                rend.SetPropertyBlock (block);
+            }
+            else if (is3D && stereoFormat == "left-right") {
+                Debug.Log ("Stereoscopic left/right 360 video");
+                block.SetFloat("_Layout", 2f);
+                rend.SetPropertyBlock (block);
+            }
+//			rend.material.SetTextureScale("_MainTex", new Vector2(1, 0.5f));
 
 			OnVideoStart(this);
-		}
-
-		void Update()
-		{
-			//var rend = videoScreenObject.GetComponent<Renderer> ();
-			//Debug.Log (rend.material.GetTextureOffset ("_MainTex"));
 		}
 
 		private void OnDisable()

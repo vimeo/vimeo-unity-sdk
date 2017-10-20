@@ -29,6 +29,7 @@ namespace Vimeo
         public event VimeoEvent OnPlay;
 
         public GameObject videoScreen;
+        public GameObject videoScreenRight;
         public GameObject audioSource;
         public string accessToken;
         public string vimeoVideoId;
@@ -42,6 +43,9 @@ namespace Vimeo
 		[HideInInspector] public string videoTitle;
 		[HideInInspector] public string videoThumbnailUrl;
 		[HideInInspector] public string authorThumbnailUrl;
+        [HideInInspector] public bool is3D;
+        [HideInInspector] public string videoProjection;
+        [HideInInspector] public string videoStereoFormat;
 
         private VimeoApi api;
 
@@ -110,6 +114,11 @@ namespace Vimeo
             video.TogglePlayback();
         }
 
+     //   public boolean IsPlaying()
+       // {
+     //       video
+        //}
+
         public int GetWidth()
         {
             return video.width;
@@ -170,7 +179,7 @@ namespace Vimeo
         {
 			var json = JSON.Parse(response);
             if (json ["error"] == null) {
-                video.PlayVideoByUrl (GetVideoFileUrl (json));
+                video.PlayVideoByUrl (GetVideoFileUrl (json), is3D, videoStereoFormat);
             } 
             else {
                 Debug.LogError("Video could not be found");
@@ -183,6 +192,14 @@ namespace Vimeo
             videoTitle = json ["name"];
             videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
             authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
+            is3D = false;
+            videoStereoFormat = "mono";
+
+            if (json ["spatial"] != null) {
+                is3D = true;
+                videoProjection   = json ["spatial"] ["projection"];
+                videoStereoFormat = json ["spatial"] ["stereo_format"];
+            }
 
             // New Vimeo file response format
             if (json ["play"] != null) {

@@ -25,10 +25,15 @@ namespace Vimeo {
 
     public class VimeoPublisher : MonoBehaviour {
 
-        private MovieRecorder recorder;
-        private VimeoApi api;
+        public delegate void UploadAction(string status, float progress);
+        public event UploadAction OnUploadProgress;
 
+        private MovieRecorder recorder;
+
+        [HideInInspector] 
+        public VimeoApi api;
     	public Camera camera;
+
         public enum PrivacyMode
         {
             anybody,
@@ -47,6 +52,10 @@ namespace Vimeo {
         [HideInInspector] public bool validAccessTokenCheck;
         public bool openInBrowser;
 
+        public bool postToSlack;
+        public string slackToken;
+        public string slackChannel;
+
     	void Start () {
     		recorder = camera.GetComponent<MovieRecorder> ();
             api = gameObject.AddComponent<VimeoApi> ();
@@ -55,23 +64,43 @@ namespace Vimeo {
 
     	public void StartRecording()
     	{
-            Debug.Log ("Recording...");
     		recorder.BeginRecording();
+            UploadProgress ("Recording", 0);
     	}
 
     	public void EndRecording()
     	{
             recorder.EndRecording();
-            
-            PublishVideo ();
+            PublishVideo();
     	}
+
+        public void CancelRecording()
+        {
+            recorder.EndRecording ();
+            DeleteVideoFile();
+
+            UploadProgress ("Cancelled", 0);
+        }
+
+        public string GetVideoFilePath()
+        {
+            return recorder.outputPath + ".mp4";
+        }
 
     	private void PublishVideo()
     	{
-            Debug.Log ("Uploading to Vimeo: " + recorder.outputPath);
+            //Debug.Log ("Uploading to Vimeo: " + recorder.outputPath);
             api.OnUploadComplete += UploadComplete;
-            api.UploadVideoFile(recorder.outputPath + ".mp4");
+            api.OnUploadProgress += UploadProgress;
+            api.UploadVideoFile(GetVideoFilePath());
     	}
+
+        private void UploadProgress(string status, float progress)
+        {
+            if (OnUploadProgress != null) {
+                OnUploadProgress (status, progress);
+            }
+        }
 
         private void UploadComplete(string video_uri)
         {
@@ -83,12 +112,18 @@ namespace Vimeo {
             }
 
             api.SetVideoViewPrivacy(PrivacyMode.unlisted.ToString());
-
             api.SaveVideo(video_id);
 
             if (openInBrowser == true) {
                 Application.OpenURL("https://vimeo.com/" + video_id);
             }
+
+            DeleteVideoFile();
+        }
+
+        private void DeleteVideoFile()
+        {
+            FileUtil.DeleteFileOrDirectory(GetVideoFilePath());
         }
 
     }
