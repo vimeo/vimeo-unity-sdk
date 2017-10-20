@@ -236,7 +236,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1456218436
+  randomSeed: 1630680096
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3593,14 +3593,14 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 406132289
+  randomSeed: -420646322
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 3
+      scalar: 2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -3641,7 +3641,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 44.7
+      scalar: 80
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4153,7 +4153,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 200
+      scalar: 300
       minScalar: 10
       maxCurve:
         serializedVersion: 2
@@ -7149,6 +7149,26 @@ Prefab:
         type: 2}
       propertyPath: videoName
       value: Unity Upload Test
+      objectReference: {fileID: 0}
+    - target: {fileID: 223088080273911104, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 223088080273911104, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 665133140}
+    - target: {fileID: 223088080273911104, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: m_PixelPerfect
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: postToSlack
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32eca34aee5579b4ea3f8c9707ab2911, type: 2}
