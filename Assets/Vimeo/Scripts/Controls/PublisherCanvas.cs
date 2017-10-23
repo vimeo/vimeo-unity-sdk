@@ -65,7 +65,6 @@ namespace Vimeo.Controls {
 //
         private void TitleFieldChange()
         {
-            Debug.Log (titleField.GetComponent<InputField> ().text);
             vimeoPublisher.videoName = titleField.GetComponent<InputField> ().text;
         }
 

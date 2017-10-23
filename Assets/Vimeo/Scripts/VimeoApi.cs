@@ -155,7 +155,8 @@ namespace Vimeo
                 if (request.isNetworkError) {
                     Debug.Log (request.error);
                     Debug.Log (request.responseCode);
-                } else {
+                } 
+                else {
                     StartCoroutine(VerifyUpload(ticket));
                 }
             }

@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using SimpleJSON;
 using Vimeo;
 using Vimeo.Auth;
+using Vimeo.Services;
 
 namespace Vimeo {
 
@@ -33,6 +34,7 @@ namespace Vimeo {
         [HideInInspector] 
         public VimeoApi api;
     	public Camera camera;
+    	private Slack slack;
 
         public enum PrivacyMode
         {
@@ -55,6 +57,7 @@ namespace Vimeo {
         public bool postToSlack;
         public string slackToken;
         public string slackChannel;
+		public string slackMessage;
 
     	void Start () {
     		recorder = camera.GetComponent<MovieRecorder> ();
@@ -84,7 +87,7 @@ namespace Vimeo {
 
         public string GetVideoFilePath()
         {
-            return recorder.outputPath + ".mp4";
+            return recorder.outputPath + ".webm"; 
         }
 
     	private void PublishVideo()
@@ -102,21 +105,29 @@ namespace Vimeo {
             }
         }
 
-        private void UploadComplete(string video_uri)
-        {
-            string[] uri_pieces = video_uri.Split ("/"[0]);
-            string video_id = uri_pieces[2];
+        private void UploadComplete (string video_uri)
+		{
+			string[] uri_pieces = video_uri.Split ("/" [0]);
+			string video_id = uri_pieces [2];
 
-            if (videoName != null && videoName != "") {
-                api.SetVideoName(videoName);
-            }
+			if (videoName != null && videoName != "") {
+				api.SetVideoName (videoName);
+			}
 
-            api.SetVideoViewPrivacy(PrivacyMode.unlisted.ToString());
-            api.SaveVideo(video_id);
+			api.SetVideoViewPrivacy (PrivacyMode.unlisted.ToString ());
+			api.SaveVideo (video_id);
 
-            if (openInBrowser == true) {
-                Application.OpenURL("https://vimeo.com/" + video_id);
-            }
+			if (openInBrowser == true) {
+				Application.OpenURL ("https://vimeo.com/" + video_id);
+			}
+
+			if (postToSlack == true) {
+				if (slack == null) {
+					slack = gameObject.AddComponent<Slack> ();
+				}
+				slack.Init(slackToken, slackChannel);
+				slack.PostVideoToChannel("https://vimeo.com/" + video_id);
+			}
 
             DeleteVideoFile();
         }
