@@ -236,7 +236,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1630680096
+  randomSeed: -1431896387
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -3593,7 +3593,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -420646322
+  randomSeed: 1693466971
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -6916,7 +6916,7 @@ MonoBehaviour:
   m_endTime: 10
   m_recordOnStart: 0
   m_encoderConfigs:
-    format: 4
+    format: 3
     pngEncoderSettings:
       pixelFormat: 0
       maxTasks: 2
@@ -6945,7 +6945,7 @@ MonoBehaviour:
       videoTargetFramerate: 60
       videoBitrateMode: 1
       videoTargetBitrate: 1024000
-      videoMaxTasks: 4
+      videoMaxTasks: 32
       audio:
         v: 1
       audioEncoder: 0
@@ -6963,7 +6963,7 @@ MonoBehaviour:
       videoBitrateMode: 1
       videoTargetBitrate: 10024000
       videoFlags: 62
-      videoMaxTasks: 10
+      videoMaxTasks: 32
       audio:
         v: 1
       audioSampleRate: 48000
@@ -7169,6 +7169,11 @@ Prefab:
         type: 2}
       propertyPath: postToSlack
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: accessToken
+      value: e6f593df1cc3fbc3d6451302c331ed48
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32eca34aee5579b4ea3f8c9707ab2911, type: 2}
