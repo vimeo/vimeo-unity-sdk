@@ -3,20 +3,17 @@ using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
-using Vimeo.Auth;
+using Vimeo.Config;
 
 namespace Vimeo
 {
 	[CustomEditor (typeof(VimeoPlayer))]
-	public class VimeoPlayerInspector : VimeoLogin
+    public class VimeoPlayerInspector : VimeoConfig
 	{
 		public override void OnInspectorGUI()
 		{
-			DrawDefaultInspector ();
 			var publisher = target as VimeoPlayer;
-            publisher.videoQualityIndex = EditorGUILayout.Popup("Max quality", publisher.videoQualityIndex, publisher.videoQualities);
-
-            DrawVimeoAuth(publisher); 
+            DrawVimeoConfig(publisher); 
             EditorUtility.SetDirty(target);
 		}
     }

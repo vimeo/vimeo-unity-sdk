@@ -3593,7 +3593,7 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: 1693466971
+  randomSeed: -383940673
   InitialModule:
     serializedVersion: 3
     enabled: 1
@@ -7168,12 +7168,22 @@ Prefab:
     - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
         type: 2}
       propertyPath: postToSlack
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
         type: 2}
       propertyPath: accessToken
       value: e6f593df1cc3fbc3d6451302c331ed48
+      objectReference: {fileID: 0}
+    - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: openInBrowser
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114358356546521658, guid: 32eca34aee5579b4ea3f8c9707ab2911,
+        type: 2}
+      propertyPath: m_privacyMode
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 32eca34aee5579b4ea3f8c9707ab2911, type: 2}

@@ -6,20 +6,18 @@ using UnityEditor;
 using UnityEngine.Networking;
 using SimpleJSON;
 using Vimeo;
-using Vimeo.Auth;
+using Vimeo.Config;
 using Vimeo.Services;
 
 namespace Vimeo {
 
     [CustomEditor (typeof(VimeoPublisher))]
-    public class VimeoPublisherInspector : VimeoLogin
+    public class VimeoPublisherInspector : VimeoConfig
     {
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
             var player = target as VimeoPublisher;
-
-            DrawVimeoAuth (player);
+            DrawVimeoConfig (player);
             EditorUtility.SetDirty(target);
         }
     }
@@ -87,7 +85,7 @@ namespace Vimeo {
 
         public string GetVideoFilePath()
         {
-            return recorder.outputPath + ".webm"; 
+            return recorder.outputPath + ".mp4"; 
         }
 
     	private void PublishVideo()

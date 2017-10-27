@@ -26,7 +26,7 @@ namespace Vimeo.Services {
             form.AddField ("token", _token);
 			form.AddField ("channel", "#" + _channel);
 			form.AddField ("text", "Check out my latest render from " + Application.productName + " " + video_url);
-			form.AddField ("as_user", "true");
+			form.AddField ("as_user", "false");
 			form.AddField ("pretty", "1");
 
 			StartCoroutine(Post(api_url, form));
