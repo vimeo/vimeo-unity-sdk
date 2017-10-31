@@ -17,6 +17,11 @@ namespace Vimeo.Config
             so.ApplyModifiedProperties();
         }
 
+        public bool Authenticated(string token)
+        {
+            return token != "" && token != null;
+        }
+
         public void DrawVimeoConfig(VimeoPublisher publisher)
         {
             var so = serializedObject;
@@ -28,6 +33,7 @@ namespace Vimeo.Config
                 EditorGUILayout.PropertyField(so.FindProperty("camera"));
                 EditorGUILayout.PropertyField(so.FindProperty("videoName"));
                 EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
+                EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));
                 EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
 
                 DrawSlackConfig(publisher);
@@ -50,7 +56,6 @@ namespace Vimeo.Config
                 if (GUILayout.Button("Switch accounts")) {
                     var t = target as VimeoPublisher;
                     t.accessToken = null;
-                    //Application.OpenURL("https://vimeo-unity.herokuapp.com/auth/vimeo");
                 }
             }
         }
@@ -65,16 +70,11 @@ namespace Vimeo.Config
                 }
             } 
             else {
-                if (GUILayout.Button("Disable")) {
+                if (GUILayout.Button("Switch Slack Team")) {
                     var t = target as VimeoPublisher;
                     t.slackToken = null;
                 }
             }
-        }
-
-        public bool Authenticated(string token)
-        {
-            return token != "" && token != null;
         }
 
         public void DrawSlackConfig(VimeoPublisher publisher)
@@ -87,12 +87,10 @@ namespace Vimeo.Config
                 if (Authenticated (publisher.slackToken)) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField (so.FindProperty ("slackChannel"));
-                    EditorGUILayout.PropertyField (so.FindProperty ("slackMessage"));
                     EditorGUI.indentLevel--;
                 } 
-                else {
-                    DrawSlackAuth (publisher.slackToken);
-                }
+
+                DrawSlackAuth (publisher.slackToken);
             }
         }
     }

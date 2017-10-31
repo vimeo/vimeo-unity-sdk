@@ -182,7 +182,7 @@ namespace UTJ.FrameCapturer
             }
 
             m_recording = false;
-            m_aborted = true;
+            //m_aborted = true;
         }
 
 
@@ -272,6 +272,7 @@ namespace UTJ.FrameCapturer
                 else if (m_captureControl == CaptureControl.TimeRange)
                 {
                     float time = Time.unscaledTime - m_initialTime;
+                    //Debug.Log (m_startTime + " - " + m_endTime + " time:" + time + " m_initialTime:" + m_initialTime);
                     if (!m_aborted && time >= m_startTime && time <= m_endTime)
                     {
                         if (!m_recording) { BeginRecording(); }

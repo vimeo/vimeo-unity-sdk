@@ -24,7 +24,7 @@ namespace UTJ.FrameCapturer
 
 
         #region fields
-        [SerializeField] MovieEncoderConfigs m_encoderConfigs = new MovieEncoderConfigs(MovieEncoder.Type.WebM);
+        [SerializeField] public MovieEncoderConfigs m_encoderConfigs = new MovieEncoderConfigs(MovieEncoder.Type.WebM);
         [SerializeField] CaptureTarget m_captureTarget = CaptureTarget.FrameBuffer;
         [SerializeField] RenderTexture m_targetRT;
         [SerializeField] bool m_captureVideo = true;

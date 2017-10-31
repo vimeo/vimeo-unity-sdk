@@ -4,10 +4,10 @@ using UTJ.FrameCapturer;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
-using SimpleJSON;
 using Vimeo;
 using Vimeo.Config;
 using Vimeo.Services;
+using SimpleJSON;
 
 namespace Vimeo {
 
@@ -24,75 +24,138 @@ namespace Vimeo {
 
     public class VimeoPublisher : MonoBehaviour {
 
+        public enum LinkType
+        {
+            VideoPage,
+            ReviewPage
+        }
+
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        private MovieRecorder recorder;
-
-        [HideInInspector] 
+        public MovieRecorder recorder;
         public VimeoApi api;
     	public Camera camera;
     	private Slack slack;
 
-        public enum PrivacyMode
-        {
-            anybody,
-            contacts,
-            disable,
-            nobody,
-            //password,
-            unlisted,
-            //users,
-        }
-
-        public string videoName;
-        [SerializeField] protected PrivacyMode m_privacyMode = PrivacyMode.anybody;
+        public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
+        public LinkType defaultShareLink = LinkType.VideoPage;
         public string accessToken;
-        [HideInInspector] public bool validAccessToken;
-        [HideInInspector] public bool validAccessTokenCheck;
+        public bool validAccessToken;
+        public bool validAccessTokenCheck;
         public bool openInBrowser;
 
         public bool postToSlack;
+
         public string slackToken;
         public string slackChannel;
 		public string slackMessage;
 
+        public string videoName;
+        public string videoId;
+        public string videoPermalink;
+        public string videoReviewPermalink;
+
+        public UTJ.FrameCapturer.RecorderBase.CaptureControl captureControl;
+
+        private bool isRecording = false;
+
+        private Coroutine saveCoroutine;
+
     	void Start () {
     		recorder = camera.GetComponent<MovieRecorder> ();
+
+            if (recorder == null) {
+                recorder = camera.gameObject.AddComponent<MovieRecorder> ();
+            }
+
+            recorder.outputDir = new DataPath(DataPath.Root.TemporaryCache, "Vimeo");
+            recorder.recordOnStart = false;
+            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
+
+            if (fcAPI.fcMP4OSIsSupported ()) {
+                // Note: Had to expose m_encoderConfigs publicly in MovieRecorder
+                recorder.m_encoderConfigs.format = MovieEncoder.Type.MP4;
+            } 
+            else if (fcAPI.fcWebMIsSupported ()) {
+                recorder.m_encoderConfigs.format = MovieEncoder.Type.WebM;
+            } 
+            else {
+                Debug.LogError ("Unfortunately, this system does not support MP4 or WebM recording");
+            }
+
             api = gameObject.AddComponent<VimeoApi> ();
             api.token = accessToken;
+
+            api.OnPatchComplete  += VideoUpdated;
+            api.OnUploadComplete += UploadComplete;
+            api.OnUploadProgress += UploadProgress;
     	}
 
     	public void StartRecording()
-    	{
-    		recorder.BeginRecording();
+        {
+            videoId = null;
+            videoPermalink = null;
+            videoReviewPermalink = null;
+
+            // Using alt capture method
+            if (captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
+                recorder.captureControl = captureControl;
+            }
+
+            recorder.BeginRecording ();
             UploadProgress ("Recording", 0);
     	}
 
     	public void EndRecording()
     	{
-            recorder.EndRecording();
+            isRecording = false;
+
+            if (captureControl == UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
+                recorder.EndRecording ();
+            }
+
+            // Reset recorder back to Manual (a bit of a hack)
+            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
+
             PublishVideo();
     	}
-
+            
         public void CancelRecording()
         {
-            recorder.EndRecording ();
+            isRecording = false;
+            recorder.EndRecording();
             DeleteVideoFile();
+            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
 
             UploadProgress ("Cancelled", 0);
         }
 
         public string GetVideoFilePath()
         {
-            return recorder.outputPath + ".mp4"; 
+            if (fcAPI.fcMP4OSIsSupported ()) {
+                return recorder.outputPath + ".mp4"; 
+            } else {
+                return recorder.outputPath + ".webm"; 
+            }
+        }
+
+        public string GetVimeoPermalink()
+        {
+            if (videoPermalink != null) {
+                if (defaultShareLink == LinkType.ReviewPage) {
+                    return videoReviewPermalink;
+                } 
+                else {
+                    return videoPermalink;
+                }
+            } 
+             
+            return "https://vimeo.com/" + videoId;
         }
 
     	private void PublishVideo()
     	{
-            //Debug.Log ("Uploading to Vimeo: " + recorder.outputPath);
-            api.OnUploadComplete += UploadComplete;
-            api.OnUploadProgress += UploadProgress;
             api.UploadVideoFile(GetVideoFilePath());
     	}
 
@@ -103,36 +166,92 @@ namespace Vimeo {
             }
         }
 
-        private void UploadComplete (string video_uri)
+        private void UploadComplete(string video_uri)
 		{
 			string[] uri_pieces = video_uri.Split ("/" [0]);
-			string video_id = uri_pieces [2];
+			videoId = uri_pieces [2];
 
-			if (videoName != null && videoName != "") {
-				api.SetVideoName (videoName);
-			}
-
-			api.SetVideoViewPrivacy (PrivacyMode.unlisted.ToString ());
-			api.SaveVideo (video_id);
+            SetVideoName(videoName);
+            SetVideoPrivacyMode(m_privacyMode);
 
 			if (openInBrowser == true) {
-				Application.OpenURL ("https://vimeo.com/" + video_id);
-			}
-
-			if (postToSlack == true) {
-				if (slack == null) {
-					slack = gameObject.AddComponent<Slack> ();
-				}
-				slack.Init(slackToken, slackChannel);
-				slack.PostVideoToChannel("https://vimeo.com/" + video_id);
+                OpenVideo();
 			}
 
             DeleteVideoFile();
         }
 
+        private void VideoUpdated(string response)
+        {
+            JSONNode json = JSON.Parse (response);
+            videoPermalink = json["link"];
+            videoReviewPermalink = json["review_link"];
+        }
+
         private void DeleteVideoFile()
         {
             FileUtil.DeleteFileOrDirectory(GetVideoFilePath());
+        }
+
+        public void SetVideoName(string title)
+        {
+            if (title != null && title != "") {
+                if (saveCoroutine != null) { StopCoroutine (saveCoroutine); }
+                api.SetVideoName(title);
+                saveCoroutine = StartCoroutine("SaveVideo");
+            }
+        }
+
+        public void SetVideoPrivacyMode(VimeoApi.PrivacyMode mode)
+        {
+            if (saveCoroutine != null) { StopCoroutine (saveCoroutine); }
+            api.SetVideoViewPrivacy(mode.ToString());
+            saveCoroutine = StartCoroutine("SaveVideo");
+        }
+
+        private IEnumerator SaveVideo()
+        {
+            yield return new WaitForSeconds (3f);
+
+            if (videoId != null) {
+                Debug.Log ("Video saved!");
+                api.SaveVideo (videoId);
+            }
+        }
+
+        public void OpenVideo()
+        {
+            Application.OpenURL(GetVimeoPermalink());
+        }
+
+        public void OpenSettings()
+        {
+            Application.OpenURL("https://vimeo.com/" + videoId + "/settings");
+        }
+
+        public void PostToSlack()
+        {
+            if (postToSlack == true && slackChannel != null) {
+                if (slack == null) {
+                    slack = gameObject.AddComponent<Slack>();
+                }
+
+                slack.Init(slackToken, slackChannel);
+                slack.PostVideoToChannel(videoName, GetVimeoPermalink());
+            }
+        }
+
+        void LateUpdate()
+        {
+            // Set recording state based upon MovieRecorder state
+            if (!isRecording && recorder.isRecording) {
+                isRecording = true;
+            }
+
+            // If not recording manually, automatically trigger EndRecording
+            if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
+                EndRecording();
+            }
         }
 
     }

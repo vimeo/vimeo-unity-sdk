@@ -14,6 +14,17 @@ namespace Vimeo
 {
     public class VimeoApi : MonoBehaviour
     {
+        public enum PrivacyMode
+        {
+            anybody,
+            disable,
+            nobody,
+            unlisted,
+            //contacts,
+            //password,
+            //users,
+        }
+
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
         public event RequestAction OnUploadComplete;
@@ -96,6 +107,7 @@ namespace Vimeo
                     Debug.Log (request.downloadHandler.text);
                 }
 
+                // Reset the form
                 form = new WWWForm();
 
                 if (OnPatchComplete != null) {
@@ -118,11 +130,17 @@ namespace Vimeo
 
                 yield return request.Send ();
 
+                Debug.Log (request.downloadHandler.text);
+
                 if (request.isNetworkError) {
                     Debug.Log (request.error);
                 } else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON (request.downloadHandler.text);
-                    StartCoroutine(UploadVideo(ticket));
+                    if (ticket.error != "") {
+                        StartCoroutine (UploadVideo (ticket));
+                    } else {
+                        Debug.LogError (ticket.error);
+                    }
                 }
             }
         }
@@ -138,11 +156,11 @@ namespace Vimeo
             FileInfo video_file = new FileInfo(video_file_path);
             byte[] data = File.ReadAllBytes(video_file_path);
 
-            //Debug.Log (data.Length);
-            //Debug.Log (video_file.Name);
+            Debug.Log (data.Length);
+            Debug.Log (video_file.Name);
 
             // Upload to the Vimeo server
-            //Debug.Log ("Uploading to " + ticket.upload_link_secure);
+            Debug.Log ("Uploading to " + ticket.upload_link_secure);
 
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 uploader = request;
@@ -178,7 +196,6 @@ namespace Vimeo
                     StartCoroutine(CompleteUpload(ticket));
                 } 
                 else {
-                    
                     Debug.Log (request.responseCode);
                 }
             }

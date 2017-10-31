@@ -18,14 +18,14 @@ namespace Vimeo.Services {
 			_channel = channel;	
 		}
 		
-		public void PostVideoToChannel (string video_url)
+		public void PostVideoToChannel (string message, string video_url)
 		{
 			string api_url = "https://slack.com/api/chat.postMessage";
 
 			WWWForm form = new WWWForm ();
             form.AddField ("token", _token);
-			form.AddField ("channel", "#" + _channel);
-			form.AddField ("text", "Check out my latest render from " + Application.productName + " " + video_url);
+            form.AddField ("channel", "#" + _channel.Replace("#", ""));
+			form.AddField ("text", message + " " + video_url);
 			form.AddField ("as_user", "false");
 			form.AddField ("pretty", "1");
 
