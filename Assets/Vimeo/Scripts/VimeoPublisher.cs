@@ -63,7 +63,8 @@ namespace Vimeo {
     		recorder = camera.GetComponent<MovieRecorder> ();
 
             if (recorder == null) {
-                recorder = camera.gameObject.AddComponent<MovieRecorder> ();
+                recorder = camera.gameObject.AddComponent<MovieRecorder>();
+                recorder.Reset(); // Need to manually call this only when adding the component for first time
             }
 
             recorder.outputDir = new DataPath(DataPath.Root.TemporaryCache, "Vimeo");

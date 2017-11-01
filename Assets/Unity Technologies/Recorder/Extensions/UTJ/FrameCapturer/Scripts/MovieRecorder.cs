@@ -192,7 +192,7 @@ namespace UTJ.FrameCapturer
 
         #region impl
 #if UNITY_EDITOR
-        void Reset()
+        public void Reset() // EDIT: Had to make this public so that i could manually initiate when adding the component. Why? I don't know
         {
             m_shCopy = fcAPI.GetFrameBufferCopyShader();
         }
