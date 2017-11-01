@@ -282,7 +282,7 @@ namespace Vimeo {
                     slack = gameObject.AddComponent<Slack>();
                 }
 
-                slack.Init(slackToken, slackChannel);
+                slack.Init(GetSlackToken(), slackChannel);
                 slack.PostVideoToChannel(videoName, GetVimeoPermalink());
             }
         }
