@@ -31,6 +31,7 @@ namespace Vimeo.Config
                 EditorGUILayout.Space();
 
                 EditorGUILayout.PropertyField(so.FindProperty("camera"));
+                EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
                 EditorGUILayout.PropertyField(so.FindProperty("videoName"));
                 EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
                 EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));

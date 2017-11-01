@@ -41,8 +41,9 @@ namespace Vimeo {
         public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
         public LinkType defaultShareLink = LinkType.VideoPage;
         public string vimeoToken;
-        public bool openInBrowser;
 
+        public bool recordOnStart;
+        public bool openInBrowser;
         public bool postToSlack;
 
         public string slackToken;
@@ -65,6 +66,10 @@ namespace Vimeo {
             if (recorder == null) {
                 recorder = camera.gameObject.AddComponent<MovieRecorder>();
                 recorder.Reset(); // Need to manually call this only when adding the component for first time
+
+                // Set Vimeo default encoding settings
+                recorder.m_encoderConfigs.mp4EncoderSettings.videoTargetBitrate = 1024 * 10000;
+                recorder.m_encoderConfigs.mp4EncoderSettings.audioTargetBitrate = 128 * 1000; 
             }
 
             recorder.outputDir = new DataPath(DataPath.Root.TemporaryCache, "Vimeo");
@@ -88,6 +93,10 @@ namespace Vimeo {
             api.OnPatchComplete  += VideoUpdated;
             api.OnUploadComplete += UploadComplete;
             api.OnUploadProgress += UploadProgress;
+
+            if (recordOnStart) {
+                StartRecording();
+            }
     	}
 
         public string GetVimeoToken()

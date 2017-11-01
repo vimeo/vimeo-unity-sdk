@@ -54,8 +54,13 @@ namespace Vimeo.Controls {
                 PrivacyTypeChange();
             });
 
-            StartState ();
-            container.SetActive(false);
+            if (vimeoPublisher.recordOnStart) {
+                container.SetActive (true);
+                RecordingState();
+            } else {
+                StartState ();
+                container.SetActive (false);
+            }
         }
 
         void Update()
@@ -204,6 +209,7 @@ namespace Vimeo.Controls {
             recordTypeDropdown.gameObject.SetActive(false);
             recordInputField.SetActive (false);
             recordButton.SetActive (false);
+            progressBar.SetActive (false);
 
             HideShareWindow();
         }
