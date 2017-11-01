@@ -1,5 +1,4 @@
-﻿
-using System.Xml;
+﻿using System.Xml;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +7,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 
-
-// Dev token 93f6a1e01b096a554624c5378f34d59a
 namespace Vimeo
 {
     public class VimeoApi : MonoBehaviour
