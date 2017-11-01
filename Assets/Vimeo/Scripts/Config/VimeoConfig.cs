@@ -25,9 +25,9 @@ namespace Vimeo.Config
         public void DrawVimeoConfig(VimeoPublisher publisher)
         {
             var so = serializedObject;
-            DrawVimeoAuth (publisher.accessToken);
+            DrawVimeoAuth (publisher.GetVimeoToken());
 
-            if (Authenticated(publisher.accessToken)) {
+            if (Authenticated(publisher.GetVimeoToken())) {
                 EditorGUILayout.Space();
 
                 EditorGUILayout.PropertyField(so.FindProperty("camera"));
@@ -46,7 +46,7 @@ namespace Vimeo.Config
         {
             var so = serializedObject;
             if (!Authenticated(_token)) {
-                EditorGUILayout.PropertyField (so.FindProperty ("accessToken"));
+                EditorGUILayout.PropertyField (so.FindProperty ("vimeoToken"));
                 //GUILayout.Box("To generate a Vimeo access token, create or edit a developer app, visit the Authentication tab, and generate a new access token with Upload & Edit scopes.");
                 if (GUILayout.Button ("Sign into Vimeo")) {
                     Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/vimeo");
@@ -55,7 +55,7 @@ namespace Vimeo.Config
             else {
                 if (GUILayout.Button("Switch accounts")) {
                     var t = target as VimeoPublisher;
-                    t.accessToken = null;
+                    t.SetVimeoToken(null);
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace Vimeo.Config
             else {
                 if (GUILayout.Button("Switch Slack Team")) {
                     var t = target as VimeoPublisher;
-                    t.slackToken = null;
+                    t.SetSlackToken(null);
                 }
             }
         }
@@ -84,13 +84,13 @@ namespace Vimeo.Config
 
             if (publisher.postToSlack == true) {
 
-                if (Authenticated (publisher.slackToken)) {
+                if (Authenticated (publisher.GetSlackToken())) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField (so.FindProperty ("slackChannel"));
                     EditorGUI.indentLevel--;
                 } 
 
-                DrawSlackAuth (publisher.slackToken);
+                DrawSlackAuth (publisher.GetSlackToken());
             }
         }
     }

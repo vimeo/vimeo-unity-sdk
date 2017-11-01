@@ -40,16 +40,13 @@ namespace Vimeo {
 
         public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
         public LinkType defaultShareLink = LinkType.VideoPage;
-        public string accessToken;
-        public bool validAccessToken;
-        public bool validAccessTokenCheck;
+        public string vimeoToken;
         public bool openInBrowser;
 
         public bool postToSlack;
 
         public string slackToken;
         public string slackChannel;
-		public string slackMessage;
 
         public string videoName;
         public string videoId;
@@ -85,12 +82,60 @@ namespace Vimeo {
             }
 
             api = gameObject.AddComponent<VimeoApi> ();
-            api.token = accessToken;
+            api.token = GetVimeoToken();
 
             api.OnPatchComplete  += VideoUpdated;
             api.OnUploadComplete += UploadComplete;
             api.OnUploadProgress += UploadProgress;
     	}
+
+        public string GetVimeoToken()
+        {
+            var token = PlayerPrefs.GetString("vimeo-token");
+            if (token == null || token == "") {
+                if (vimeoToken != null && vimeoToken != "") {
+                    SetVimeoToken (vimeoToken);
+                }
+                token = vimeoToken;
+            }
+
+            vimeoToken = null;
+            return token;
+        }
+
+        public void SetVimeoToken(string token)
+        {
+            SetKey("vimeo-token", token);
+        }
+
+        public string GetSlackToken()
+        {
+            var token = PlayerPrefs.GetString("slack-token");
+            if (token == null || token == "") {
+                if (slackToken != null && slackToken != "") {
+                    SetSlackToken(slackToken);
+                }
+                token = slackToken;
+            }
+
+            slackToken = null;
+            return token;
+        }
+
+        public void SetSlackToken(string token)
+        {
+            SetKey("slack-token", token);
+        }
+
+        private void SetKey(string key, string val)
+        {
+            if (val == null || val == "") {
+                PlayerPrefs.DeleteKey(key);
+            } else {
+                PlayerPrefs.SetString(key, val);
+            }
+            PlayerPrefs.Save(); 
+        }
 
     	public void StartRecording()
         {
