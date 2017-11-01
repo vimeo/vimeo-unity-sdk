@@ -289,14 +289,16 @@ namespace Vimeo {
 
         void LateUpdate()
         {
-            // Set recording state based upon MovieRecorder state
-            if (!isRecording && recorder.isRecording) {
-                isRecording = true;
-            }
+            if (recorder != null) {
+                // Set recording state based upon MovieRecorder state
+                if (!isRecording && recorder.isRecording) {
+                    isRecording = true;
+                }
 
-            // If not recording manually, automatically trigger EndRecording
-            if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
-                EndRecording();
+                // If not recording manually, automatically trigger EndRecording
+                if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
+                    EndRecording ();
+                }
             }
         }
 
