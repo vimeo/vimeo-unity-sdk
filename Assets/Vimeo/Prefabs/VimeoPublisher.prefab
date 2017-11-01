@@ -272,7 +272,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1235118762226952
 GameObject:
   m_ObjectHideFlags: 1
@@ -2338,14 +2338,11 @@ MonoBehaviour:
   camera: {fileID: 0}
   m_privacyMode: 3
   defaultShareLink: 0
-  accessToken: 723a594dd8400f4e854e7993fc0c271f
-  validAccessToken: 1
-  validAccessTokenCheck: 1
+  vimeoToken: 
   openInBrowser: 1
   postToSlack: 1
-  slackToken: xoxp-56919177042-57067232899-263381600998-6ebfc261be8042f8d299073cd9ffb9d2
+  slackToken: 
   slackChannel: '#creator-labs'
-  slackMessage: 
   videoName: Unity Upload Test
   videoId: 
   videoPermalink: 
