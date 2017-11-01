@@ -34,6 +34,8 @@ namespace Vimeo
         public event UploadAction OnUploadProgress;
 
         private string video_file_path;
+
+        [HideInInspector]
         public string token;
         public static string API_URL = "https://api.vimeo.com";
         private WWWForm form;
