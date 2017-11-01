@@ -153,30 +153,39 @@ namespace Vimeo
                 OnUploadProgress ("Uploading", 0);
             }
 
-            // Get local video file and store it in a byte array for uploading
+            byte[] data = new byte[0];
+            bool success = false;
+
+
+            // Using try/catch to wait for video to finish being
+            while (success == false) {
+                try {
+                    // Get local video file and store it in a byte array for uploading
+                    data = File.ReadAllBytes(video_file_path);
+                    success = true;
+                } catch (IOException e) {
+                    //Debug.Log ("File is being accessed by another process");
+                }
+            }
 
             FileInfo video_file = new FileInfo(video_file_path);
-            byte[] data = File.ReadAllBytes(video_file_path);
-
-            Debug.Log (data.Length);
+            //Debug.Log (data.Length);
             Debug.Log (video_file.Name);
 
             // Upload to the Vimeo server
-            Debug.Log ("Uploading to " + ticket.upload_link_secure);
+            //Debug.Log ("Uploading to " + ticket.upload_link_secure);
 
-            using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
+            using (UnityWebRequest request = UnityWebRequest.Put (ticket.upload_link_secure, data)) {
                 uploader = request;
-                request.SetRequestHeader("Content-Type", "video/" + video_file.Extension);
-                yield return request.Send();
-
+                request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
+                yield return request.Send ();
 
                 uploader = null;
 
                 if (request.isNetworkError) {
                     Debug.Log (request.error);
                     Debug.Log (request.responseCode);
-                } 
-                else {
+                } else {
                     StartCoroutine(VerifyUpload(ticket));
                 }
             }
