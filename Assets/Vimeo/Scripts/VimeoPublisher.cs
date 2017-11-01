@@ -65,10 +65,6 @@ namespace Vimeo {
             if (recorder == null) {
                 recorder = camera.gameObject.AddComponent<MovieRecorder>();
                 recorder.Reset(); // Need to manually call this only when adding the component for first time
-
-                // Set Vimeo default encoding settings
-                recorder.m_encoderConfigs.mp4EncoderSettings.videoTargetBitrate = 1024 * 2000;
-                recorder.m_encoderConfigs.mp4EncoderSettings.audioTargetBitrate = 128 * 2000;
             }
 
             recorder.outputDir = new DataPath(DataPath.Root.TemporaryCache, "Vimeo");
