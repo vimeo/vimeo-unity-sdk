@@ -11,7 +11,7 @@ namespace Vimeo.Controls {
         public GameObject playButtonText;
         public Slider seekBar;
 
-        private bool seeking;
+        private bool seeking = false;
 
     	void Start () {
             vimeoPlayer.OnPlay  += VideoPlay;

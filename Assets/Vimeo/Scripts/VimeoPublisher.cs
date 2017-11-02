@@ -35,7 +35,7 @@ namespace Vimeo {
 
         public MovieRecorder recorder;
         public VimeoApi api;
-    	public Camera camera;
+    	public Camera _camera;
     	private Slack slack;
 
         public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
@@ -61,15 +61,15 @@ namespace Vimeo {
         private Coroutine saveCoroutine;
 
     	void Start () {
-            if (camera == null) {
+            if (_camera == null) {
                 Debug.LogWarning ("VimeoPublisher: No camera was specified.");
                 return;
             }
 
-    		recorder = camera.GetComponent<MovieRecorder> ();
+            recorder = _camera.GetComponent<MovieRecorder> ();
 
             if (recorder == null) {
-                recorder = camera.gameObject.AddComponent<MovieRecorder>();
+                recorder = _camera.gameObject.AddComponent<MovieRecorder>();
                 recorder.Reset(); // Need to manually call this only when adding the component for first time
 
                 // Set Vimeo default encoding settings

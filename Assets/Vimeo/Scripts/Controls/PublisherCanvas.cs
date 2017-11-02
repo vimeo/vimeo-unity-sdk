@@ -23,8 +23,6 @@ namespace Vimeo.Controls {
         public GameObject slackChannelField;
         public Dropdown privacyTypeDropdown;
 
-        private bool enabled = false;
-
         void Start()
         {
             vimeoPublisher = GetComponent<VimeoPublisher>();

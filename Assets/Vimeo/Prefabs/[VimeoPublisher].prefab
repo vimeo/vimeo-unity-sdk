@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 114358356546521658}
   - component: {fileID: 114507536841100650}
   m_Layer: 0
-  m_Name: VimeoPublisher
+  m_Name: '[VimeoPublisher]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2335,7 +2335,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   recorder: {fileID: 0}
   api: {fileID: 0}
-  camera: {fileID: 0}
+  _camera: {fileID: 0}
   m_privacyMode: 0
   defaultShareLink: 0
   vimeoToken: 

@@ -90,24 +90,22 @@ namespace Vimeo
 
         IEnumerator Patch(string url)
         {
-            Debug.Log ("Patching " + url);
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
                 yield return request.Send ();
 
-                if (request.isNetworkError) {
-                    Debug.Log (request.error);
-                } else {
-                    Debug.Log (request.downloadHandler.text);
-                }
-
                 // Reset the form
                 form = new WWWForm();
 
-                if (OnPatchComplete != null) {
-                    OnPatchComplete(request.downloadHandler.text);
+                if (request.isNetworkError) {
+                    Debug.Log (request.error);
+                } 
+                else {
+                    if (OnPatchComplete != null) {
+                        OnPatchComplete(request.downloadHandler.text);
+                    }
                 }
             }
         }
@@ -156,14 +154,15 @@ namespace Vimeo
                     // Get local video file and store it in a byte array for uploading
                     data = File.ReadAllBytes(video_file_path);
                     success = true;
-                } catch (IOException e) {
+                } catch (IOException e) { 
+                    // TODO: fix this ugly code!
                     //Debug.Log ("File is being accessed by another process");
                 }
             }
 
             FileInfo video_file = new FileInfo(video_file_path);
             //Debug.Log (data.Length);
-            Debug.Log (video_file.Name);
+            //Debug.Log (video_file.Name);
 
             // Upload to the Vimeo server
             //Debug.Log ("Uploading to " + ticket.upload_link_secure);
