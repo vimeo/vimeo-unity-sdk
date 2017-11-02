@@ -64,8 +64,10 @@ namespace Vimeo
             }
 
             // Bootup video
-            if (vimeoVideoId != null) {
-                LoadVimeoVideo(int.Parse(vimeoVideoId));
+            if (vimeoVideoId != null && vimeoVideoId != "") {
+                LoadVimeoVideo (int.Parse (vimeoVideoId));
+            } else {
+                Debug.LogWarning ("No Vimeo video ID was specified");
             }
         }
 
