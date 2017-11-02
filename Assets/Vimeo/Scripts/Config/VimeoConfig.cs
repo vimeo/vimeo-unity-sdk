@@ -24,8 +24,7 @@ namespace Vimeo.Config
                 EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                 EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
-                player.videoQualityIndex = EditorGUILayout.Popup("Max quality", player.videoQualityIndex, player.videoQualities);
-                //EditorGUILayout.PropertyField(so.FindProperty("videoQualities"));
+                player.videoQualityIndex = EditorGUILayout.Popup("Max video quality", player.videoQualityIndex, player.videoQualities);
             }
 
             so.ApplyModifiedProperties();
@@ -57,15 +56,17 @@ namespace Vimeo.Config
             var so = serializedObject;
             if (!Authenticated(_token)) {
                 EditorGUILayout.PropertyField (so.FindProperty ("vimeoToken"));
-                //GUILayout.Box("To generate a Vimeo access token, create or edit a developer app, visit the Authentication tab, and generate a new access token with Upload & Edit scopes.");
                 if (GUILayout.Button ("Sign into Vimeo")) {
                     Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/vimeo");
                 }
             } 
             else {
                 if (GUILayout.Button("Switch accounts")) {
-                    var t = target as VimeoPublisher;
-                    t.SetVimeoToken(null);
+                    if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
+                        (target as VimeoPublisher).SetVimeoToken (null);
+                    } else {
+                        (target as VimeoPlayer).SetVimeoToken (null);
+                    }
                 }
             }
         }
