@@ -197,6 +197,11 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1423461865 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1775618987241786, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
+    type: 2}
+  m_PrefabInternal: {fileID: 2022683847}
 --- !u!1001 &2022683847
 Prefab:
   m_ObjectHideFlags: 0
@@ -244,7 +249,7 @@ Prefab:
     - target: {fileID: 114151494372987810, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
         type: 2}
       propertyPath: vimeoVideoId
-      value: 206295203
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4185628265908584, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
       propertyPath: m_LocalScale.x
@@ -275,6 +280,16 @@ Prefab:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114151494372987810, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
+        type: 2}
+      propertyPath: vimeoToken
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114151494372987810, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
+        type: 2}
+      propertyPath: videoScreen
+      value: 
+      objectReference: {fileID: 1423461865}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
   m_IsPrefabParent: 0

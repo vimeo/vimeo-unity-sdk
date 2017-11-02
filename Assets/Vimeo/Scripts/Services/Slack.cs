@@ -9,9 +9,6 @@ namespace Vimeo.Services {
 		private string _token;
 		private string _channel;
 
-		void Start () {
-		}
-
 		public void Init (string token, string channel)
 		{
 			_token = token;	

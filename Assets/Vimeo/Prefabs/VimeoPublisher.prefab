@@ -2336,15 +2336,15 @@ MonoBehaviour:
   recorder: {fileID: 0}
   api: {fileID: 0}
   camera: {fileID: 0}
-  m_privacyMode: 3
+  m_privacyMode: 0
   defaultShareLink: 0
   vimeoToken: 
   recordOnStart: 0
-  openInBrowser: 1
-  postToSlack: 1
+  openInBrowser: 0
+  postToSlack: 0
   slackToken: 
   slackChannel: '#creator-labs'
-  videoName: Unity Upload Test
+  videoName: 
   videoId: 
   videoPermalink: 
   videoReviewPermalink: 

@@ -138,10 +138,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   videoScreen: {fileID: 1774604084}
   audioSource: {fileID: 251272396}
-  accessToken: 7fd0fe94a12beb932f0a5101226e7adb
-  vimeoVideoId: 10821312
-  validAccessToken: 1
-  validAccessTokenCheck: 1
+  vimeoToken: 
+  vimeoVideoId: 
   videoQualities:
   - Highest
   - 1080
@@ -149,9 +147,12 @@ MonoBehaviour:
   - 480
   - 360
   videoQualityIndex: 0
-  videoTitle: 
+  videoName: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
+  is3D: 0
+  videoProjection: 
+  videoStereoFormat: 
   video: {fileID: 0}
 --- !u!4 &88082455
 Transform:
@@ -181,7 +182,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   vimeoPlayer: {fileID: 88082454}
   playButtonText: {fileID: 693494976}
-  progressBar: {fileID: 1314484397}
+  seekBar: {fileID: 1314484398}
 --- !u!1 &151812512
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,7 +926,7 @@ GameObject:
   - component: {fileID: 1314484399}
   - component: {fileID: 1314484398}
   m_Layer: 0
-  m_Name: ProgressBar
+  m_Name: SeekBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

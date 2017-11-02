@@ -9,11 +9,15 @@ namespace Vimeo.Controls {
 
         public VimeoPlayer vimeoPlayer;
         public GameObject playButtonText;
-        public GameObject progressBar;
+        public Slider seekBar;
+
+        private bool seeking;
 
     	void Start () {
             vimeoPlayer.OnPlay  += VideoPlay;
             vimeoPlayer.OnPause += VideoPause;
+
+            // TODO: Implement seek controls
     	}
 
         private void VideoPlay()
@@ -30,7 +34,10 @@ namespace Vimeo.Controls {
 
         void Update()
         {
-           // if (vimeoPlayer.play
+            if (vimeoPlayer != null && !seeking) {
+                
+                seekBar.normalizedValue = vimeoPlayer.GetProgress();
+            }
         }
     }
 }

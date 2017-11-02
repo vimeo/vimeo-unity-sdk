@@ -92,20 +92,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ad4f86e0ad84f4380af8f8f22ff0c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  videoScreen: {fileID: 1775618987241786}
-  videoScreenRight: {fileID: 0}
+  videoScreen: {fileID: 0}
   audioSource: {fileID: 0}
-  accessToken: 
+  vimeoToken: 
   vimeoVideoId: 
-  validAccessToken: 0
-  validAccessTokenCheck: 0
   videoQualities:
   - Highest
   - 1080
   - 720
   - SD
   videoQualityIndex: 0
-  videoTitle: 
+  videoName: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
   is3D: 0

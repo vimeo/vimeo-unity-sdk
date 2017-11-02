@@ -17,9 +17,6 @@ namespace Vimeo
             disable,
             nobody,
             unlisted,
-            //contacts,
-            //password,
-            //users,
         }
 
         public delegate void RequestAction(string response);

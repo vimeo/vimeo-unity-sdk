@@ -119,6 +119,11 @@ namespace Vimeo
 			video.Pause ();
 		}
 
+        public void Seek(float seek)
+        {
+            video.Seek(seek);
+        }
+
 		public void SeekBackward(float seek)
 		{
 			video.SeekBackward(seek);
@@ -146,7 +151,7 @@ namespace Vimeo
 
 		public float GetProgress()
 		{
-			if (video != null) {
+            if (video != null && video.videoPlayer != null) {
 				return (float)video.videoPlayer.frame / (float)video.videoPlayer.frameCount;
 			}
 			return 0;
