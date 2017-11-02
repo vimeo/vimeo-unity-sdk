@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23145900850159626}
   - component: {fileID: 114151494372987810}
   m_Layer: 0
-  m_Name: Vimeo360Player
+  m_Name: '[Vimeo360Player]'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -93,9 +93,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   videoScreen: {fileID: 1775618987241786}
+  videoScreenRight: {fileID: 0}
   audioSource: {fileID: 0}
-  vimeoApiToken: 
+  accessToken: 
   vimeoVideoId: 
+  validAccessToken: 0
+  validAccessTokenCheck: 0
   videoQualities:
   - Highest
   - 1080
@@ -105,4 +108,7 @@ MonoBehaviour:
   videoTitle: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
+  is3D: 0
+  videoProjection: 
+  videoStereoFormat: 
   video: {fileID: 0}

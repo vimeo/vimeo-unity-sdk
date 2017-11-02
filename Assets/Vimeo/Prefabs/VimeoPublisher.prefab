@@ -2339,6 +2339,7 @@ MonoBehaviour:
   m_privacyMode: 3
   defaultShareLink: 0
   vimeoToken: 
+  recordOnStart: 0
   openInBrowser: 1
   postToSlack: 1
   slackToken: 
