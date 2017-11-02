@@ -40,7 +40,13 @@ namespace Vimeo
 				videoPlayer.SetTargetAudioSource(0, audioSource);
 
 				videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
-                videoPlayer.targetMaterialProperty = "_Tex";
+
+                if (videoScreenObject.GetComponent<Renderer> ().material.name.StartsWith ("360VideoScreen")) {
+                    videoPlayer.targetMaterialProperty = "_Tex";
+                } else {
+                    videoPlayer.targetMaterialProperty = "_MainTex";
+                }
+
 				videoPlayer.prepareCompleted += VideoPlayerStarted;
 
 				videoPlayer.isLooping = true;
