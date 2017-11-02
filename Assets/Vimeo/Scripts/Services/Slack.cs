@@ -31,8 +31,8 @@ namespace Vimeo.Services {
 
 		IEnumerator Post(string url, WWWForm form) 
 		{
-			Debug.Log("Posting to slack:" + url );
-			Debug.Log(form.ToString());
+			//Debug.Log("Posting to slack:" + url );
+			//Debug.Log(form.ToString());
 
 			using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
 				yield return request.Send ();

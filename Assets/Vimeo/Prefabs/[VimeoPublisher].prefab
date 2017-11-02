@@ -2343,7 +2343,7 @@ MonoBehaviour:
   openInBrowser: 0
   postToSlack: 0
   slackToken: 
-  slackChannel: '#creator-labs'
+  slackChannel: 
   videoName: 
   videoId: 
   videoPermalink: 
