@@ -1,69 +1,34 @@
 fileFormatVersion: 2
-guid: 9785f8285b204164888ca4c9528095f5
-timeCreated: 1505759523
+guid: 4f0ec68726ad90c4ab627d2c8a293df1
+timeCreated: 1509647424
 licenseType: Pro
 ModelImporter:
   serializedVersion: 21
   fileIDToRecycleName:
-    100000: Curve
-    100002: Curve_001
-    100004: Plane
-    100006: Plane_003
-    100008: Plane_004
-    100010: Plane_005
-    100012: Plane_006
-    100014: Plane_007
-    100016: Plane_008
-    100018: Plane_009
-    100020: Plane_010
-    100022: //RootNode
-    400000: Curve
-    400002: Curve_001
-    400004: Plane
-    400006: Plane_003
-    400008: Plane_004
-    400010: Plane_005
-    400012: Plane_006
-    400014: Plane_007
-    400016: Plane_008
-    400018: Plane_009
-    400020: Plane_010
-    400022: //RootNode
+    100000: Area
+    100002: Area.001
+    100004: Area.002
+    100006: Camera
+    100008: Curve
+    100010: Curve.001
+    100012: //RootNode
+    400000: Area
+    400002: Area.001
+    400004: Area.002
+    400006: Camera
+    400008: Curve
+    400010: Curve.001
+    400012: //RootNode
+    2000000: Camera
     2300000: Curve
-    2300002: Curve_001
-    2300004: Plane
-    2300006: Plane_003
-    2300008: Plane_004
-    2300010: Plane_005
-    2300012: Plane_006
-    2300014: Plane_007
-    2300016: Plane_008
-    2300018: Plane_009
-    2300020: Plane_010
+    2300002: Curve.001
     3300000: Curve
-    3300002: Curve_001
-    3300004: Plane
-    3300006: Plane_003
-    3300008: Plane_004
-    3300010: Plane_005
-    3300012: Plane_006
-    3300014: Plane_007
-    3300016: Plane_008
-    3300018: Plane_009
-    3300020: Plane_010
-    4300000: Curve_001
-    4300002: Plane_010
-    4300004: Plane_009
-    4300006: Plane_008
-    4300008: Plane_007
-    4300010: Plane_006
-    4300012: Plane_005
-    4300014: Plane_004
-    4300016: Plane_003
-    4300018: Curve
-    4300020: Plane
-    7400000: Default Take
-    9500000: //RootNode
+    3300002: Curve.001
+    4300000: Curve.001
+    4300002: Curve
+    10800000: Area
+    10800002: Area.001
+    10800004: Area.002
   materials:
     importMaterials: 0
     materialName: 0
@@ -108,7 +73,7 @@ ModelImporter:
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
-    useFileScale: 1
+    useFileScale: 0
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -130,7 +95,7 @@ ModelImporter:
     rootMotionBoneName: 
     rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 0
