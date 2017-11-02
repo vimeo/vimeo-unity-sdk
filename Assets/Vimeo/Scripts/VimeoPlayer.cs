@@ -26,34 +26,28 @@ namespace Vimeo
         public event VimeoEvent OnPlay;
 
         public GameObject videoScreen;
-        public GameObject videoScreenRight;
         public GameObject audioSource;
-        public string accessToken;
+        public string vimeoToken;
         public string vimeoVideoId;
 
-        [HideInInspector] public bool validAccessToken;
-        [HideInInspector] public bool validAccessTokenCheck;
+		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
+		public int videoQualityIndex = 0;
 
-		[HideInInspector] public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
-		[HideInInspector] public int videoQualityIndex = 0;
-
-		[HideInInspector] public string videoTitle;
-		[HideInInspector] public string videoThumbnailUrl;
-		[HideInInspector] public string authorThumbnailUrl;
-        [HideInInspector] public bool is3D;
-        [HideInInspector] public string videoProjection;
-        [HideInInspector] public string videoStereoFormat;
+		public string videoName;
+		public string videoThumbnailUrl;
+		public string authorThumbnailUrl;
+        public bool is3D;
+        public string videoProjection;
+        public string videoStereoFormat;
 
         private VimeoApi api;
-
-		[HideInInspector]
         public VideoController video;
 
 		private void Start()
         {
-            if (accessToken != null) {
+            if (GetVimeoToken() != null) {
                 api = gameObject.AddComponent<VimeoApi>();
-                api.token = accessToken;
+                api.token = GetVimeoToken();
                 api.OnRequestComplete += OnLoadVimeoVideoComplete;
             }
 
@@ -73,6 +67,35 @@ namespace Vimeo
             if (vimeoVideoId != null) {
                 LoadVimeoVideo(int.Parse(vimeoVideoId));
             }
+        }
+
+        public string GetVimeoToken()
+        {
+            var token = PlayerPrefs.GetString("vimeo-player-token");
+            if (token == null || token == "") {
+                if (vimeoToken != null && vimeoToken != "") {
+                    SetVimeoToken (vimeoToken);
+                }
+                token = vimeoToken;
+            }
+
+            vimeoToken = null;
+            return token;
+        }
+
+        public void SetVimeoToken(string token)
+        {
+            SetKey("vimeo-player-token", token);
+        }
+
+        private void SetKey(string key, string val)
+        {
+            if (val == null || val == "") {
+                PlayerPrefs.DeleteKey(key);
+            } else {
+                PlayerPrefs.SetString(key, val);
+            }
+            PlayerPrefs.Save(); 
         }
 
         private void OnDisable()
@@ -110,11 +133,6 @@ namespace Vimeo
         {
             video.TogglePlayback();
         }
-
-     //   public boolean IsPlaying()
-       // {
-     //       video
-        //}
 
         public int GetWidth()
         {
@@ -186,7 +204,7 @@ namespace Vimeo
         private string GetVideoFileUrl(JSONNode json)
         {
             // Set the metadata
-            videoTitle = json ["name"];
+            videoName = json ["name"];
             videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
             authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
             is3D = false;

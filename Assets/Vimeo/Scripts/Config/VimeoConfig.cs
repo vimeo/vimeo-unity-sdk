@@ -8,18 +8,27 @@ namespace Vimeo.Config
 {
     public class VimeoConfig : Editor 
     {
-        public void DrawVimeoConfig(VimeoPlayer player)
-        {
-            var so = serializedObject;
-            player.videoQualityIndex = EditorGUILayout.Popup("Max quality", player.videoQualityIndex, player.videoQualities);
-            DrawVimeoAuth(player.accessToken);
-
-            so.ApplyModifiedProperties();
-        }
-
         public bool Authenticated(string token)
         {
             return token != "" && token != null;
+        }
+
+        public void DrawVimeoConfig(VimeoPlayer player)
+        {
+            var so = serializedObject;
+            DrawVimeoAuth(player.GetVimeoToken());
+          
+            if (Authenticated(player.GetVimeoToken())) {
+                EditorGUILayout.Space();
+
+                EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
+                EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+                EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
+                player.videoQualityIndex = EditorGUILayout.Popup("Max quality", player.videoQualityIndex, player.videoQualities);
+                //EditorGUILayout.PropertyField(so.FindProperty("videoQualities"));
+            }
+
+            so.ApplyModifiedProperties();
         }
 
         public void DrawVimeoConfig(VimeoPublisher publisher)

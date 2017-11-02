@@ -40,6 +40,7 @@ namespace Vimeo
 				videoPlayer.SetTargetAudioSource(0, audioSource);
 
 				videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
+                videoPlayer.targetMaterialProperty = "_Tex";
 				videoPlayer.prepareCompleted += VideoPlayerStarted;
 
 				videoPlayer.isLooping = true;
@@ -120,21 +121,17 @@ namespace Vimeo
             var rend = videoScreenObject.GetComponent<MeshRenderer> ();
 
             if (is3D && stereoFormat == "mono") {
-                Debug.Log ("Monoscopic 360 video");
                 block.SetFloat("_Layout", 0f);
                 rend.SetPropertyBlock (block);
             }
             else if (is3D && stereoFormat == "top-bottom") {
-                Debug.Log ("Stereoscopic top/bottom 360 video");
                 block.SetFloat("_Layout", 2f);
                 rend.SetPropertyBlock (block);
             }
             else if (is3D && stereoFormat == "left-right") {
-                Debug.Log ("Stereoscopic left/right 360 video");
                 block.SetFloat("_Layout", 2f);
                 rend.SetPropertyBlock (block);
             }
-//			rend.material.SetTextureScale("_MainTex", new Vector2(1, 0.5f));
 
 			OnVideoStart(this);
 		}
