@@ -42,9 +42,9 @@ namespace Vimeo {
         public LinkType defaultShareLink = LinkType.VideoPage;
         public string vimeoToken;
 
-        public bool recordOnStart;
-        public bool openInBrowser;
-        public bool postToSlack;
+        public bool recordOnStart = false;
+        public bool openInBrowser = false;
+        public bool postToSlack = false;
 
         public string slackToken;
         public string slackChannel;
@@ -61,6 +61,11 @@ namespace Vimeo {
         private Coroutine saveCoroutine;
 
     	void Start () {
+            if (camera == null) {
+                Debug.LogWarning ("VimeoPublisher: No camera was specified.");
+                return;
+            }
+
     		recorder = camera.GetComponent<MovieRecorder> ();
 
             if (recorder == null) {

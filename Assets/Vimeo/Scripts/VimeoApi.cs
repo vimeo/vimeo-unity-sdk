@@ -126,13 +126,12 @@ namespace Vimeo
 
                 yield return request.Send ();
 
-                Debug.Log (request.downloadHandler.text);
-
                 if (request.isNetworkError) {
-                    Debug.Log (request.error);
+                    Debug.LogError (request.error);
                 } else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON (request.downloadHandler.text);
-                    if (ticket.error != "") {
+
+                    if (ticket.error == null) {
                         StartCoroutine (UploadVideo (ticket));
                     } else {
                         Debug.LogError (ticket.error);
