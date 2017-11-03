@@ -50,7 +50,7 @@ public class VimeoUploader : MonoBehaviour
 
 	IEnumerator UploadVideo(VimeoTicket ticket)
 	{
-		Debug.Log ("-----------------------UploadVideo-------------------------");
+		//Debug.Log ("-----------------------UploadVideo-------------------------");
 		// Get local video file and store it in a byte array for uploading
 
 		FileInfo video_file = new FileInfo(video_file_path);

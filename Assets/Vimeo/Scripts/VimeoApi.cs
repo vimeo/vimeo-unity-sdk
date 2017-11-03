@@ -16,7 +16,7 @@ namespace Vimeo
             anybody,
             disable,
             nobody,
-            unlisted,
+            unlisted
         }
 
         public delegate void RequestAction(string response);
@@ -67,7 +67,7 @@ namespace Vimeo
 
             // Start Upload Process
             StartCoroutine(GetTicket());
-        }
+        } 
 
         public static bool ValidateToken(string t)
         {
@@ -94,7 +94,7 @@ namespace Vimeo
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
-                yield return request.Send ();
+                yield return request.Send();
 
                 // Reset the form
                 form = new WWWForm();
@@ -161,12 +161,8 @@ namespace Vimeo
             }
 
             FileInfo video_file = new FileInfo(video_file_path);
-            //Debug.Log (data.Length);
-            //Debug.Log (video_file.Name);
 
             // Upload to the Vimeo server
-            //Debug.Log ("Uploading to " + ticket.upload_link_secure);
-
             using (UnityWebRequest request = UnityWebRequest.Put (ticket.upload_link_secure, data)) {
                 uploader = request;
                 request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
