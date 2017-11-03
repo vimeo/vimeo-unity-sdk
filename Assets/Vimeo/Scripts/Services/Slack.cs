@@ -35,7 +35,7 @@ namespace Vimeo.Services {
 			//Debug.Log(form.ToString());
 
 			using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
-				yield return request.Send ();
+                yield return request.SendWebRequest();
 
 				Debug.Log(request.downloadHandler.text);
 
