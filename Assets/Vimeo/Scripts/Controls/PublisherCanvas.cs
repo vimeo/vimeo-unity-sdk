@@ -32,6 +32,18 @@ namespace Vimeo.Controls {
             slackChannelField.GetComponent<InputField>().text = vimeoPublisher.slackChannel;
             privacyTypeDropdown.value = GetPrivacyTypeIndex(vimeoPublisher.m_privacyMode);
 
+			recordButton.GetComponent<Button>().onClick.AddListener(delegate {
+                vimeoPublisher.BeginRecording();
+            });
+
+			cancelButton.GetComponent<Button>().onClick.AddListener(delegate {
+                vimeoPublisher.CancelRecording();
+            });
+
+			finishButton.GetComponent<Button>().onClick.AddListener(delegate {
+                vimeoPublisher.EndRecording();
+            });
+
             titleField.GetComponent<InputField> ().onValueChanged.AddListener (delegate {
                 TitleFieldChange();
             });
@@ -129,10 +141,10 @@ namespace Vimeo.Controls {
             float fval; 
             int ival;
             if (vimeoPublisher.captureControl == UTJ.FrameCapturer.RecorderBase.CaptureControl.TimeRange && float.TryParse(recordInputField.GetComponent<InputField> ().text, out fval)) {
-                vimeoPublisher.recorder.endTime = fval;
+//                vimeoPublisher.recorder.endTime = fval;
             } 
             else if (int.TryParse(recordInputField.GetComponent<InputField> ().text, out ival)) {
-                vimeoPublisher.recorder.endFrame = ival;
+  //              vimeoPublisher.recorder.endFrame = ival;
             }
         }
 
@@ -147,11 +159,11 @@ namespace Vimeo.Controls {
                     break;
                 case "Seconds":
                     vimeoPublisher.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.TimeRange;
-                    recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endTime.ToString ();
+    //                recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endTime.ToString ();
                     break;
                 case "Frames": // Disabled for now
                     vimeoPublisher.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.FrameRange;
-                    recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endFrame.ToString ();
+      //              recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endFrame.ToString ();
                     break;
             }
 

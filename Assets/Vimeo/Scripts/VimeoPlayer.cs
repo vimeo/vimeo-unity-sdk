@@ -18,6 +18,7 @@ namespace Vimeo
 		}
     }
 
+	[AddComponentMenu("Vimeo/Video Player")]
 	public class VimeoPlayer : MonoBehaviour 
     {
         public delegate void VimeoEvent();

@@ -135,7 +135,7 @@ namespace UTJ.FrameCapturer
                 }
             }
 
-            // create command buffer
+            // create command buffer 
             {
                 int tid = Shader.PropertyToID("_TmpFrameBuffer");
                 m_cb = new CommandBuffer();

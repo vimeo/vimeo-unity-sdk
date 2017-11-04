@@ -22,6 +22,7 @@ namespace Vimeo {
         }
     }
 
+	[AddComponentMenu("Vimeo/Video Recorder")]
     public class VimeoPublisher : MonoBehaviour {
 
         public enum LinkType
@@ -33,7 +34,7 @@ namespace Vimeo {
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        public MovieRecorder recorder;
+        public VimeoRecorder recorder;
         public VimeoApi api;
     	public Camera _camera;
     	private Slack slack;
@@ -66,30 +67,11 @@ namespace Vimeo {
                 return;
             }
 
-            recorder = _camera.GetComponent<MovieRecorder> ();
+            recorder = _camera.GetComponent<VimeoRecorder>();
 
             if (recorder == null) {
-                recorder = _camera.gameObject.AddComponent<MovieRecorder>();
-                recorder.Reset(); // Need to manually call this only when adding the component for first time
-
-                // Set Vimeo default encoding settings
-                recorder.m_encoderConfigs.mp4EncoderSettings.videoTargetBitrate = 1024 * 10000;
-                recorder.m_encoderConfigs.mp4EncoderSettings.audioTargetBitrate = 128 * 1000; 
-            }
-
-            recorder.outputDir = new DataPath(DataPath.Root.TemporaryCache, "Vimeo");
-            recorder.recordOnStart = false;
-            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
-
-            if (fcAPI.fcMP4OSIsSupported ()) {
-                // Note: Had to expose m_encoderConfigs publicly in MovieRecorder
-                recorder.m_encoderConfigs.format = MovieEncoder.Type.MP4;
-            } 
-            else if (fcAPI.fcWebMIsSupported ()) {
-                recorder.m_encoderConfigs.format = MovieEncoder.Type.WebM;
-            } 
-            else {
-                Debug.LogError ("Unfortunately, this system does not support MP4 or WebM recording");
+                recorder = _camera.gameObject.AddComponent<VimeoRecorder>();
+                Debug.Log("VimeoRecorder automatically added to " + _camera.name + ": " + recorder);
             }
 
             api = gameObject.AddComponent<VimeoApi> ();
@@ -100,7 +82,7 @@ namespace Vimeo {
             api.OnUploadProgress += UploadProgress;
 
             if (recordOnStart) {
-                StartRecording();
+				BeginRecording();
             }
     	}
 
@@ -152,31 +134,21 @@ namespace Vimeo {
             PlayerPrefs.Save(); 
         }
 
-    	public void StartRecording()
+    	public void BeginRecording()
         {
             videoId = null;
             videoPermalink = null;
             videoReviewPermalink = null;
 
-            // Using alt capture method
-            if (captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
-                recorder.captureControl = captureControl;
-            }
-
-            recorder.BeginRecording ();
+			_camera.GetComponent<VimeoRecorder>().BeginRecording();
             UploadProgress ("Recording", 0);
     	}
 
     	public void EndRecording()
     	{
             isRecording = false;
-
-            if (captureControl == UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
-                recorder.EndRecording ();
-            }
-
-            // Reset recorder back to Manual (a bit of a hack)
-            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
+            Debug.Log("endrecording clicked");
+            recorder.EndRecording();
 
             PublishVideo();
     	}
@@ -186,18 +158,18 @@ namespace Vimeo {
             isRecording = false;
             recorder.EndRecording();
             DeleteVideoFile();
-            recorder.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
 
             UploadProgress ("Cancelled", 0);
         }
 
         public string GetVideoFilePath()
         {
-            if (fcAPI.fcMP4OSIsSupported ()) {
-                return recorder.outputPath + ".mp4"; 
-            } else {
-                return recorder.outputPath + ".webm"; 
-            }
+        	return recorder.encodedFilePath;
+//            if (fcAPI.fcMP4OSIsSupported ()) {
+//                return recorder.outputPath + ".mp4"; 
+//            } else {
+//                return recorder.outputPath + ".webm"; 
+//            }
         }
 
         public string GetVimeoPermalink()
@@ -310,9 +282,9 @@ namespace Vimeo {
                 }
 
                 // If not recording manually, automatically trigger EndRecording
-                if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
-                    EndRecording ();
-                }
+//                if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
+//                    EndRecording ();
+//                }
             }
         }
 
