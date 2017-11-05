@@ -147,7 +147,6 @@ namespace Vimeo {
     	public void EndRecording()
     	{
             isRecording = false;
-            Debug.Log("endrecording clicked");
             recorder.EndRecording();
 
             PublishVideo();

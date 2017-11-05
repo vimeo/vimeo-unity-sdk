@@ -35,11 +35,6 @@ namespace Vimeo {
 		private RenderTexture renderBuffer;
 		private CommandBuffer commandBuffer;
 
-		void Start ()
-		{
-			
-		}
-
 	    public void BeginRecording()
 		{
 			Debug.Log("VimeoRecorder: BeginRecording()");
