@@ -10,7 +10,7 @@ The goal of the Vimeo Unity SDK is to solve the following:
 There is a lot we want to do with this SDK, but we have released this SDK sooner than later to get feedback from the community and learn more about what people are building. The SDK comes with the following example Unity scenes in the `Vimeo/scenes` folder:
 
   - **Player** - Simple video streaming playback with basic controls.
-  - **360Player** - Demos how to setup 360 playback and also supports stereoscopic 360.
+  - **360Player** - Demos how to stream 360 videos from Vimeo (supports 3D / stereoscopic).
   - **Publisher** - Demos how to record in-game footage and automatically upload to your Vimeo account. 
   
 Check those scenes out if you want to jump right in or continue reading to get more details.
@@ -18,7 +18,7 @@ Check those scenes out if you want to jump right in or continue reading to get m
 Usage
 -------
 
-There are two major components to the Vimeo Unity SDK. The `VimeoPlayer.cs` for playback and the `VimeoPublisher.cs` for recording and publishing to Vimeo. 
+There are two major components to the Vimeo Unity SDK. The `VimeoPlayer.cs` for playback and the `VimeoPublisher.cs` for recording and uploading to Vimeo. 
 
 ##### VimeoPlayer
 
