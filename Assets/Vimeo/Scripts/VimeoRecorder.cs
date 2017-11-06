@@ -29,7 +29,6 @@ namespace Vimeo {
 		private Shader shaderCopy;
 		private Mesh fullscreenQuad;
 
-		private Texture2D tex;
 		private MediaEncoder encoder;
 		private NativeArray<float> audioBuffer;
 		private RenderTexture renderBuffer;
@@ -59,12 +58,14 @@ namespace Vimeo {
 			}
 			
 			// Get Camera data and prepare to send to buffer
-			int captureWidth = _camera.pixelWidth / 2;
-			int captureHeight = _camera.pixelHeight / 2;
+            int captureWidth = (_camera.pixelWidth + 1) & ~1;
+            int captureHeight = (_camera.pixelHeight + 1) & ~1;
 
 			renderBuffer = new RenderTexture(captureWidth, captureHeight, 0);
 			renderBuffer.wrapMode = TextureWrapMode.Repeat;
 			renderBuffer.Create();
+
+            Debug.Log ("WxH: " + captureWidth + "x" + captureHeight);
 
 			// Configure encoder
 			videoAttrs = new VideoTrackAttributes
@@ -87,7 +88,8 @@ namespace Vimeo {
 			//sampleFramesPerVideoFrame = audioAttrs.channelCount * audioAttrs.sampleRate.numerator / videoAttrs.frameRate.numerator;
 	        //audioBuffer = new NativeArray<float>(sampleFramesPerVideoFrame, Allocator.Temp);
 
-			// Setup the command buffer (only supporting frame buffer right now)
+			// Setup the command buffer 
+            // TODO: Support RenderTexture
 			int tid = Shader.PropertyToID("_TmpFrameBuffer");
 			commandBuffer = new CommandBuffer();
 			commandBuffer.name = "VimeoRecorder: copy frame buffer";
@@ -128,7 +130,7 @@ namespace Vimeo {
 
 		IEnumerator OnPostRender ()
 		{
-			if (isRecording) {
+            if (isRecording && encoder != null) {
 				yield return new WaitForEndOfFrame();
 
 				// Fill 'tex' with the video content to be encoded into the file for this 
@@ -146,7 +148,7 @@ namespace Vimeo {
 
 		public static void CaptureLock(RenderTexture src, Action<Texture2D> body)
         {
-			var tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
+            Texture2D tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
             RenderTexture.active = src;
             tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0, false);
             tex.Apply();

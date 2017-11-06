@@ -164,11 +164,6 @@ namespace Vimeo {
         public string GetVideoFilePath()
         {
         	return recorder.encodedFilePath;
-//            if (fcAPI.fcMP4OSIsSupported ()) {
-//                return recorder.outputPath + ".mp4"; 
-//            } else {
-//                return recorder.outputPath + ".webm"; 
-//            }
         }
 
         public string GetVimeoPermalink()
