@@ -72,6 +72,7 @@ namespace Vimeo
         public static bool ValidateToken(string t)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
+                request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + t);
                 request.SendWebRequest();
 
@@ -91,6 +92,7 @@ namespace Vimeo
         IEnumerator Patch(string url)
         {
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
+                request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
@@ -120,6 +122,7 @@ namespace Vimeo
             form.AddField ("type", "streaming");
 
             using (UnityWebRequest request = UnityWebRequest.Post (API_URL + "/me/videos", form)) {
+                request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
 
                 yield return request.SendWebRequest();
@@ -165,6 +168,7 @@ namespace Vimeo
             // Upload to the Vimeo server
             using (UnityWebRequest request = UnityWebRequest.Put (ticket.upload_link_secure, data)) {
                 uploader = request;
+                request.chunkedTransfer = false;
                 request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
                 yield return request.SendWebRequest();
 
@@ -188,6 +192,7 @@ namespace Vimeo
             byte[] data = new byte[] { 0x00 };
 
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
+                request.chunkedTransfer = false;
                 request.SetRequestHeader("Content-Range", "bytes */*");
                 yield return request.SendWebRequest();
 
@@ -208,6 +213,7 @@ namespace Vimeo
 
             // Debug.Log (API_URL + ticket.complete_uri);
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
+                request.chunkedTransfer = false;
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
                 yield return request.SendWebRequest();
 
@@ -222,6 +228,7 @@ namespace Vimeo
             if (token != null)
             {
                 UnityWebRequest request = UnityWebRequest.Get(API_URL + api_path);
+                request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 yield return request.SendWebRequest();
 
