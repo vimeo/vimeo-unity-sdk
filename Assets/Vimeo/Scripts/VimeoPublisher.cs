@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UTJ.FrameCapturer;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
@@ -54,8 +53,6 @@ namespace Vimeo {
         public string videoId;
         public string videoPermalink;
         public string videoReviewPermalink;
-
-        public UTJ.FrameCapturer.RecorderBase.CaptureControl captureControl;
 
         private bool isRecording = false;
 
