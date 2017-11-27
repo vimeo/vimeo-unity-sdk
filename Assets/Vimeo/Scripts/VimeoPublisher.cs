@@ -59,7 +59,12 @@ namespace Vimeo {
 
         private Coroutine saveCoroutine;
 
-    	void Start () {
+    	void Start () 
+    	{
+    		if (_camera == null) {
+    			_camera = Camera.main;
+			}
+
             if (_camera == null) {
                 Debug.LogWarning ("VimeoPublisher: No camera was specified.");
                 return;
@@ -190,17 +195,16 @@ namespace Vimeo {
             }
         }
 
-        private void UploadComplete(string video_uri)
+        private void UploadComplete (string video_uri)
 		{
 			string[] uri_pieces = video_uri.Split ("/" [0]);
 			videoId = uri_pieces [2];
 
-            SetVideoName(videoName);
-            SetVideoPrivacyMode(m_privacyMode);
+			SetVideoName(videoName);
+			SetVideoPrivacyMode(m_privacyMode);
 
-			if (openInBrowser == true) {
-                OpenVideo();
-			}
+			Debug.Log("Video saved!");
+            api.SaveVideo(videoId);
 
             DeleteVideoFile();
         }
@@ -210,6 +214,16 @@ namespace Vimeo {
             JSONNode json = JSON.Parse (response);
             videoPermalink = json["link"];
             videoReviewPermalink = json["review_link"];
+
+			if (openInBrowser == true) {
+				openInBrowser = false;
+				OpenVideo();
+			}
+
+			if (autoPostToChannel == true) {
+				autoPostToChannel = false;
+				PostToSlack();
+			}
         }
 
         private void DeleteVideoFile()
@@ -254,14 +268,19 @@ namespace Vimeo {
         }
 
         public void PostToSlack()
-        {
-            if (shareToSlack == true && slackChannel != null) {
-                if (slack == null) {
-                    slack = gameObject.AddComponent<Slack>();
-                }
+		{
+			if (shareToSlack == true && slackChannel != null) {
+				if (slack == null) {
+					slack = gameObject.AddComponent<Slack>();
+				}
 
-                slack.Init(GetSlackToken(), slackChannel);
-                slack.PostVideoToChannel(videoName, GetVimeoPermalink());
+				if (GetSlackToken() != null && GetSlackToken() != "") {
+					slack.Init(GetSlackToken(), slackChannel);
+					slack.PostVideoToChannel(videoName, GetVimeoPermalink());
+				}
+				else {
+					Debug.LogWarning("You are not signed into Slack.");
+				}
             }
         }
 

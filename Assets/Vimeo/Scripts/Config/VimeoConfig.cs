@@ -8,8 +8,8 @@ namespace Vimeo.Config
 {
     public class VimeoConfig : Editor 
     {
-		bool slackFold = false;
-		bool vimeoFold = false;
+		bool slackFold;
+		bool vimeoFold;
 
         public bool Authenticated(string token)
         {
@@ -63,7 +63,7 @@ namespace Vimeo.Config
         {
             var so = serializedObject;
             if (!Authenticated(_token)) {
-                EditorGUILayout.PropertyField (so.FindProperty ("vimeoToken"));
+				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
                 if (GUILayout.Button ("Sign into Vimeo")) {
                     Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/vimeo");
                 }
@@ -83,7 +83,7 @@ namespace Vimeo.Config
         {
             var so = serializedObject;
             if (!Authenticated(_token)) {
-                EditorGUILayout.PropertyField (so.FindProperty ("slackToken"));
+				EditorGUILayout.PropertyField(so.FindProperty ("slackToken"));
                 if (GUILayout.Button ("Sign into Slack")) {
                     Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/slack");
                 }
