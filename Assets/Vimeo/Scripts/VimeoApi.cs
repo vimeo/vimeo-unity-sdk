@@ -31,7 +31,7 @@ namespace Vimeo
 
         [HideInInspector]
         public string token;
-        public static string API_URL = "http://api.vimeo.com";
+        public static string API_URL = "https://api.vimeo.com";
         private WWWForm form;
 
         private UnityWebRequest uploader;
@@ -126,7 +126,6 @@ namespace Vimeo
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 yield return request.SendWebRequest();
-                Debug.Log(request.chunkedTransfer);
 
                 if (request.isNetworkError) {
                     Debug.LogError (request.error);
