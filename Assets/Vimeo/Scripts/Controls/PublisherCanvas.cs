@@ -138,34 +138,12 @@ namespace Vimeo.Controls {
 
         private void RecordInputFieldChange()
         {
-            float fval; 
-            int ival;
-//            if (vimeoPublisher.captureControl == UTJ.FrameCapturer.RecorderBase.CaptureControl.TimeRange && float.TryParse(recordInputField.GetComponent<InputField> ().text, out fval)) {
-////                vimeoPublisher.recorder.endTime = fval;
-//            } 
-//            else if (int.TryParse(recordInputField.GetComponent<InputField> ().text, out ival)) {
-//  //              vimeoPublisher.recorder.endFrame = ival;
-//            }
         }
 
         private void RecordTypeChange()
         {
             int index = recordTypeDropdown.value;
             string txt = recordTypeDropdown.options[index].text;
-
-//            switch (txt) {
-//                case "Manual":
-//                    vimeoPublisher.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual;
-//                    break;
-//                case "Seconds":
-//                    vimeoPublisher.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.TimeRange;
-//    //                recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endTime.ToString ();
-//                    break;
-//                case "Frames": // Disabled for now
-//                    vimeoPublisher.captureControl = UTJ.FrameCapturer.RecorderBase.CaptureControl.FrameRange;
-//      //              recordInputField.GetComponent<InputField> ().text = vimeoPublisher.recorder.endFrame.ToString ();
-//                    break;
-//            }
 
             StartState();
         }
@@ -189,9 +167,9 @@ namespace Vimeo.Controls {
         public void StartState()
         {
             recordButton.SetActive (true);
-            recordTypeDropdown.gameObject.SetActive(true);
+            recordTypeDropdown.gameObject.SetActive(false); // temporarily disabled
 
-                recordInputField.SetActive (false);
+            recordInputField.SetActive (false);
 
             finishButton.SetActive (false);
             cancelButton.SetActive (false);

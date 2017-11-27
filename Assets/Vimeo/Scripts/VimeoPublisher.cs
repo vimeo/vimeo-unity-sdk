@@ -36,7 +36,6 @@ namespace Vimeo {
         public VimeoRecorder recorder;
         public VimeoApi api;
     	public Camera _camera;
-    	private Slack slack;
 
         public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
         public LinkType defaultShareLink = LinkType.VideoPage;
@@ -44,8 +43,10 @@ namespace Vimeo {
 
         public bool recordOnStart = false;
         public bool openInBrowser = false;
-        public bool postToSlack = false;
 
+		private Slack slack;
+		public bool shareToSlack = false;
+		public bool autoPostToChannel = false;
         public string slackToken;
         public string slackChannel;
 
@@ -254,7 +255,7 @@ namespace Vimeo {
 
         public void PostToSlack()
         {
-            if (postToSlack == true && slackChannel != null) {
+            if (shareToSlack == true && slackChannel != null) {
                 if (slack == null) {
                     slack = gameObject.AddComponent<Slack>();
                 }
@@ -267,15 +268,10 @@ namespace Vimeo {
         void LateUpdate()
         {
             if (recorder != null) {
-                // Set recording state based upon MovieRecorder state
+                // Set recording state based upon VimeoRecorder state
                 if (!isRecording && recorder.isRecording) {
                     isRecording = true;
                 }
-
-                // If not recording manually, automatically trigger EndRecording
-//                if (isRecording && !recorder.isRecording && captureControl != UTJ.FrameCapturer.RecorderBase.CaptureControl.Manual) {
-//                    EndRecording ();
-//                }
             }
         }
 
