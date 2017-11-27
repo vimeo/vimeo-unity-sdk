@@ -1,4 +1,5 @@
-﻿using UnityEditor.Media;
+﻿#if UNITY_2017_3_OR_NEWER 
+using UnityEditor.Media;
 using UnityEngine;
 using UnityEngine.Collections;
 using UnityEngine.Rendering;
@@ -70,7 +71,7 @@ namespace Vimeo {
 			// Configure encoder
 			videoAttrs = new VideoTrackAttributes
 	        {
-	            frameRate = new MediaRational(30),
+	            frameRate = new MediaRational(40),
 				width = (uint)captureWidth,
 				height = (uint)captureHeight,
 	            includeAlpha = false
@@ -133,9 +134,9 @@ namespace Vimeo {
             if (isRecording && encoder != null) {
 				yield return new WaitForEndOfFrame();
 
-				// Fill 'tex' with the video content to be encoded into the file for this 
-				//tex.ReadPixels(new Rect(0, 0, render., 0));
-
+				VimeoRecorder.CaptureLock(renderBuffer, (data) => {
+					encoder.AddFrame(data);
+                });
 
                 // Fill 'audioBuffer' with the audio content to be encoded into the file for this frame.
                 // ...
@@ -168,3 +169,4 @@ namespace Vimeo {
         }
 	}
 }
+#endif
