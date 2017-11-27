@@ -31,7 +31,7 @@ namespace Vimeo
 
         [HideInInspector]
         public string token;
-        public static string API_URL = "https://api.vimeo.com";
+        public static string API_URL = "http://api.vimeo.com";
         private WWWForm form;
 
         private UnityWebRequest uploader;
@@ -72,7 +72,7 @@ namespace Vimeo
         public static bool ValidateToken(string t)
         {
             using (UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
-                request.chunkedTransfer = false;
+				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + t);
                 request.SendWebRequest();
 
@@ -92,7 +92,7 @@ namespace Vimeo
         IEnumerator Patch(string url)
         {
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
-                request.chunkedTransfer = false;
+				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
@@ -114,6 +114,7 @@ namespace Vimeo
 
         IEnumerator GetTicket()
         {
+        	Debug.Log("VimeoApi: GetTicket");
             if (OnUploadProgress != null) {
                 OnUploadProgress ("Authorizing", 0);
             }
@@ -121,21 +122,23 @@ namespace Vimeo
             WWWForm form = new WWWForm ();
             form.AddField ("type", "streaming");
 
-            using (UnityWebRequest request = UnityWebRequest.Post (API_URL + "/me/videos", form)) {
-                request.chunkedTransfer = false;
+            using (UnityWebRequest request = UnityWebRequest.Post(API_URL + "/me/videos", form)) {
+				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
-
                 yield return request.SendWebRequest();
+                Debug.Log(request.chunkedTransfer);
 
                 if (request.isNetworkError) {
                     Debug.LogError (request.error);
-                } else {
+                } 
+                else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON (request.downloadHandler.text);
 
                     if (ticket.error == null) {
-                        StartCoroutine (UploadVideo (ticket));
-                    } else {
-                        Debug.LogError (ticket.error);
+                        StartCoroutine(UploadVideo (ticket));
+                    } 
+                    else {
+                        Debug.LogError(ticket.error);
                     }
                 }
             }
@@ -166,9 +169,9 @@ namespace Vimeo
             FileInfo video_file = new FileInfo(video_file_path);
 
             // Upload to the Vimeo server
-            using (UnityWebRequest request = UnityWebRequest.Put (ticket.upload_link_secure, data)) {
+            using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 uploader = request;
-                request.chunkedTransfer = false;
+				request.chunkedTransfer = false;
                 request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
                 yield return request.SendWebRequest();
 
@@ -213,7 +216,7 @@ namespace Vimeo
 
             // Debug.Log (API_URL + ticket.complete_uri);
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
-                request.chunkedTransfer = false;
+				request.chunkedTransfer = false;
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
                 yield return request.SendWebRequest();
 
@@ -228,7 +231,7 @@ namespace Vimeo
             if (token != null)
             {
                 UnityWebRequest request = UnityWebRequest.Get(API_URL + api_path);
-                request.chunkedTransfer = false;
+				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 yield return request.SendWebRequest();
 
