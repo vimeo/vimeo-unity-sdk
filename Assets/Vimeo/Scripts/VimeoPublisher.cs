@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿#if UNITY_2017_3_OR_NEWER 
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -296,3 +298,4 @@ namespace Vimeo {
 
     }
 }
+#endif

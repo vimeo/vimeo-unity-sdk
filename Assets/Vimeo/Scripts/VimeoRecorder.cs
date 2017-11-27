@@ -135,17 +135,6 @@ namespace Vimeo {
 
 				// Fill 'tex' with the video content to be encoded into the file for this 
 				//tex.ReadPixels(new Rect(0, 0, render., 0));
-//				VimeoRecorder.CaptureLock(renderBuffer, (data) => {
-//					encoder.AddFrame(data);
-//                });
-
-                Texture2D tex = new Texture2D(renderBuffer.width, renderBuffer.height, TextureFormat.RGBA32, false);
-                RenderTexture.active = renderBuffer;
-                tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0, false);
-                tex.Apply();
-                encoder.AddFrame(tex);
-                UnityEngine.Object.Destroy(tex);
-
 
 
                 // Fill 'audioBuffer' with the audio content to be encoded into the file for this frame.
