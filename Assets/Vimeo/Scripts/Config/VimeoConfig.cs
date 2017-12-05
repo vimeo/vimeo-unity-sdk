@@ -65,7 +65,7 @@ namespace Vimeo.Config
             if (!Authenticated(_token)) {
 				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
                 if (GUILayout.Button ("Sign into Vimeo")) {
-                    Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/vimeo");
+                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
                 }
             } 
             else {
@@ -85,7 +85,7 @@ namespace Vimeo.Config
             if (!Authenticated(_token)) {
 				EditorGUILayout.PropertyField(so.FindProperty ("slackToken"));
                 if (GUILayout.Button ("Sign into Slack")) {
-                    Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/slack");
+					Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/slack");
                 }
             } 
             else {
