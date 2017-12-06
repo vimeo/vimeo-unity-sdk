@@ -161,7 +161,7 @@ namespace Vimeo
                     success = true;
                 } catch (IOException e) { 
                     // TODO: fix this ugly code!
-                    //Debug.Log ("File is being accessed by another process");
+                    Debug.Log ("File is being accessed by another process. " + e.Message);
                 }
             }
 
