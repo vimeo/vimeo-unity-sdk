@@ -16,23 +16,46 @@ namespace Vimeo.Config
             return token != "" && token != null;
         }
 
-        public void DrawVimeoConfig(VimeoPlayer player)
+        public void DrawVimeoConfig (VimeoPlayer player)
+		{
+			var so = serializedObject;
+			DrawVimeoAuth (player.GetVimeoToken ());
+          
+			if (Authenticated (player.GetVimeoToken ())) {
+				EditorGUILayout.Space ();
+
+				EditorGUILayout.PropertyField (so.FindProperty ("videoScreen"));
+				EditorGUILayout.PropertyField (so.FindProperty ("audioSource"));
+				EditorGUILayout.PropertyField (so.FindProperty ("vimeoVideoId"));
+				player.videoQualityIndex = EditorGUILayout.Popup ("Max video quality", player.videoQualityIndex, player.videoQualities);
+			}
+
+			so.ApplyModifiedProperties ();
+		}
+
+        public void DrawVimeoAuth(string _token)
         {
             var so = serializedObject;
-            DrawVimeoAuth(player.GetVimeoToken());
-          
-            if (Authenticated(player.GetVimeoToken())) {
-                EditorGUILayout.Space();
-
-                EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
-                EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
-                EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
-                player.videoQualityIndex = EditorGUILayout.Popup("Max video quality", player.videoQualityIndex, player.videoQualities);
+            if (!Authenticated(_token)) {
+				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
+                if (GUILayout.Button ("Sign into Vimeo")) {
+                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
+                }
+            } 
+            else {
+                if (GUILayout.Button("Switch accounts")) {
+                    if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
+#if UNITY_2017_3_OR_NEWER
+                        (target as VimeoPublisher).SetVimeoToken (null);
+#endif
+                    } else {
+                        (target as VimeoPlayer).SetVimeoToken (null);
+                    }
+                }
             }
-
-            so.ApplyModifiedProperties();
         }
 
+#if UNITY_2017_3_OR_NEWER
         public void DrawVimeoConfig(VimeoPublisher publisher)
         {
             var so = serializedObject;
@@ -59,26 +82,6 @@ namespace Vimeo.Config
             so.ApplyModifiedProperties();
         }
 
-        public void DrawVimeoAuth(string _token)
-        {
-            var so = serializedObject;
-            if (!Authenticated(_token)) {
-				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
-                if (GUILayout.Button ("Sign into Vimeo")) {
-                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
-                }
-            } 
-            else {
-                if (GUILayout.Button("Switch accounts")) {
-                    if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
-                        (target as VimeoPublisher).SetVimeoToken (null);
-                    } else {
-                        (target as VimeoPlayer).SetVimeoToken (null);
-                    }
-                }
-            }
-        }
-
         public void DrawSlackAuth(string _token)
         {
             var so = serializedObject;
@@ -95,7 +98,6 @@ namespace Vimeo.Config
                 }
             }
 		}
-
         
 
         public void DrawSlackConfig(VimeoPublisher publisher)
@@ -115,5 +117,6 @@ namespace Vimeo.Config
 				EditorGUI.indentLevel--;
 			}
         }
+#endif
     }
 }

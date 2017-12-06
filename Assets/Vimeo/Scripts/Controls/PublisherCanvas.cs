@@ -1,9 +1,9 @@
-﻿using System.Collections;
+﻿#if UNITY_2017_3_OR_NEWER
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Vimeo;
-
 
 namespace Vimeo.Controls {
     public class PublisherCanvas : MonoBehaviour
@@ -239,4 +239,4 @@ namespace Vimeo.Controls {
     }
 
 }
-
+#endif

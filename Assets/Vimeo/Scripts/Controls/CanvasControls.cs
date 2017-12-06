@@ -35,7 +35,6 @@ namespace Vimeo.Controls {
         void Update()
         {
             if (vimeoPlayer != null && !seeking) {
-                
                 seekBar.normalizedValue = vimeoPlayer.GetProgress();
             }
         }
