@@ -41,6 +41,5 @@ Assets/SteamVR/Scenes
 Assets/SteamVR/Textures
 
 # Github for Unity
-Assets/Editor/GitHub*
 *.mp4
 *.blend*

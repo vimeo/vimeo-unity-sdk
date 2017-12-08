@@ -22,7 +22,7 @@ namespace Vimeo {
         }
     }
 
-	[AddComponentMenu("Vimeo/Video Recorder")]
+    [AddComponentMenu("Vimeo/Video Recorder")]
     public class VimeoPublisher : MonoBehaviour {
 
         public enum LinkType

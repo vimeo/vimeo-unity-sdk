@@ -63,7 +63,6 @@ namespace Vimeo
                 video.OnVideoStart += VideoStarted;
                 video.OnPlay       += VideoPlay;
                 video.OnPause      += VideoPaused;
-                video.OnPlaybackError += VideoPlaybackError;
             }
 
             // Bootup video
@@ -199,24 +198,24 @@ namespace Vimeo
             }
         }
 
-        private void VideoPlaybackError(VideoController controller) 
-        {
-            
-        }
-
         private void OnLoadVimeoVideoComplete(string response)
         {
 			var json = JSON.Parse(response);
-            if (json ["error"] == null) {
-                video.PlayVideoByUrl(GetVideoFileUrl(json), is3D, videoStereoFormat);
+            if (json["error"] == null) {
+                video.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
             } 
             else {
                 Debug.LogError("Video could not be found");
             }
         }
 
-        private string GetVideoFileUrl(JSONNode json)
+        private List<JSONNode> GetVideoFiles(JSONNode json)
         {
+            if (json["play"] == null && json["files"] == null) {
+                Debug.LogError("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
+                return null;
+            }
+
             // Set the metadata
             videoName = json["name"];
             videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
@@ -230,9 +229,10 @@ namespace Vimeo
                 videoStereoFormat = json["spatial"]["stereo_format"];
             }
 
+            List<JSONNode> qualities = new List<JSONNode>();
+
             // New Vimeo file response format
-            if (json ["play"] != null) {
-                List<JSONNode> qualities = new List<JSONNode>();
+            if (json["play"] != null) {
                 JSONNode progressiveFiles = json["play"]["progressive"];
 
                 // Sort the quality
@@ -240,50 +240,42 @@ namespace Vimeo
                     qualities.Add(progressiveFiles[i]);
                 }   
                 qualities.Sort(SortByQuality);
-
-                if (videoQualities[videoQualityIndex] == "Highest") {
-                    return qualities[0]["link"];
-                } 
-                else {
-                    return FindByQuality(qualities, videoQualities[videoQualityIndex])["link"];
-                }
             }
 
             // Current Vimeo file API response format
-            if (json ["files"] != null) {
-                List<JSONNode> qualities = new List<JSONNode> ();
+            if (json["files"] != null) {
                 JSONNode progressiveFiles = json["files"];
 
+                // Get all progressive video files 
                 for (int i = 0; i < progressiveFiles.Count; i++) {
                     if (progressiveFiles[i]["height"] != null && progressiveFiles[i]["type"].Value == "video/mp4") {
                         qualities.Add(progressiveFiles[i]);
                     }
                 }
                 qualities.Sort(SortByQuality);
-
-                if (videoQualities[videoQualityIndex] == "Highest") {
-                   return qualities[0]["link_secure"];
-                } 
-                else {
-                    return FindByQuality(qualities, videoQualities[videoQualityIndex])["link_secure"];
-                }
             }
 
-            Debug.LogError("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
-            return null;
+            // If set to highest, get the first one
+            if (videoQualities[videoQualityIndex] == "Highest") {
+                return qualities;
+            } 
+            else {
+                return GetPreferredQualities(qualities, videoQualities[videoQualityIndex]);
+            }
         }
 
-		private JSONNode FindByQuality(List<JSONNode> qualities, string quality)
+		private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, string quality)
 		{
+            List<JSONNode> preferred_qualities = new List<JSONNode>();
 			for (int i = 0; i < qualities.Count; i++) {
                 if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
 					Debug.Log("Loading " + qualities[i]["height"] + "p file");
-					return qualities[i];
+                    preferred_qualities.Add(qualities[i]);
 				}
 			}
 
 			Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
-			return qualities [0];
+			return qualities;
 		}
 
 		private static int SortByQuality(JSONNode q1, JSONNode q2)
