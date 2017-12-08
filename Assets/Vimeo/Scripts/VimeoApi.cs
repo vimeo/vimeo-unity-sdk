@@ -74,7 +74,7 @@ namespace Vimeo
             using (UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + t);
-                request.SendWebRequest();
+                VimeoApi.SendRequest(request);
 
                 // Wait until request is finished
                 while (request.responseCode <=  0) { }
@@ -95,8 +95,7 @@ namespace Vimeo
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
-
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 // Reset the form
                 form = new WWWForm();
@@ -125,7 +124,7 @@ namespace Vimeo
             using (UnityWebRequest request = UnityWebRequest.Post(API_URL + "/me/videos", form)) {
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 if (request.isNetworkError) {
                     Debug.LogError (request.error);
@@ -172,7 +171,7 @@ namespace Vimeo
                 uploader = request;
 				request.chunkedTransfer = false;
                 request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 uploader = null;
 
@@ -196,7 +195,7 @@ namespace Vimeo
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 request.chunkedTransfer = false;
                 request.SetRequestHeader("Content-Range", "bytes */*");
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 if (request.responseCode == 308) {
                     StartCoroutine(CompleteUpload(ticket));
@@ -217,7 +216,7 @@ namespace Vimeo
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
 				request.chunkedTransfer = false;
                 request.SetRequestHeader ("Authorization", "Bearer " + token);
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete (request.GetResponseHeader("Location"));
@@ -232,12 +231,20 @@ namespace Vimeo
                 UnityWebRequest request = UnityWebRequest.Get(API_URL + api_path);
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
-                yield return request.SendWebRequest();
+                yield return VimeoApi.SendRequest(request);
 
                 if (OnRequestComplete != null) {
                     OnRequestComplete(request.downloadHandler.text);
                 }
             }
+        }
+
+        public static AsyncOperation SendRequest(UnityWebRequest req) {
+#if UNITY_2017_3_OR_NEWER
+            return req.SendWebRequest();
+#else
+            return req.Send();
+#endif
         }
 
         void FixedUpdate()
