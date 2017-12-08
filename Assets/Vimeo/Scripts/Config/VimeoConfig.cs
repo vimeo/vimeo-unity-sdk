@@ -19,18 +19,19 @@ namespace Vimeo.Config
         public void DrawVimeoConfig (VimeoPlayer player)
 		{
 			var so = serializedObject;
-			DrawVimeoAuth (player.GetVimeoToken ());
-          
-			if (Authenticated (player.GetVimeoToken ())) {
-				EditorGUILayout.Space ();
+			
+			if (Authenticated(player.GetVimeoToken())) {
+				EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
+				EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+				EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
+				player.videoQualityIndex = EditorGUILayout.Popup("Video Quality", player.videoQualityIndex, player.videoQualities);
 
-				EditorGUILayout.PropertyField (so.FindProperty ("videoScreen"));
-				EditorGUILayout.PropertyField (so.FindProperty ("audioSource"));
-				EditorGUILayout.PropertyField (so.FindProperty ("vimeoVideoId"));
-				player.videoQualityIndex = EditorGUILayout.Popup ("Max video quality", player.videoQualityIndex, player.videoQualities);
+                EditorGUILayout.Space();
 			}
 
-			so.ApplyModifiedProperties ();
+            DrawVimeoAuth(player.GetVimeoToken());
+
+			so.ApplyModifiedProperties();
 		}
 
         public void DrawVimeoAuth(string _token)
@@ -38,11 +39,14 @@ namespace Vimeo.Config
             var so = serializedObject;
             if (!Authenticated(_token)) {
 				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
-                if (GUILayout.Button ("Sign into Vimeo")) {
+
+                GUI.backgroundColor = Color.green;
+                if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
                     Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
                 }
             } 
             else {
+                GUI.backgroundColor = Color.red;
                 if (GUILayout.Button("Switch accounts")) {
                     if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
 #if UNITY_2017_3_OR_NEWER
@@ -52,6 +56,7 @@ namespace Vimeo.Config
                         (target as VimeoPlayer).SetVimeoToken (null);
                     }
                 }
+                GUI.backgroundColor = Color.white;
             }
         }
 
