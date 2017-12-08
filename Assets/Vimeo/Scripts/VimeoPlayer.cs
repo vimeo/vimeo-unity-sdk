@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
 using Vimeo.Config;
+using System.Text.RegularExpressions;
 
 namespace Vimeo
 {
@@ -62,13 +63,15 @@ namespace Vimeo
                 video.OnVideoStart += VideoStarted;
                 video.OnPlay       += VideoPlay;
                 video.OnPause      += VideoPaused;
+                video.OnPlaybackError += VideoPlaybackError;
             }
 
             // Bootup video
             if (vimeoVideoId != null && vimeoVideoId != "") {
-                LoadVimeoVideo (int.Parse (vimeoVideoId));
+                vimeoVideoId = Regex.Split(vimeoVideoId, "/?([0-9]+)")[1];
+                LoadVimeoVideo(int.Parse(vimeoVideoId));
             } else {
-                Debug.LogWarning ("No Vimeo video ID was specified");
+                Debug.LogWarning("No Vimeo video ID was specified");
             }
         }
 
@@ -114,12 +117,12 @@ namespace Vimeo
 
 		public void Play()
 		{
-			video.Play ();
+			video.Play();
 		}
 
 		public void Pause()
 		{
-			video.Pause ();
+			video.Pause();
 		}
 
         public void Seek(float seek)
@@ -175,7 +178,7 @@ namespace Vimeo
 			return null;
 		}
 
-        // Events below!
+        // Events below
         private void VideoStarted(VideoController controller) {
             if (OnVideoStart != null) {
                 OnVideoStart();
@@ -184,25 +187,28 @@ namespace Vimeo
 
         private void VideoPlay(VideoController controller)
         {
-            if (OnPlay != null)
-            {
+            if (OnPlay != null) {
                 OnPlay();
             }
         }
 
         private void VideoPaused(VideoController controller)
         {
-            if (OnPause != null)
-            {
+            if (OnPause != null) {
                 OnPause();
             }
+        }
+
+        private void VideoPlaybackError(VideoController controller) 
+        {
+            
         }
 
         private void OnLoadVimeoVideoComplete(string response)
         {
 			var json = JSON.Parse(response);
             if (json ["error"] == null) {
-                video.PlayVideoByUrl (GetVideoFileUrl (json), is3D, videoStereoFormat);
+                video.PlayVideoByUrl(GetVideoFileUrl(json), is3D, videoStereoFormat);
             } 
             else {
                 Debug.LogError("Video could not be found");
@@ -212,58 +218,58 @@ namespace Vimeo
         private string GetVideoFileUrl(JSONNode json)
         {
             // Set the metadata
-            videoName = json ["name"];
-            videoThumbnailUrl = json ["pictures"] ["sizes"] [4] ["link"];
-            authorThumbnailUrl = json ["user"] ["pictures"] ["sizes"] [2] ["link"];
+            videoName = json["name"];
+            videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
+            authorThumbnailUrl = json["user"]["pictures"]["sizes"][2]["link"];
             is3D = false;
             videoStereoFormat = "mono";
 
-            if (json ["spatial"] != null) {
+            if (json["spatial"] != null) {
                 is3D = true;
-                videoProjection   = json ["spatial"] ["projection"];
-                videoStereoFormat = json ["spatial"] ["stereo_format"];
+                videoProjection   = json["spatial"]["projection"];
+                videoStereoFormat = json["spatial"]["stereo_format"];
             }
 
             // New Vimeo file response format
             if (json ["play"] != null) {
-                List<JSONNode> qualities = new List<JSONNode> ();
-                JSONNode progressiveFiles = json ["play"] ["progressive"];
+                List<JSONNode> qualities = new List<JSONNode>();
+                JSONNode progressiveFiles = json["play"]["progressive"];
 
                 // Sort the quality
                 for (int i = 0; i < progressiveFiles.Count; i++) {
-                    qualities.Add (progressiveFiles [i]);
+                    qualities.Add(progressiveFiles[i]);
                 }   
-                qualities.Sort (SortByQuality);
+                qualities.Sort(SortByQuality);
 
-                if (videoQualities [videoQualityIndex] == "Highest") {
-                    return qualities [0] ["link"];
+                if (videoQualities[videoQualityIndex] == "Highest") {
+                    return qualities[0]["link"];
                 } 
                 else {
-                    return FindByQuality (qualities, videoQualities [videoQualityIndex])["link"];
+                    return FindByQuality(qualities, videoQualities[videoQualityIndex])["link"];
                 }
             }
 
-            // Current Vimeo file response
+            // Current Vimeo file API response format
             if (json ["files"] != null) {
                 List<JSONNode> qualities = new List<JSONNode> ();
-                JSONNode progressiveFiles = json ["files"];
+                JSONNode progressiveFiles = json["files"];
 
                 for (int i = 0; i < progressiveFiles.Count; i++) {
                     if (progressiveFiles[i]["height"] != null && progressiveFiles[i]["type"].Value == "video/mp4") {
-                        qualities.Add (progressiveFiles [i]);
+                        qualities.Add(progressiveFiles[i]);
                     }
                 }
                 qualities.Sort(SortByQuality);
 
                 if (videoQualities[videoQualityIndex] == "Highest") {
-                   return qualities [0] ["link_secure"];
+                   return qualities[0]["link_secure"];
                 } 
                 else {
-                    return FindByQuality (qualities, videoQualities [videoQualityIndex])["link_secure"];
+                    return FindByQuality(qualities, videoQualities[videoQualityIndex])["link_secure"];
                 }
             }
 
-            Debug.LogError ("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
+            Debug.LogError("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
             return null;
         }
 
@@ -271,7 +277,7 @@ namespace Vimeo
 		{
 			for (int i = 0; i < qualities.Count; i++) {
                 if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
-					Debug.Log ("Loading " + qualities[i]["height"] + "p file");
+					Debug.Log("Loading " + qualities[i]["height"] + "p file");
 					return qualities[i];
 				}
 			}
@@ -282,7 +288,7 @@ namespace Vimeo
 
 		private static int SortByQuality(JSONNode q1, JSONNode q2)
 		{
-			return int.Parse (q2["height"]).CompareTo (int.Parse (q1["height"]));
+			return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
 		}
     }
 }
