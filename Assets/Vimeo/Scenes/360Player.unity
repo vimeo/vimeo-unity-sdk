@@ -150,19 +150,7 @@ Prefab:
     - target: {fileID: 114151494372987810, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
         type: 2}
       propertyPath: vimeoVideoId
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4185628265908584, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
-      propertyPath: m_LocalScale.x
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 4185628265908584, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
-      propertyPath: m_LocalScale.y
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 4185628265908584, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
-      propertyPath: m_LocalScale.z
-      value: 13
+      value: 245109240
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}

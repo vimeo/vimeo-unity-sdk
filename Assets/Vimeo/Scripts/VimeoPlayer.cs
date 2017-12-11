@@ -19,7 +19,7 @@ namespace Vimeo
 		}
     }
 
-	[AddComponentMenu("Vimeo/Video Player")]
+	[AddComponentMenu("Vimeo/Vimeo Player")]
 	public class VimeoPlayer : MonoBehaviour 
     {
         public delegate void VimeoEvent();
@@ -45,6 +45,24 @@ namespace Vimeo
         private VimeoApi api;
         public VideoController controller;
 
+        [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
+        private static void CreateCanvasPrefab() {
+            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
+            go.name = "[VimeoPlayerCanvas]";
+        }
+
+        [MenuItem("GameObject/Video/Vimeo Player (Plane)")]
+        private static void CreatePlanePrefab() {
+            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer]") as GameObject);
+            go.name = "[VimeoPlayer]";
+        }
+
+        [MenuItem("GameObject/Video/Vimeo Player (360)")]
+        private static void Create360Prefab() {
+            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer360]") as GameObject);
+            go.name = "[VimeoPlayer360]";
+        }
+
 		private void Start()
         {
             if (GetVimeoToken() != null) {
@@ -53,23 +71,27 @@ namespace Vimeo
                 api.OnRequestComplete += OnLoadVimeoVideoComplete;
             }
 
-            if (videoScreen != null) {
-                controller = gameObject.AddComponent<VideoController>();
-                controller.videoScreenObject = videoScreen;
-
-                if (audioSource) {
-                    controller.audioSource = audioSource.GetComponent<AudioSource>();
-                }
-                controller.OnVideoStart += VideoStarted;
-                controller.OnPlay       += VideoPlay;
-                controller.OnPause      += VideoPaused;
+            if (videoScreen == null) {
+                Debug.LogWarning("No video screen was specified.");
             }
+
+            if (audioSource) {
+                controller.audioSource = audioSource.GetComponent<AudioSource>();
+            }
+
+            controller = gameObject.AddComponent<VideoController>();
+            controller.videoScreenObject = videoScreen;
+
+            controller.OnVideoStart += VideoStarted;
+            controller.OnPlay       += VideoPlay;
+            controller.OnPause      += VideoPaused;
 
             // Bootup video
             if (vimeoVideoId != null && vimeoVideoId != "") {
                 vimeoVideoId = Regex.Split(vimeoVideoId, "/?([0-9]+)")[1];
                 LoadVimeoVideo(int.Parse(vimeoVideoId));
-            } else {
+            } 
+            else {
                 Debug.LogWarning("No Vimeo video ID was specified");
             }
         }
@@ -157,7 +179,7 @@ namespace Vimeo
 		public float GetProgress()
 		{
             if (controller != null && controller.videoPlayer != null) {
-				return (float)controller.videoPlayer.frame / (float)controller.videoPlayer.frameCount;
+				return (float)controller.GetCurrentFrame() / (float)controller.GetTotalFrames();
 			}
 			return 0;
 		}
@@ -218,7 +240,7 @@ namespace Vimeo
 
             // Set the metadata
             videoName = json["name"];
-            videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
+            videoThumbnailUrl  = json["pictures"]["sizes"][4]["link"];
             authorThumbnailUrl = json["user"]["pictures"]["sizes"][2]["link"];
             is3D = false;
             videoStereoFormat = "mono";

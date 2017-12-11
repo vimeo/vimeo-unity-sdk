@@ -10,11 +10,6 @@ namespace Vimeo.Controls
     {
         private float offset = 0f;
 
-        void Start()
-        {
-            
-        }
-
         void Update()
         {
             GetComponent<RawImage> ().uvRect = new Rect (offset, 0, 3, 1);

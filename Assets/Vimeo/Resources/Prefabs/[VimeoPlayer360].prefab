@@ -11,6 +11,24 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1775618987241786}
   m_IsPrefabParent: 1
+--- !u!1 &1332080199964504
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4095449416328334}
+  - component: {fileID: 33806953863579282}
+  - component: {fileID: 135024306115374058}
+  - component: {fileID: 23416316517131148}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1775618987241786
 GameObject:
   m_ObjectHideFlags: 0
@@ -20,15 +38,26 @@ GameObject:
   m_Component:
   - component: {fileID: 4185628265908584}
   - component: {fileID: 114151494372987810}
-  - component: {fileID: 33388849716783088}
-  - component: {fileID: 23145900850159626}
   m_Layer: 0
-  m_Name: '[Vimeo360Player]'
+  m_Name: '[VimeoPlayer360]'
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 2800000, guid: f769f33aff14dac43a5e2a682eaf1b33, type: 3}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!4 &4095449416328334
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1332080199964504}
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4185628265908584}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!4 &4185628265908584
 Transform:
   m_ObjectHideFlags: 1
@@ -36,24 +65,25 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1775618987241786}
   m_LocalRotation: {x: 0.000000014901161, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.77, z: 0.36}
-  m_LocalScale: {x: 12.907349, y: 12.907362, z: 12.907362}
-  m_Children: []
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 40, y: 40, z: 40}
+  m_Children:
+  - {fileID: 4095449416328334}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23145900850159626
+--- !u!23 &23416316517131148
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775618987241786}
+  m_GameObject: {fileID: 1332080199964504}
   m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
   m_MotionVectors: 1
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 2100000, guid: 1ffe957299247ae4ba0ee0bd7e805e6c, type: 2}
   m_StaticBatchInfo:
@@ -74,13 +104,13 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33388849716783088
+--- !u!33 &33806953863579282
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775618987241786}
-  m_Mesh: {fileID: 4300004, guid: f1eb71dff313b4747ace5d64819089aa, type: 3}
+  m_GameObject: {fileID: 1332080199964504}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &114151494372987810
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -92,10 +122,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62ad4f86e0ad84f4380af8f8f22ff0c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  videoScreen: {fileID: 1775618987241786}
-  audioSource: {fileID: 1775618987241786}
+  videoScreen: {fileID: 1332080199964504}
+  audioSource: {fileID: 0}
   vimeoToken: 
-  vimeoVideoId: 
+  vimeoVideoId: 245109240
   videoQualities:
   - Highest
   - 1080
@@ -110,4 +140,16 @@ MonoBehaviour:
   is3D: 0
   videoProjection: 
   videoStereoFormat: 
-  video: {fileID: 0}
+  controller: {fileID: 0}
+--- !u!135 &135024306115374058
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1332080199964504}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

@@ -8,7 +8,6 @@ public class VimeoTicket
 	public string complete_uri;
     public string error;
 
-
 	public static VimeoTicket CreateFromJSON(string jsonString)
 	{
 		return JsonUtility.FromJson<VimeoTicket> (jsonString);

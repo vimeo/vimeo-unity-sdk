@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 
-namespace Vimeo
+namespace Vimeo.Services
 {
     public class VimeoApi : MonoBehaviour
     {
@@ -64,9 +64,7 @@ namespace Vimeo
         public void UploadVideoFile(string file_path)
         {
             video_file_path = file_path;
-
-            // Start Upload Process
-            StartCoroutine(GetTicket());
+            StartCoroutine(GetTicket()); 
         } 
 
         public static bool ValidateToken(string t)
