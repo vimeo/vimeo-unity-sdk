@@ -29,7 +29,6 @@ namespace Vimeo
 		private List<JSONNode> video_files;
 		private int cur_file_index = 0;
 
-
 		private void Setup()
 		{  
             if (videoPlayer == null) {

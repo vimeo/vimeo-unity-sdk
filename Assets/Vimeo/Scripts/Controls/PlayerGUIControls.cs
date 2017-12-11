@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 namespace Vimeo.Controls {
-    public class CanvasControls : MonoBehaviour {
+    public class PlayerGUIControls : MonoBehaviour {
 
         public VimeoPlayer vimeoPlayer;
         public GameObject playButtonText;
@@ -18,6 +17,8 @@ namespace Vimeo.Controls {
             vimeoPlayer.OnPause += VideoPause;
 
             // TODO: Implement seek controls
+            // Hook into the Unity videoplayer object 
+            // https://docs.unity3d.com/ScriptReference/Video.VideoPlayer.html
     	}
 
         private void VideoPlay()

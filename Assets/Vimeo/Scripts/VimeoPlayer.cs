@@ -43,7 +43,7 @@ namespace Vimeo
         public string videoStereoFormat;
 
         private VimeoApi api;
-        public VideoController video;
+        public VideoController controller;
 
 		private void Start()
         {
@@ -54,15 +54,15 @@ namespace Vimeo
             }
 
             if (videoScreen != null) {
-                video = gameObject.AddComponent<VideoController>();
-                video.videoScreenObject = videoScreen;
+                controller = gameObject.AddComponent<VideoController>();
+                controller.videoScreenObject = videoScreen;
 
                 if (audioSource) {
-                    video.audioSource = audioSource.GetComponent<AudioSource>();
+                    controller.audioSource = audioSource.GetComponent<AudioSource>();
                 }
-                video.OnVideoStart += VideoStarted;
-                video.OnPlay       += VideoPlay;
-                video.OnPause      += VideoPaused;
+                controller.OnVideoStart += VideoStarted;
+                controller.OnPlay       += VideoPlay;
+                controller.OnPause      += VideoPaused;
             }
 
             // Bootup video
@@ -106,7 +106,7 @@ namespace Vimeo
         private void OnDisable()
         {
             api.OnRequestComplete -= OnLoadVimeoVideoComplete;
-            video.OnVideoStart    -= VideoStarted;
+            controller.OnVideoStart    -= VideoStarted;
         }	
 
         public void LoadVimeoVideo(int id)
@@ -116,57 +116,57 @@ namespace Vimeo
 
 		public void Play()
 		{
-			video.Play();
+			controller.Play();
 		}
 
 		public void Pause()
 		{
-			video.Pause();
+			controller.Pause();
 		}
 
         public void Seek(float seek)
         {
-            video.Seek(seek);
+            controller.Seek(seek);
         }
 
 		public void SeekBackward(float seek)
 		{
-			video.SeekBackward(seek);
+			controller.SeekBackward(seek);
 		}
 
 		public void SeekForward(float seek)
 		{
-			video.SeekForward(seek);
+			controller.SeekForward(seek);
 		}
 
         public void ToggleVideoPlayback()
         {
-            video.TogglePlayback();
+            controller.TogglePlayback();
         }
 
         public int GetWidth()
         {
-            return video.width;
+            return controller.width;
         }
 
         public int GetHeight()
         {
-            return video.height;
+            return controller.height;
         }
 
 		public float GetProgress()
 		{
-            if (video != null && video.videoPlayer != null) {
-				return (float)video.videoPlayer.frame / (float)video.videoPlayer.frameCount;
+            if (controller != null && controller.videoPlayer != null) {
+				return (float)controller.videoPlayer.frame / (float)controller.videoPlayer.frameCount;
 			}
 			return 0;
 		}
 
 		public string GetTimecode()
 		{
-			if (video != null) {
-				float sec = Mathf.Floor ((float)video.videoPlayer.time % 60);
-				float min = Mathf.Floor ((float)video.videoPlayer.time / 60f);
+			if (controller != null) {
+				float sec = Mathf.Floor ((float)controller.videoPlayer.time % 60);
+				float min = Mathf.Floor ((float)controller.videoPlayer.time / 60f);
 
 				string secZeroPad = sec > 9 ? "" : "0";
 				string minZeroPad = min > 9 ? "" : "0";
@@ -202,7 +202,7 @@ namespace Vimeo
         {
 			var json = JSON.Parse(response);
             if (json["error"] == null) {
-                video.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
+                controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
             } 
             else {
                 Debug.LogError("Video could not be found");

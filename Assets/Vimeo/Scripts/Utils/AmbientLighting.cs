@@ -40,7 +40,7 @@ namespace Vimeo.Fun {
 
 		IEnumerator RefreshLights()
 		{
-			var videoTex = vimeoPlayer.video.videoPlayer.texture as RenderTexture;
+			var videoTex = vimeoPlayer.controller.videoPlayer.texture as RenderTexture;
 			timeSinceRefresh += Time.deltaTime;
 
 			if (videoTex != null && timeSinceRefresh > refreshRate) {
