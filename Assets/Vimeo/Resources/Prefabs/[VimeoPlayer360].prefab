@@ -125,6 +125,7 @@ MonoBehaviour:
   videoScreen: {fileID: 1332080199964504}
   audioSource: {fileID: 0}
   vimeoToken: 
+  saveVimeoToken: 0
   vimeoVideoId: 
   videoQualities:
   - Highest

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
 using Vimeo.Config;
+using Vimeo.Services;
 using System.Text.RegularExpressions;
 
 namespace Vimeo
@@ -19,7 +20,7 @@ namespace Vimeo
 		}
     }
 
-	[AddComponentMenu("Vimeo/Vimeo Player")]
+	[AddComponentMenu("Video/Vimeo Player")]
 	public class VimeoPlayer : MonoBehaviour 
     {
         public delegate void VimeoEvent();
@@ -30,6 +31,7 @@ namespace Vimeo
         public GameObject videoScreen;
         public GameObject audioSource;
         public string vimeoToken;
+        public bool   saveVimeoToken = false;
         public string vimeoVideoId;
 
 		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
@@ -101,12 +103,17 @@ namespace Vimeo
             var token = PlayerPrefs.GetString("vimeo-player-token");
             if (token == null || token == "") {
                 if (vimeoToken != null && vimeoToken != "") {
-                    SetVimeoToken (vimeoToken);
+                    SetVimeoToken(vimeoToken);
                 }
                 token = vimeoToken;
             }
 
-            vimeoToken = null;
+            if (saveVimeoToken) {
+                vimeoToken = token;
+            }
+            else {
+                vimeoToken = null;
+            }
             return token;
         }
 
