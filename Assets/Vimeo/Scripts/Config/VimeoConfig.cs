@@ -8,28 +8,59 @@ namespace Vimeo.Config
 {
     public class VimeoConfig : Editor 
     {
+		bool slackFold;
+		bool vimeoFold;
+
         public bool Authenticated(string token)
         {
             return token != "" && token != null;
         }
 
-        public void DrawVimeoConfig(VimeoPlayer player)
+        public void DrawVimeoConfig (VimeoPlayer player)
+		{
+			var so = serializedObject;
+			
+			if (Authenticated(player.GetVimeoToken())) {
+				EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
+				EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+				EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
+				player.videoQualityIndex = EditorGUILayout.Popup("Video Quality", player.videoQualityIndex, player.videoQualities);
+
+                EditorGUILayout.Space();
+			}
+
+            DrawVimeoAuth(player.GetVimeoToken());
+
+			so.ApplyModifiedProperties();
+		}
+
+        public void DrawVimeoAuth(string _token)
         {
             var so = serializedObject;
-            DrawVimeoAuth(player.GetVimeoToken());
-          
-            if (Authenticated(player.GetVimeoToken())) {
-                EditorGUILayout.Space();
+            if (!Authenticated(_token)) {
+				EditorGUILayout.PropertyField(so.FindProperty ("vimeoToken"));
 
-                EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
-                EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
-                EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"));
-                player.videoQualityIndex = EditorGUILayout.Popup("Max video quality", player.videoQualityIndex, player.videoQualities);
+                GUI.backgroundColor = Color.green;
+                if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
+                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
+                }
+            } 
+            else {
+                GUI.backgroundColor = Color.red;
+                if (GUILayout.Button("Switch accounts")) {
+                    if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
+#if UNITY_2017_3_OR_NEWER
+                        (target as VimeoPublisher).SetVimeoToken (null);
+#endif
+                    } else {
+                        (target as VimeoPlayer).SetVimeoToken (null);
+                    }
+                }
+                GUI.backgroundColor = Color.white;
             }
-
-            so.ApplyModifiedProperties();
         }
 
+#if UNITY_2017_3_OR_NEWER
         public void DrawVimeoConfig(VimeoPublisher publisher)
         {
             var so = serializedObject;
@@ -40,10 +71,15 @@ namespace Vimeo.Config
 
                 EditorGUILayout.PropertyField(so.FindProperty("_camera"));
                 EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
-                EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
-                EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));
-                EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
+				EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
+
+				vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo Default Settings");
+				if (vimeoFold) {
+					EditorGUI.indentLevel++;
+	                EditorGUILayout.PropertyField(so.FindProperty("videoName"));
+	                EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
+					EditorGUI.indentLevel--;
+                }
 
                 DrawSlackConfig(publisher);
             }
@@ -51,33 +87,13 @@ namespace Vimeo.Config
             so.ApplyModifiedProperties();
         }
 
-        public void DrawVimeoAuth(string _token)
-        {
-            var so = serializedObject;
-            if (!Authenticated(_token)) {
-                EditorGUILayout.PropertyField (so.FindProperty ("vimeoToken"));
-                if (GUILayout.Button ("Sign into Vimeo")) {
-                    Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/vimeo");
-                }
-            } 
-            else {
-                if (GUILayout.Button("Switch accounts")) {
-                    if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
-                        (target as VimeoPublisher).SetVimeoToken (null);
-                    } else {
-                        (target as VimeoPlayer).SetVimeoToken (null);
-                    }
-                }
-            }
-        }
-
         public void DrawSlackAuth(string _token)
         {
             var so = serializedObject;
             if (!Authenticated(_token)) {
-                EditorGUILayout.PropertyField (so.FindProperty ("slackToken"));
+				EditorGUILayout.PropertyField(so.FindProperty ("slackToken"));
                 if (GUILayout.Button ("Sign into Slack")) {
-                    Application.OpenURL ("https://vimeo-unity.herokuapp.com/auth/slack");
+					Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/slack");
                 }
             } 
             else {
@@ -86,23 +102,26 @@ namespace Vimeo.Config
                     t.SetSlackToken(null);
                 }
             }
-        }
+		}
+        
 
         public void DrawSlackConfig(VimeoPublisher publisher)
         {
             var so = serializedObject;
-            EditorGUILayout.PropertyField(so.FindProperty("postToSlack"));
+			slackFold = EditorGUILayout.Foldout(slackFold, "Share to Slack");
 
-            if (publisher.postToSlack == true) {
-
+			if (slackFold) {
+				EditorGUI.indentLevel++;
                 if (Authenticated (publisher.GetSlackToken())) {
-                    EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField (so.FindProperty ("slackChannel"));
-                    EditorGUI.indentLevel--;
+                    EditorGUILayout.PropertyField(so.FindProperty ("slackChannel"));
+					EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));
+					EditorGUILayout.PropertyField(so.FindProperty ("autoPostToChannel"));
                 } 
 
                 DrawSlackAuth (publisher.GetSlackToken());
-            }
+				EditorGUI.indentLevel--;
+			}
         }
+#endif
     }
 }
