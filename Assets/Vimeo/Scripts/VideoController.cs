@@ -14,7 +14,6 @@ namespace Vimeo
 		public event PlaybackAction OnVideoStart;
 		public event PlaybackAction OnPause;
 		public event PlaybackAction OnPlay;
-        public event PlaybackAction OnPlaybackError;
 
 		public GameObject videoScreenObject;
 		public int width;
