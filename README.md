@@ -5,7 +5,7 @@ This SDK lets you stream 2D and 360 videos from your own Vimeo account into a Un
 
 ## Getting started
 
-The SDK comes with the following example Unity scenes in the `Vimeo/scenes` folder. Please note these demos don't work out of the box. You will need to authorize your Vimeo account and select your own video test. Skip to step #2 below to learn how to sign in.
+The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` folder. Please note these demos don't work out of the box. You will need to authorize your Vimeo account and select your own video test. Skip to step #2 below to learn how to sign in.
 
 <table>
   <tr>
@@ -46,14 +46,14 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
 
 <img src="Images/vimeo-login.gif"  />
 
-* Click "Sign into Vimeo" will ask you to authorize with your Vimeo account. 
-* Copy the token and paste it into the `Vimeo Token` field in Unity. 
+* Click "Sign into Vimeo" which will ask you to authorize with your Vimeo account. 
+* After authorizing, copy the token and paste it into the `Vimeo Token` field in Unity. 
 * [Find your video](https://vimeo.com/manage/videos) and then copy the URL or the ID and pase it into the `Vimeo Video URL` field.
 * If you are not using one of the existing prefabs, then you will need to assign a GameObject to the `Video Screen` field. Currently, we only support Mesh and RawImage GameObjects.
 * `Audio Output` is optional. If left empty, a new audio object will be attached to the video screen. 
 * For security reasons, the Vimeo token is not saved into the scene. But, if you plan on building this app so others can watch video, then be sure to check `Save token with scene`
  
- Press play and you should now see your Vimeo video streaming in your app.
+ You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
 Future support
 -------------
