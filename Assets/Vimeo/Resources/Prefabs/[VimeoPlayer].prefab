@@ -140,7 +140,7 @@ MonoBehaviour:
   videoScreen: {fileID: 1905328899539908}
   audioSource: {fileID: 0}
   vimeoToken: 
-  vimeoVideoId: 245992818
+  vimeoVideoId: 
   videoQualities:
   - Highest
   - 1080

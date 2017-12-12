@@ -147,11 +147,6 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114151494372987810, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1,
-        type: 2}
-      propertyPath: vimeoVideoId
-      value: 245109240
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 54f1b0e92fb3a604a9c1edae4d8c74c1, type: 2}
   m_IsPrefabParent: 0
