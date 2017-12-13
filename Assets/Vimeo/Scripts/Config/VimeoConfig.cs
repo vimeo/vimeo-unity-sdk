@@ -43,7 +43,7 @@ namespace Vimeo.Config
 
                 GUI.backgroundColor = Color.green;
                 if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
-                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
+                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private");
                 }
             } 
             else {
