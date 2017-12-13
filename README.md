@@ -48,7 +48,7 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
 
 * Click "Sign into Vimeo" which will ask you to authorize with your Vimeo account. 
 * After authorizing, copy the token and paste it into the `Vimeo Token` field in Unity. 
-* [Find your video](https://vimeo.com/manage/videos) and then copy the URL or the ID and pase it into the `Vimeo Video URL` field.
+* [Find your video](https://vimeo.com/manage/videos) and then copy the full URL or the video ID and paste it into the `Vimeo Video URL` field.
 * If you are not using one of the existing prefabs, then you will need to assign a GameObject to the `Video Screen` field. Currently, we only support Mesh and RawImage GameObjects.
 * `Audio Output` is optional. If left empty, a new audio object will be attached to the video screen. 
 * For security reasons, the Vimeo token is not saved into the scene. But, if you plan on building this app so others can watch video, then be sure to check `Save token with scene`
