@@ -1,11 +1,12 @@
-﻿using System.Collections;
+﻿#if UNITY_EDITOR  
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Vimeo;
 
 namespace Vimeo.Config 
-{
+{  
     public class VimeoConfig : Editor 
     {
 		bool slackFold;
@@ -52,10 +53,10 @@ namespace Vimeo.Config
                 if (GUILayout.Button("Switch accounts")) {
                     if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
 #if UNITY_2017_3_OR_NEWER
-                        (target as VimeoPublisher).SetVimeoToken (null);
+                        (target as VimeoPublisher).SetVimeoToken(null);
 #endif
                     } else {
-                        (target as VimeoPlayer).SetVimeoToken (null);
+                        (target as VimeoPlayer).SetVimeoToken(null);
                     }
                 }
                 GUI.backgroundColor = Color.white;
@@ -127,3 +128,5 @@ namespace Vimeo.Config
 #endif
     }
 }
+
+#endif

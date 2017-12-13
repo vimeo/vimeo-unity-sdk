@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
-using Vimeo.Config;
+
 using Vimeo.Services;
 using System.Text.RegularExpressions;
 
 namespace Vimeo
 {
+#if UNITY_EDITOR  
+    using Vimeo.Config;
+    using UnityEditor;
 	[CustomEditor (typeof(VimeoPlayer))]
     public class VimeoPlayerInspector : VimeoConfig
 	{
@@ -19,6 +21,7 @@ namespace Vimeo
             EditorUtility.SetDirty(target);
 		}
     }
+#endif
 
 	[AddComponentMenu("Video/Vimeo Player")]
 	public class VimeoPlayer : MonoBehaviour 
@@ -47,6 +50,7 @@ namespace Vimeo
         private VimeoApi api;
         public VideoController controller;
 
+#if UNITY_EDITOR
         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
         private static void CreateCanvasPrefab() {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
@@ -64,6 +68,7 @@ namespace Vimeo
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer360]") as GameObject);
             go.name = "[VimeoPlayer360]";
         }
+#endif
 
 		private void Start()
         {
@@ -120,6 +125,10 @@ namespace Vimeo
         public void SetVimeoToken(string token)
         {
             SetKey("vimeo-player-token", token);
+
+            if (token == null) {
+                vimeoToken = null;
+            }
         }
 
         private void SetKey(string key, string val)
