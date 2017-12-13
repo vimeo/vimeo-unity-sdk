@@ -40,12 +40,14 @@ namespace Vimeo.Services {
 
 				Debug.Log(request.downloadHandler.text);
 
+#if UNITY_2017_1_OR_NEWER
 				if (request.isNetworkError) {
                     Debug.Log (request.error);
                 } 
                 else {
                     Debug.Log("Posted to Slack!");
             	}
+#endif
 			}
 		}
 	}

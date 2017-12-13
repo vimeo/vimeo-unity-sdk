@@ -98,8 +98,8 @@ namespace Vimeo.Services
                 // Reset the form
                 form = new WWWForm();
 
-                if (request.isNetworkError) {
-                    Debug.Log (request.error);
+                if (IsNetworkError(request)) {
+                    Debug.Log(request.error);
                 } 
                 else {
                     if (OnPatchComplete != null) {
@@ -124,7 +124,7 @@ namespace Vimeo.Services
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 yield return VimeoApi.SendRequest(request);
 
-                if (request.isNetworkError) {
+                if (IsNetworkError(request)) {
                     Debug.LogError (request.error);
                 } 
                 else {
@@ -173,7 +173,7 @@ namespace Vimeo.Services
 
                 uploader = null;
 
-                if (request.isNetworkError) {
+                if (IsNetworkError(request)) {
                     Debug.Log (request.error);
                     Debug.Log (request.responseCode);
                 } else {
@@ -235,6 +235,14 @@ namespace Vimeo.Services
                     OnRequestComplete(request.downloadHandler.text);
                 }
             }
+        }
+
+        public static bool IsNetworkError(UnityWebRequest req) {
+#if UNITY_2017_1_OR_NEWER
+            return req.isNetworkError;
+#else
+            return req.isError;
+#endif
         }
 
         public static AsyncOperation SendRequest(UnityWebRequest req) {

@@ -86,7 +86,13 @@ namespace Vimeo
 		public void PlayVideos(List<JSONNode> files, bool is3D, string stereoFormat) 
 		{
 			video_files = files;
-			PlayVideoByUrl(video_files[cur_file_index]["link_secure"], is3D, stereoFormat);
+			if (video_files[cur_file_index]["link_secure"] == null) {
+				PlayVideoByUrl(video_files[cur_file_index]["link"], is3D, stereoFormat);
+			}
+			else{
+				PlayVideoByUrl(video_files[cur_file_index]["link_secure"], is3D, stereoFormat);
+			}
+			
 		}
 
 		public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat) 

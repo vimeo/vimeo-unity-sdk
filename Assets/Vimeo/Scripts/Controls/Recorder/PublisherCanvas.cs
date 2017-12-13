@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Vimeo;
+using Vimeo.Services;
 
 namespace Vimeo.Controls {
     public class PublisherCanvas : MonoBehaviour
