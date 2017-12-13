@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.12731749, g: 0.13414757, b: 0.1210787, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -229,6 +229,21 @@ Prefab:
         type: 2}
       propertyPath: m_AnchorMax.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114708236403802286, guid: 9ba9537c00e62a34bbb9071dfed6399d,
+        type: 2}
+      propertyPath: vimeoVideoId
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 224646269247799512, guid: 9ba9537c00e62a34bbb9071dfed6399d,
+        type: 2}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224646269247799512, guid: 9ba9537c00e62a34bbb9071dfed6399d,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 9ba9537c00e62a34bbb9071dfed6399d, type: 2}

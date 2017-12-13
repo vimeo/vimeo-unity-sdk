@@ -14,7 +14,7 @@ namespace Vimeo
 	[CustomEditor (typeof(VimeoPlayer))]
     public class VimeoPlayerInspector : VimeoConfig
 	{
-         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
+        [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
         private static void CreateCanvasPrefab() {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
             go.name = "[VimeoPlayerCanvas]";
