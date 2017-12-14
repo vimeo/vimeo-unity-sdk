@@ -24,7 +24,12 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
   </tr>
 </table>
 
-### 1. Choose your playback method
+### 1. Installation
+There are two ways to install:
+* Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
+* Or download from the [Unity Asset Store](http://u3d.as/127G)
+
+### 2. Choose your playback method
 Open up your Unity scene or create a new one. For streaming any Vimeo video, you will be using the `VimeoPlayer` component. There are two ways to setup the Vimeo player in Unity:
 
 #### Prefab setup
@@ -37,7 +42,7 @@ If you are setting up your own scene and want to specify your video "screen" and
 
 <img src="Images/vimeo-component.gif"  />
 
-### 2. Sign into your Vimeo account
+### 3. Sign into your Vimeo account
 Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't already) and make sure you have some videos uploaded. Please read the following two requirements to streaming Vimeo videos into Unity:
 
 > The `VimeoPlayer` component requires video file access via the Vimeo API. Accessing video files is limited to [Vimeo Pro and Business](https://vimeo.com/upgrade) customers. 
@@ -55,16 +60,12 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
  
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
-Future support
--------------
-
+## Future support
 We do not support the following features yet, but we hope to in the near future:
   
   - **In progress:** Real-time & offline video capture and uploading to Vimeo
   - Adaptive video playback (HLS/DASH). The `VimeoPlayer` component does allow you to set your streaming quality preference.
   - Vimeo Live streaming playback & publishing
 
-Contributing
--------------
-
+## Contributing
 There are many ways you can contribute. Make pull requestss or report bugs and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
