@@ -5,7 +5,7 @@ This SDK lets you stream 2D and 360 videos from your own Vimeo account into a Un
 
 ## Getting started
 
-The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` folder. Please note these demos don't work out of the box. You will need to authorize your Vimeo account and select your own video test. [Skip to step #2](#2-sign-into-your-vimeo-account) to learn how to sign in.
+The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` folder. Please note these demos don't work out of the box. You will need to authorize your Vimeo account and select your own video test. [Skip to step #3](#3-sign-into-your-vimeo-account) to learn how to sign in.
 
 <table>
   <tr>
