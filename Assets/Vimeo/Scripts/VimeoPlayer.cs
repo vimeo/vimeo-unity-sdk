@@ -254,12 +254,16 @@ namespace Vimeo
 
             // Set the metadata
             videoName = json["name"];
-            videoThumbnailUrl  = json["pictures"]["sizes"][4]["link"];
-            authorThumbnailUrl = json["user"]["pictures"]["sizes"][2]["link"];
+            videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
+
+            if (json["user"]["pictures"] != null && !json["user"]["pictures"].IsNull) {
+               authorThumbnailUrl = json["user"]["pictures"]["sizes"][2]["link"];
+            }
+
             is3D = false;
             videoStereoFormat = "mono";
 
-            if (json["spatial"] != null) {
+            if (json["spatial"] != null && !json["spatial"].IsNull) {
                 is3D = true;
                 videoProjection   = json["spatial"]["projection"];
                 videoStereoFormat = json["spatial"]["stereo_format"];
