@@ -17,11 +17,11 @@ namespace Vimeo.Config
             return token != "" && token != null;
         }
 
-        public void DrawVimeoConfig (VimeoPlayer player)
+        public void DrawVimeoConfig(VimeoPlayer player)
 		{
 			var so = serializedObject;
 			
-			if (Authenticated(player.GetVimeoToken())) {
+			if (Authenticated(player.GetVimeoToken()) && player.vimeoSignIn) {
 				EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
 				EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
 				EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
@@ -30,27 +30,40 @@ namespace Vimeo.Config
                 EditorGUILayout.Space();
 			}
 
-            DrawVimeoAuth(player.GetVimeoToken());
-
+            DrawVimeoAuth(player);
 			so.ApplyModifiedProperties();
 		}
 
-        public void DrawVimeoAuth(string _token)
+        public void DrawVimeoAuth(VimeoPlayer player)
         {
             var so = serializedObject;
-            if (!Authenticated(_token)) {
-				EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
 
-                GUI.backgroundColor = Color.green;
-                if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
-                    Application.OpenURL ("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private");
-                }
-            } 
-            else {
+            if (!Authenticated(player.GetVimeoToken()) || !player.vimeoSignIn) {
+                EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
                 EditorGUILayout.PropertyField(so.FindProperty("saveVimeoToken"), new GUIContent("Save token with scene"));
 
+                GUILayout.BeginHorizontal("box");
+                if (GUILayout.Button("Get Token", GUILayout.Height(30))) {
+                    Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private%20video_files");
+                }
+
+                GUI.backgroundColor = Color.green;
+                if (Authenticated(player.vimeoToken)) {
+                    if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
+                        (target as VimeoPlayer).SetVimeoToken(player.vimeoToken);
+                        player.vimeoSignIn = true;
+                        GUI.FocusControl(null);
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+            } 
+            else {
+                
                 GUI.backgroundColor = Color.red;
                 if (GUILayout.Button("Switch accounts")) {
+                    player.vimeoSignIn = false;
+
                     if (target.GetType().ToString() == "Vimeo.VimeoPublisher") {
 #if UNITY_2017_3_OR_NEWER
                         (target as VimeoPublisher).SetVimeoToken(null);
@@ -106,7 +119,6 @@ namespace Vimeo.Config
                 }
             }
 		}
-        
 
         public void DrawSlackConfig(VimeoPublisher publisher)
         {

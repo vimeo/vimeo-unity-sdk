@@ -52,7 +52,8 @@ namespace Vimeo
         public GameObject videoScreen;
         public GameObject audioSource;
         public string vimeoToken;
-        public bool   saveVimeoToken = false;
+        public bool   saveVimeoToken = true;
+        public bool   vimeoSignIn = false;
         public string vimeoVideoId;
 
 		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
@@ -108,29 +109,23 @@ namespace Vimeo
 
         public string GetVimeoToken()
         {
-            var token = PlayerPrefs.GetString("vimeo-player-token");
-            if (token == null || token == "") {
-                if (vimeoToken != null && vimeoToken != "") {
-                    SetVimeoToken(vimeoToken);
-                }
-                token = vimeoToken;
-            }
-
             if (saveVimeoToken) {
-                vimeoToken = token;
+                return vimeoToken;
             }
             else {
-                vimeoToken = null;
+                return PlayerPrefs.GetString("vimeo-player-token");
             }
-            return token;
         }
 
         public void SetVimeoToken(string token)
         {
-            SetKey("vimeo-player-token", token);
-
-            if (token == null) {
+            if (saveVimeoToken) {
+                SetKey("vimeo-player-token", null);
+                vimeoToken = token;
+            }
+            else {
                 vimeoToken = null;
+                SetKey("vimeo-player-token", token);
             }
         }
 

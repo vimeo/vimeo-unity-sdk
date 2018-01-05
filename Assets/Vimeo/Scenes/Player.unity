@@ -42,7 +42,7 @@ RenderSettings:
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 11
+  serializedVersion: 9
   m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 9
+    serializedVersion: 8
     m_Resolution: 2
     m_BakeResolution: 40
     m_TextureWidth: 1024
@@ -87,7 +87,7 @@ LightmapSettings:
     m_PVRFilteringAtrousNormalSigma: 1
     m_PVRFilteringAtrousPositionSigma: 1
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_ShadowMaskMode: 2
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -300,6 +300,21 @@ Prefab:
     - target: {fileID: 4034917320204670, guid: f54a9bafa49ec444098b519b1e4771c4, type: 2}
       propertyPath: m_RootOrder
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114529228338408296, guid: f54a9bafa49ec444098b519b1e4771c4,
+        type: 2}
+      propertyPath: saveVimeoToken
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114529228338408296, guid: f54a9bafa49ec444098b519b1e4771c4,
+        type: 2}
+      propertyPath: vimeoToken
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114529228338408296, guid: f54a9bafa49ec444098b519b1e4771c4,
+        type: 2}
+      propertyPath: vimeoSignIn
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f54a9bafa49ec444098b519b1e4771c4, type: 2}
