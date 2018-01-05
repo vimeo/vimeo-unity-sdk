@@ -80,8 +80,13 @@ namespace Vimeo
                 Debug.LogWarning("No video screen was specified.");
             }
 
-            if (audioSource) {
-                controller.audioSource = audioSource.GetComponent<AudioSource>();
+            if (audioSource && audioSource.GetType() == typeof(GameObject)) {
+                if (audioSource.GetComponent<AudioSource>() != null) {
+                    controller.audioSource = audioSource.GetComponent<AudioSource>();
+                }
+                else {
+                    Debug.LogWarning("No AudioSource component found on " + audioSource.name + " GameObject");
+                }
             }
 
             controller = gameObject.AddComponent<VideoController>();
