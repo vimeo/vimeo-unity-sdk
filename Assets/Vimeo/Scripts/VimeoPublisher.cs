@@ -16,14 +16,15 @@ namespace Vimeo {
     {
         public override void OnInspectorGUI()
         {
-            var player = target as VimeoPublisher;
-            DrawVimeoConfig (player);
+            var publisher = target as VimeoPublisher;
+            publisher.vimeoTokenName = "vimeo-publisher-token";
+            DrawVimeoConfig(publisher);
             EditorUtility.SetDirty(target);
         }
     }
 
     [AddComponentMenu("Vimeo/Video Recorder")]
-    public class VimeoPublisher : MonoBehaviour {
+    public class VimeoPublisher : VimeoBehavior {
 
         public enum LinkType
         {
@@ -40,7 +41,6 @@ namespace Vimeo {
 
         public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
         public LinkType defaultShareLink = LinkType.VideoPage;
-        public string vimeoToken;
 
         public bool recordOnStart = false;
         public bool openInBrowser = false;
@@ -62,6 +62,7 @@ namespace Vimeo {
 
     	void Start () 
     	{
+
     		if (_camera == null) {
     			_camera = Camera.main;
 			}
@@ -90,25 +91,6 @@ namespace Vimeo {
             }
     	}
 
-        public string GetVimeoToken()
-        {
-            var token = PlayerPrefs.GetString("vimeo-token");
-            if (token == null || token == "") {
-                if (vimeoToken != null && vimeoToken != "") {
-                    SetVimeoToken (vimeoToken);
-                }
-                token = vimeoToken;
-            }
-
-            vimeoToken = null;
-            return token;
-        }
-
-        public void SetVimeoToken(string token)
-        {
-            SetKey("vimeo-token", token);
-        }
-
         public string GetSlackToken()
         {
             var token = PlayerPrefs.GetString("slack-token");
@@ -126,16 +108,6 @@ namespace Vimeo {
         public void SetSlackToken(string token)
         {
             SetKey("slack-token", token);
-        }
-
-        private void SetKey(string key, string val)
-        {
-            if (val == null || val == "") {
-                PlayerPrefs.DeleteKey(key);
-            } else {
-                PlayerPrefs.SetString(key, val);
-            }
-            PlayerPrefs.Save(); 
         }
 
     	public void BeginRecording()

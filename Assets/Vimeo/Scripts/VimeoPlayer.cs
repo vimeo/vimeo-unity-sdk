@@ -34,15 +34,16 @@ namespace Vimeo
 
 		public override void OnInspectorGUI()
 		{
-			var publisher = target as VimeoPlayer;
-            DrawVimeoConfig(publisher); 
+			var player = target as VimeoPlayer;
+            player.vimeoTokenName = "vimeo-player-token";
+            DrawVimeoConfig(player); 
             EditorUtility.SetDirty(target);
 		}
     }
 #endif
 
 	[AddComponentMenu("Video/Vimeo Player")]
-	public class VimeoPlayer : MonoBehaviour 
+	public class VimeoPlayer : VimeoBehavior 
     {
         public delegate void VimeoEvent();
         public event VimeoEvent OnVideoStart;
@@ -51,9 +52,7 @@ namespace Vimeo
 
         public GameObject videoScreen;
         public GameObject audioSource;
-        public string vimeoToken;
-        public bool   saveVimeoToken = true;
-        public bool   vimeoSignIn = false;
+
         public string vimeoVideoId;
 
 		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
@@ -107,37 +106,6 @@ namespace Vimeo
             }
         }
 
-        public string GetVimeoToken()
-        {
-            if (saveVimeoToken) {
-                return vimeoToken;
-            }
-            else {
-                return PlayerPrefs.GetString("vimeo-player-token");
-            }
-        }
-
-        public void SetVimeoToken(string token)
-        {
-            if (saveVimeoToken) {
-                SetKey("vimeo-player-token", null);
-                vimeoToken = token;
-            }
-            else {
-                vimeoToken = null;
-                SetKey("vimeo-player-token", token);
-            }
-        }
-
-        private void SetKey(string key, string val)
-        {
-            if (val == null || val == "") {
-                PlayerPrefs.DeleteKey(key);
-            } else {
-                PlayerPrefs.SetString(key, val);
-            }
-            PlayerPrefs.Save(); 
-        }
 
         private void OnDisable()
         {
