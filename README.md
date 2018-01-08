@@ -25,9 +25,7 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
 </table>
 
 ### 1. Installation
-There are two ways to install:
-* Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
-* Or download from the [Unity Asset Store](http://u3d.as/127G)
+Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
 
 ### 2. Choose your playback method
 Open up your Unity scene or create a new one. For streaming any Vimeo video, you will be using the `VimeoPlayer` component. There are two ways to setup the Vimeo player in Unity:

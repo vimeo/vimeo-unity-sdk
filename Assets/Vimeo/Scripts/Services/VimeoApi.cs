@@ -232,7 +232,12 @@ namespace Vimeo.Services
                 yield return VimeoApi.SendRequest(request);
 
                 if (OnRequestComplete != null) {
-                    OnRequestComplete(request.downloadHandler.text);
+                    if (request.responseCode != 200) {
+                        Debug.LogError(request.downloadHandler.text);
+                    }
+                    else {
+                        OnRequestComplete(request.downloadHandler.text);
+                    }
                 }
             }
         }

@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using SimpleJSON;
 
 using Vimeo.Services;
+using Vimeo.Config;
 using System.Text.RegularExpressions;
 
 namespace Vimeo
 {
 #if UNITY_EDITOR  
-    using Vimeo.Config;
     using UnityEditor;
 	[CustomEditor (typeof(VimeoPlayer))]
     public class VimeoPlayerInspector : VimeoConfig
@@ -34,15 +34,15 @@ namespace Vimeo
 
 		public override void OnInspectorGUI()
 		{
-			var publisher = target as VimeoPlayer;
-            DrawVimeoConfig(publisher); 
+			var player = target as VimeoPlayer;
+            DrawVimeoConfig(player); 
             EditorUtility.SetDirty(target);
 		}
     }
 #endif
 
 	[AddComponentMenu("Video/Vimeo Player")]
-	public class VimeoPlayer : MonoBehaviour 
+	public class VimeoPlayer : VimeoBehavior 
     {
         public delegate void VimeoEvent();
         public event VimeoEvent OnVideoStart;
@@ -51,9 +51,7 @@ namespace Vimeo
 
         public GameObject videoScreen;
         public GameObject audioSource;
-        public string vimeoToken;
-        public bool   saveVimeoToken = true;
-        public bool   vimeoSignIn = false;
+
         public string vimeoVideoId;
 
 		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
@@ -106,44 +104,6 @@ namespace Vimeo
                 Debug.LogWarning("No Vimeo video ID was specified");
             }
         }
-
-        public string GetVimeoToken()
-        {
-            if (saveVimeoToken) {
-                return vimeoToken;
-            }
-            else {
-                return PlayerPrefs.GetString("vimeo-player-token");
-            }
-        }
-
-        public void SetVimeoToken(string token)
-        {
-            if (saveVimeoToken) {
-                SetKey("vimeo-player-token", null);
-                vimeoToken = token;
-            }
-            else {
-                vimeoToken = null;
-                SetKey("vimeo-player-token", token);
-            }
-        }
-
-        private void SetKey(string key, string val)
-        {
-            if (val == null || val == "") {
-                PlayerPrefs.DeleteKey(key);
-            } else {
-                PlayerPrefs.SetString(key, val);
-            }
-            PlayerPrefs.Save(); 
-        }
-
-        private void OnDisable()
-        {
-            api.OnRequestComplete -= OnLoadVimeoVideoComplete;
-            controller.OnVideoStart    -= VideoStarted;
-        }	
 
         public void LoadVimeoVideo(int id)
         {
