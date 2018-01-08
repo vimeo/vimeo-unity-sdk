@@ -1,57 +1,14 @@
-﻿#if UNITY_EDITOR  
+﻿#if UNITY_EDITOR
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using Vimeo;
+using Vimeo.Utils;
 
 namespace Vimeo.Config 
 {  
-    public class VimeoBehavior : MonoBehaviour
-    {
-        public string vimeoToken;
-        public bool   saveVimeoToken = true;
-        public bool   vimeoSignIn = false;
-        private const string VIMEO_TOKEN_NAME = "vimeo-token-";
-
-        public string GetVimeoToken()
-        {
-            if (saveVimeoToken) {
-                return vimeoToken;
-            }
-            else {
-                return PlayerPrefs.GetString(VIMEO_TOKEN_NAME + SceneManager.GetActiveScene().name);
-            }
-        }
-
-        public void SetVimeoToken(string token)
-        {
-            // Wasn't able to DRY this up - PlayerPrefs started causing seg faults :/
-            string token_name = VIMEO_TOKEN_NAME + SceneManager.GetActiveScene().name;
-
-            if (saveVimeoToken) {
-                SetKey(token_name, null);
-                vimeoToken = token;
-            }
-            else {
-                vimeoToken = null;
-                SetKey(token_name, token);
-            }
-        }
-
-        public void SetKey(string key, string val)
-        {
-            if (val == null || val == "") {
-                PlayerPrefs.DeleteKey(key);
-            } 
-            else {
-                PlayerPrefs.SetString(key, val);
-            }
-            PlayerPrefs.Save(); 
-        }
-    }
-
     public class VimeoConfig : Editor 
     {
 		bool slackFold;
@@ -91,10 +48,7 @@ namespace Vimeo.Config
                 GUI.backgroundColor = Color.red;
                 if (GUILayout.Button("Switch accounts")) {
                     auth.vimeoSignIn = false;
-
-                    if (target.GetType() == typeof(VimeoPublisher)) {
-                        auth.SetVimeoToken(null);
-                    }
+                    auth.SetVimeoToken(null);
                 }
                 GUI.backgroundColor = Color.white;
             }

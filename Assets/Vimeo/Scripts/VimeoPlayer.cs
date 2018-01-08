@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using SimpleJSON;
 
 using Vimeo.Services;
+using Vimeo.Config;
 using System.Text.RegularExpressions;
 
 namespace Vimeo
 {
 #if UNITY_EDITOR  
-    using Vimeo.Config;
     using UnityEditor;
 	[CustomEditor (typeof(VimeoPlayer))]
     public class VimeoPlayerInspector : VimeoConfig
@@ -104,13 +104,6 @@ namespace Vimeo
                 Debug.LogWarning("No Vimeo video ID was specified");
             }
         }
-
-
-        private void OnDisable()
-        {
-            api.OnRequestComplete -= OnLoadVimeoVideoComplete;
-            controller.OnVideoStart    -= VideoStarted;
-        }	
 
         public void LoadVimeoVideo(int id)
         {

@@ -11,7 +11,7 @@ using SimpleJSON;
 
 namespace Vimeo {
 
-    [CustomEditor (typeof(VimeoPublisher))]
+    [CustomEditor(typeof(VimeoPublisher))]
     public class VimeoPublisherInspector : VimeoConfig
     {
         public override void OnInspectorGUI()
@@ -24,7 +24,7 @@ namespace Vimeo {
 
     [AddComponentMenu("Vimeo/Video Recorder")]
     public class VimeoPublisher : VimeoBehavior {
-
+    
         public enum LinkType
         {
             VideoPage,
@@ -59,9 +59,8 @@ namespace Vimeo {
 
         private Coroutine saveCoroutine;
 
-    	void Start () 
+    	void Start() 
     	{
-
     		if (_camera == null) {
     			_camera = Camera.main;
 			}
@@ -265,7 +264,7 @@ namespace Vimeo {
                 }
             }
         }
-
     }
 }
+
 #endif
