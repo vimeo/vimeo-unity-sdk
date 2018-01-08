@@ -17,7 +17,6 @@ namespace Vimeo {
         public override void OnInspectorGUI()
         {
             var publisher = target as VimeoPublisher;
-            publisher.vimeoTokenName = "vimeo-publisher-token";
             DrawVimeoConfig(publisher);
             EditorUtility.SetDirty(target);
         }

@@ -35,7 +35,6 @@ namespace Vimeo
 		public override void OnInspectorGUI()
 		{
 			var player = target as VimeoPlayer;
-            player.vimeoTokenName = "vimeo-player-token";
             DrawVimeoConfig(player); 
             EditorUtility.SetDirty(target);
 		}

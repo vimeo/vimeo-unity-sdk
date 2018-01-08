@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEditor;
 using Vimeo;
 
@@ -12,7 +13,7 @@ namespace Vimeo.Config
         public string vimeoToken;
         public bool   saveVimeoToken = true;
         public bool   vimeoSignIn = false;
-        public string vimeoTokenName = "vimeo-token";
+        private const string VIMEO_TOKEN_NAME = "vimeo-token-";
 
         public string GetVimeoToken()
         {
@@ -20,19 +21,22 @@ namespace Vimeo.Config
                 return vimeoToken;
             }
             else {
-                return PlayerPrefs.GetString(vimeoTokenName);
+                return PlayerPrefs.GetString(VIMEO_TOKEN_NAME + SceneManager.GetActiveScene().name);
             }
         }
 
         public void SetVimeoToken(string token)
         {
+            // Wasn't able to DRY this up - PlayerPrefs started causing seg faults :/
+            string token_name = VIMEO_TOKEN_NAME + SceneManager.GetActiveScene().name;
+
             if (saveVimeoToken) {
-                SetKey(vimeoTokenName, null);
+                SetKey(token_name, null);
                 vimeoToken = token;
             }
             else {
                 vimeoToken = null;
-                SetKey(vimeoTokenName, token);
+                SetKey(token_name, token);
             }
         }
 
@@ -40,12 +44,12 @@ namespace Vimeo.Config
         {
             if (val == null || val == "") {
                 PlayerPrefs.DeleteKey(key);
-            } else {
+            } 
+            else {
                 PlayerPrefs.SetString(key, val);
             }
             PlayerPrefs.Save(); 
         }
-
     }
 
     public class VimeoConfig : Editor 
