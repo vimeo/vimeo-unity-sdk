@@ -1,11 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Vimeo.Utils;
 
 namespace Vimeo.Config 
 {  
-    public class VimeoBehavior : UniqueId
+    public class VimeoBehavior : MonoBehaviour
     {
         public string vimeoToken;
         public bool   saveVimeoToken = true;
@@ -18,14 +17,14 @@ namespace Vimeo.Config
                 return vimeoToken;
             }
             else {
-                return PlayerPrefs.GetString(VIMEO_TOKEN_NAME + uniqueId);
+                return PlayerPrefs.GetString(VIMEO_TOKEN_NAME + this.gameObject.scene.name);
             }
         }
 
         public void SetVimeoToken(string token)
         {
             // Wasn't able to DRY this up - PlayerPrefs started causing seg faults :/
-            string token_name = VIMEO_TOKEN_NAME + uniqueId;
+            string token_name = VIMEO_TOKEN_NAME + this.gameObject.scene.name;
 
             if (saveVimeoToken) {
                 SetKey(token_name, null);

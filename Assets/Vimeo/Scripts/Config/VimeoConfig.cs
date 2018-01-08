@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEditor;
 using Vimeo;
-using Vimeo.Utils;
 
 namespace Vimeo.Config 
 {  
