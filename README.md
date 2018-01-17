@@ -10,15 +10,15 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
 <table>
   <tr>
     <td style="width:33%">
-      <img src="Images/playerscene.gif" /><br>
+      <img src="https://i.imgur.com/EN5AHKj.gif" /><br>
       <b>Player</b> - Demos simple video streaming inside of a 3D environment.
     </td>
     <td style="width:33%">
-      <img src="Images/360player.gif" /><br>
+      <img src="https://i.imgur.com/4Q4uqGG.gif" /><br>
       <b>360Player</b> - Demos how to stream 360 videos from Vimeo (supports 3D / stereoscopic video).
     </td>
     <td style="width:33%">
-      <img src="Images/canvasplayer.gif" /><br>
+      <img src="https://i.imgur.com/yQ5z9rz.gif" /><br>
       <b>CanvasPlayer</b> - Demos how to build a canvas-based player with basic playback controls.
     </td>
   </tr>
@@ -33,12 +33,12 @@ Open up your Unity scene or create a new one. For streaming any Vimeo video, you
 #### Prefab setup
 The easiest way to get started is to either drag in one of the prefabs from `Vimeo/Resources/Prefabs` or simply right-click on your scene and the Vimeo Player from the `Video` menu:
 
-<img src="Images/vimeo-menuitem.gif" width="500" />
+<img src="https://i.imgur.com/LYO4k95.gif" width="500" />
 
 #### Manual setup 
 If you are setting up your own scene and want to specify your video "screen" and audio outputs, you can add the `Vimeo Player` component to your GameObject. 
 
-<img src="Images/vimeo-component.gif"  />
+<img src="https://i.imgur.com/F9aGHYD.gif"  />
 
 ### 3. Sign into your Vimeo account
 Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't already) and make sure you have some videos uploaded. Please read the following two requirements to streaming Vimeo videos into Unity:
@@ -47,7 +47,7 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
 
 > You can only stream videos from your own Vimeo account. Access to all videos is limited to partnership-level integrations. If you are interested in a partnership, reach out to casey@vimeo.com
 
-<img src="Images/vimeo-login.gif"  />
+<img src="https://i.imgur.com/P8F3A6y.gif"  />
 
 * Click "Sign into Vimeo" which will ask you to authorize with your Vimeo account. 
 * After authorizing, copy the token and paste it into the `Vimeo Token` field in Unity. 
