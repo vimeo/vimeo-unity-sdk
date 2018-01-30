@@ -28,7 +28,12 @@ namespace Vimeo.Config
 
                 GUILayout.BeginHorizontal("box");
                 if (GUILayout.Button("Get Token", GUILayout.Height(30))) {
-                    Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private%20video_files");
+                    if (auth is VimeoPlayer) {
+                        Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private%20video_files");
+                    }
+                    else {
+                        Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
+                    }
                 }
 
                 GUI.backgroundColor = Color.green;
