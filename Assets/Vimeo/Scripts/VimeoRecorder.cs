@@ -3,9 +3,9 @@ using UnityEditor.Media;
 using UnityEngine;
 
 #if UNITY_2018_1_OR_NEWER
-	using Unity.Collections;
+    using Unity.Collections;
 #else
-	using UnityEngine.Collections;
+    using UnityEngine.Collections;
 #endif
 
 using UnityEngine.Rendering;
@@ -15,142 +15,142 @@ using System.Collections;
 
 namespace Vimeo {
 
-	[RequireComponent(typeof(Camera))]
-	public class VimeoRecorder : MonoBehaviour
-	{
-		public string outputPath = Path.GetTempPath();
+    [RequireComponent(typeof(Camera))]
+    public class VimeoRecorder : MonoBehaviour
+    {
+        public string outputPath = Path.GetTempPath();
 
-		[HideInInspector] public string encodedFilePath;
-		[HideInInspector] public bool isRecording = false;
+        [HideInInspector] public string encodedFilePath;
+        [HideInInspector] public bool isRecording = false;
 
-		private Camera _camera;
+        private Camera _camera;
 
-		private VimeoPublisher vimeoPublisher;
+        private VimeoPublisher vimeoPublisher;
 
-		private VideoTrackAttributes videoAttrs;
-		private AudioTrackAttributes audioAttrs;
-		private int sampleFramesPerVideoFrame;
+        private VideoTrackAttributes videoAttrs;
+        private AudioTrackAttributes audioAttrs;
+        private int sampleFramesPerVideoFrame;
 
 
-		private Material matCopy;
-		private Shader shaderCopy;
-		private Mesh fullscreenQuad;
+        private Material matCopy;
+        private Shader shaderCopy;
+        private Mesh fullscreenQuad;
 
-		private MediaEncoder encoder;
-		private NativeArray<float> audioBuffer;
-		private RenderTexture renderBuffer;
-		private CommandBuffer commandBuffer;
+        private MediaEncoder encoder;
+        private NativeArray<float> audioBuffer;
+        private RenderTexture renderBuffer;
+        private CommandBuffer commandBuffer;
 
-	    public void BeginRecording()
-		{
-			Debug.Log("VimeoRecorder: BeginRecording()");
-			isRecording = true;
+        public void BeginRecording()
+        {
+            Debug.Log("VimeoRecorder: BeginRecording()");
+            isRecording = true;
 
-			_camera = GetComponent<Camera>();
-			encodedFilePath = Path.Combine(outputPath, "test-recording.mp4");
+            _camera = GetComponent<Camera>();
+            encodedFilePath = Path.Combine(outputPath, "test-recording.mp4");
 
-			Debug.Log(encodedFilePath);
+            Debug.Log(encodedFilePath);
 
-			// Setup shader/material/quad
-			if (shaderCopy == null) {
-				shaderCopy = Shader.Find("Hidden/FrameRecorder/CopyFrameBuffer");
-			}
+            // Setup shader/material/quad
+            if (shaderCopy == null) {
+                shaderCopy = Shader.Find("Hidden/FrameRecorder/CopyFrameBuffer");
+            }
 
-			if (matCopy == null) {
-				matCopy = new Material(shaderCopy);
-			}
+            if (matCopy == null) {
+                matCopy = new Material(shaderCopy);
+            }
 
-			if (fullscreenQuad == null) { 
-				fullscreenQuad = VimeoRecorder.CreateFullscreenQuad();
-			}
-			
-			// Get Camera data and prepare to send to buffer
+            if (fullscreenQuad == null) { 
+                fullscreenQuad = VimeoRecorder.CreateFullscreenQuad();
+            }
+            
+            // Get Camera data and prepare to send to buffer
             int captureWidth = (_camera.pixelWidth + 1) & ~1;
             int captureHeight = (_camera.pixelHeight + 1) & ~1;
 
-			renderBuffer = new RenderTexture(captureWidth, captureHeight, 0);
-			renderBuffer.wrapMode = TextureWrapMode.Repeat;
-			renderBuffer.Create();
+            renderBuffer = new RenderTexture(captureWidth, captureHeight, 0);
+            renderBuffer.wrapMode = TextureWrapMode.Repeat;
+            renderBuffer.Create();
 
             Debug.Log ("WxH: " + captureWidth + "x" + captureHeight);
 
-			// Configure encoder
-			videoAttrs = new VideoTrackAttributes
-	        {
-	            frameRate = new MediaRational(40),
-				width = (uint)captureWidth,
-				height = (uint)captureHeight,
-	            includeAlpha = false
-	        };
+            // Configure encoder
+            videoAttrs = new VideoTrackAttributes
+            {
+                frameRate = new MediaRational(40),
+                width = (uint)captureWidth,
+                height = (uint)captureHeight,
+                includeAlpha = false
+            };
 
-	        audioAttrs = new AudioTrackAttributes
-	        {
-	            sampleRate = new MediaRational(48000),
-	            channelCount = 2,
-	            language = "en"
-	        };
+            audioAttrs = new AudioTrackAttributes
+            {
+                sampleRate = new MediaRational(48000),
+                channelCount = 2,
+                language = "en"
+            };
 
-			encoder = new MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+            encoder = new MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
 
-			//sampleFramesPerVideoFrame = audioAttrs.channelCount * audioAttrs.sampleRate.numerator / videoAttrs.frameRate.numerator;
-	        //audioBuffer = new NativeArray<float>(sampleFramesPerVideoFrame, Allocator.Temp);
+            //sampleFramesPerVideoFrame = audioAttrs.channelCount * audioAttrs.sampleRate.numerator / videoAttrs.frameRate.numerator;
+            //audioBuffer = new NativeArray<float>(sampleFramesPerVideoFrame, Allocator.Temp);
 
-			// Setup the command buffer 
+            // Setup the command buffer 
             // TODO: Support RenderTexture
-			int tid = Shader.PropertyToID("_TmpFrameBuffer");
-			commandBuffer = new CommandBuffer();
-			commandBuffer.name = "VimeoRecorder: copy frame buffer";
+            int tid = Shader.PropertyToID("_TmpFrameBuffer");
+            commandBuffer = new CommandBuffer();
+            commandBuffer.name = "VimeoRecorder: copy frame buffer";
 
             commandBuffer.GetTemporaryRT(tid, -1, -1, 0, FilterMode.Bilinear);
             commandBuffer.Blit(BuiltinRenderTextureType.CurrentActive, tid);
-			commandBuffer.SetRenderTarget(renderBuffer);
-			commandBuffer.DrawMesh(fullscreenQuad, Matrix4x4.identity, matCopy, 0, 0);
+            commandBuffer.SetRenderTarget(renderBuffer);
+            commandBuffer.DrawMesh(fullscreenQuad, Matrix4x4.identity, matCopy, 0, 0);
             commandBuffer.ReleaseTemporaryRT(tid);
 
             _camera.AddCommandBuffer(CameraEvent.AfterEverything, commandBuffer);
-	    }
+        }
 
-	    public void EndRecording()
-	    {
-			if (encoder != null) {
+        public void EndRecording()
+        {
+            if (encoder != null) {
                 encoder.Dispose();
                 encoder = null;
             }
 
-			if (commandBuffer != null) {
-				_camera.RemoveCommandBuffer(CameraEvent.AfterEverything, commandBuffer);
-				commandBuffer.Release();
-				commandBuffer = null;
+            if (commandBuffer != null) {
+                _camera.RemoveCommandBuffer(CameraEvent.AfterEverything, commandBuffer);
+                commandBuffer.Release();
+                commandBuffer = null;
             }
 
             if (renderBuffer != null) {
-				renderBuffer.Release();
-				renderBuffer = null;
+                renderBuffer.Release();
+                renderBuffer = null;
             }
 
             if (isRecording) {
                 Debug.Log("VimeoRecorder: EndRecording()");
             }
 
-			isRecording = false;
-	    }
+            isRecording = false;
+        }
 
-		IEnumerator OnPostRender()
-		{
+        IEnumerator OnPostRender()
+        {
             if (isRecording && encoder != null) {
-				yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
 
-				VimeoRecorder.CaptureLock(renderBuffer, (data) => {
-					encoder.AddFrame(data);
+                VimeoRecorder.CaptureLock(renderBuffer, (data) => {
+                    encoder.AddFrame(data);
                 });
 
                 // Fill 'audioBuffer' with the audio content to be encoded into the file for this frame.
                 // ...
                 //encoder.AddSamples(audioBuffer);
-			}
-	    }
+            }
+        }
 
-		public static void CaptureLock(RenderTexture src, Action<Texture2D> body)
+        public static void CaptureLock(RenderTexture src, Action<Texture2D> body)
         {
             Texture2D tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
             RenderTexture.active = src;
@@ -160,7 +160,7 @@ namespace Vimeo {
             UnityEngine.Object.Destroy(tex);
         }
 
-		public static Mesh CreateFullscreenQuad()
+        public static Mesh CreateFullscreenQuad()
         {
             var r = new Mesh();
             r.vertices = new Vector3[4] {
@@ -173,6 +173,6 @@ namespace Vimeo {
             r.UploadMeshData(true);
             return r;
         }
-	}
+    }
 }
 #endif

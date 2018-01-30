@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
@@ -11,9 +11,9 @@ namespace Vimeo
 {
 #if UNITY_EDITOR  
     using UnityEditor;
-	[CustomEditor (typeof(VimeoPlayer))]
+    [CustomEditor (typeof(VimeoPlayer))]
     public class VimeoPlayerInspector : VimeoConfig
-	{
+    {
         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
         private static void CreateCanvasPrefab() {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
@@ -32,17 +32,17 @@ namespace Vimeo
             go.name = "[VimeoPlayer360]";
         }
 
-		public override void OnInspectorGUI()
-		{
-			var player = target as VimeoPlayer;
+        public override void OnInspectorGUI()
+        {
+            var player = target as VimeoPlayer;
             DrawVimeoConfig(player); 
             EditorUtility.SetDirty(target);
-		}
+        }
     }
 #endif
 
-	[AddComponentMenu("Video/Vimeo Player")]
-	public class VimeoPlayer : VimeoBehavior 
+    [AddComponentMenu("Video/Vimeo Player")]
+    public class VimeoPlayer : VimeoBehavior 
     {
         public delegate void VimeoEvent();
         public event VimeoEvent OnVideoStart;
@@ -54,12 +54,12 @@ namespace Vimeo
 
         public string vimeoVideoId;
 
-		public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
-		public int videoQualityIndex = 0;
+        public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
+        public int videoQualityIndex = 0;
 
-		public string videoName;
-		public string videoThumbnailUrl;
-		public string authorThumbnailUrl;
+        public string videoName;
+        public string videoThumbnailUrl;
+        public string authorThumbnailUrl;
         public bool is3D;
         public string videoProjection;
         public string videoStereoFormat;
@@ -67,7 +67,7 @@ namespace Vimeo
         private VimeoApi api;
         public VideoController controller;
 
-		private void Start()
+        private void Start()
         {
             if (GetVimeoToken() != null) {
                 api = gameObject.AddComponent<VimeoApi>();
@@ -110,30 +110,30 @@ namespace Vimeo
             api.GetVideoFileUrlByVimeoId(id);
         }
 
-		public void Play()
-		{
-			controller.Play();
-		}
+        public void Play()
+        {
+            controller.Play();
+        }
 
-		public void Pause()
-		{
-			controller.Pause();
-		}
+        public void Pause()
+        {
+            controller.Pause();
+        }
 
         public void Seek(float seek)
         {
             controller.Seek(seek);
         }
 
-		public void SeekBackward(float seek)
-		{
-			controller.SeekBackward(seek);
-		}
+        public void SeekBackward(float seek)
+        {
+            controller.SeekBackward(seek);
+        }
 
-		public void SeekForward(float seek)
-		{
-			controller.SeekForward(seek);
-		}
+        public void SeekForward(float seek)
+        {
+            controller.SeekForward(seek);
+        }
 
         public void ToggleVideoPlayback()
         {
@@ -150,28 +150,28 @@ namespace Vimeo
             return controller.height;
         }
 
-		public float GetProgress()
-		{
+        public float GetProgress()
+        {
             if (controller != null && controller.videoPlayer != null) {
-				return (float)controller.GetCurrentFrame() / (float)controller.GetTotalFrames();
-			}
-			return 0;
-		}
+                return (float)controller.GetCurrentFrame() / (float)controller.GetTotalFrames();
+            }
+            return 0;
+        }
 
-		public string GetTimecode()
-		{
-			if (controller != null) {
-				float sec = Mathf.Floor ((float)controller.videoPlayer.time % 60);
-				float min = Mathf.Floor ((float)controller.videoPlayer.time / 60f);
+        public string GetTimecode()
+        {
+            if (controller != null) {
+                float sec = Mathf.Floor ((float)controller.videoPlayer.time % 60);
+                float min = Mathf.Floor ((float)controller.videoPlayer.time / 60f);
 
-				string secZeroPad = sec > 9 ? "" : "0";
-				string minZeroPad = min > 9 ? "" : "0";
+                string secZeroPad = sec > 9 ? "" : "0";
+                string minZeroPad = min > 9 ? "" : "0";
 
-				return minZeroPad + min + ":" + secZeroPad + sec;
-			}
+                return minZeroPad + min + ":" + secZeroPad + sec;
+            }
 
-			return null;
-		}
+            return null;
+        }
 
         // Events below
         private void VideoStarted(VideoController controller) {
@@ -196,7 +196,7 @@ namespace Vimeo
 
         private void OnLoadVimeoVideoComplete(string response)
         {
-			var json = JSON.Parse(response);
+            var json = JSON.Parse(response);
             if (json["error"] == null) {
                 controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
             } 
@@ -264,23 +264,23 @@ namespace Vimeo
             }
         }
 
-		private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, string quality)
-		{
+        private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, string quality)
+        {
             List<JSONNode> preferred_qualities = new List<JSONNode>();
-			for (int i = 0; i < qualities.Count; i++) {
+            for (int i = 0; i < qualities.Count; i++) {
                 if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
-					Debug.Log("Loading " + qualities[i]["height"] + "p file");
+                    Debug.Log("Loading " + qualities[i]["height"] + "p file");
                     preferred_qualities.Add(qualities[i]);
-				}
-			}
+                }
+            }
 
-			Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
-			return qualities;
-		}
+            Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
+            return qualities;
+        }
 
-		private static int SortByQuality(JSONNode q1, JSONNode q2)
-		{
-			return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
-		}
+        private static int SortByQuality(JSONNode q1, JSONNode q2)
+        {
+            return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
+        }
     }
 }
