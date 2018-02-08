@@ -70,69 +70,6 @@ namespace Vimeo.Config
             DrawVimeoAuth(player);
 			so.ApplyModifiedProperties();
 		}
-
-#if UNITY_2017_3_OR_NEWER
-        public void DrawVimeoConfig(VimeoPublisher publisher)
-        {
-            var so = serializedObject;
-
-            if (Authenticated(publisher.GetVimeoToken()) && publisher.vimeoSignIn) {
-                EditorGUILayout.Space();
-
-                EditorGUILayout.PropertyField(so.FindProperty("_camera"));
-                EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
-				EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
-
-				vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo Default Settings");
-				if (vimeoFold) {
-					EditorGUI.indentLevel++;
-	                EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-	                EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
-					EditorGUI.indentLevel--;
-                }
-
-                DrawSlackConfig(publisher);
-            }
-
-            DrawVimeoAuth(publisher);
-            so.ApplyModifiedProperties();
-        }
-
-        public void DrawSlackAuth(string _token)
-        {
-            var so = serializedObject;
-            if (!Authenticated(_token)) {
-				EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
-                if (GUILayout.Button("Sign into Slack")) {
-					Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/slack");
-                }
-            } 
-            else {
-                if (GUILayout.Button("Switch Slack Team")) {
-                    var t = target as VimeoPublisher;
-                    t.SetSlackToken(null);
-                }
-            }
-		}
-
-        public void DrawSlackConfig(VimeoPublisher publisher)
-        {
-            var so = serializedObject;
-			slackFold = EditorGUILayout.Foldout(slackFold, "Share to Slack");
-
-			if (slackFold) {
-				EditorGUI.indentLevel++;
-                if (Authenticated (publisher.GetSlackToken())) {
-                    EditorGUILayout.PropertyField(so.FindProperty("slackChannel"));
-					EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));
-					EditorGUILayout.PropertyField(so.FindProperty("autoPostToChannel"));
-                } 
-
-                DrawSlackAuth(publisher.GetSlackToken());
-				EditorGUI.indentLevel--;
-			}
-        }
-#endif
     }
 }
 
