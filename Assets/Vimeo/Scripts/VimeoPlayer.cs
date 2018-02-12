@@ -79,6 +79,9 @@ namespace Vimeo
                 Debug.LogWarning("No video screen was specified.");
             }
 
+
+
+
             controller = gameObject.AddComponent<VideoController>();
             controller.videoScreenObject = videoScreen;
 
@@ -89,6 +92,7 @@ namespace Vimeo
 
             if (audioSource && audioSource.GetType() == typeof(GameObject))
             {
+
                 if (audioSource.GetComponent<AudioSource>() != null)
                 {
                     controller.audioSource = audioSource.GetComponent<AudioSource>();
@@ -98,6 +102,7 @@ namespace Vimeo
                     Debug.LogWarning("No AudioSource component found on " + audioSource.name + " GameObject");
                 }
             }
+
 
             // Bootup video
             if (vimeoVideoId != null && vimeoVideoId != "") {
