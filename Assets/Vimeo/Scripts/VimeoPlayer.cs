@@ -255,7 +255,7 @@ namespace Vimeo
                 qualities.Sort(SortByQuality);
             }
 
-            // If set to highest, get the first one
+            // If set to highest quality, get the first one
             if (videoQualities[videoQualityIndex] == "Highest") {
                 return qualities;
             } 
@@ -269,13 +269,16 @@ namespace Vimeo
             List<JSONNode> preferred_qualities = new List<JSONNode>();
             for (int i = 0; i < qualities.Count; i++) {
                 if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
-                    Debug.Log("Loading " + qualities[i]["height"] + "p file");
                     preferred_qualities.Add(qualities[i]);
                 }
             }
 
-            Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
-            return qualities;
+            if (preferred_qualities.Count == 0) {
+                Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
+                return qualities;
+            }
+
+            return preferred_qualities;
         }
 
         private static int SortByQuality(JSONNode q1, JSONNode q2)

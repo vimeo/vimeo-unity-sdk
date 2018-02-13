@@ -43,10 +43,13 @@ namespace Vimeo
                     audioSource.volume = 1;
                 }
 
-                videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+                videoPlayer.playOnAwake = false;
                 videoPlayer.source = VideoSource.Url;
 
+                videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
                 videoPlayer.SetTargetAudioSource(0, audioSource);
+                videoPlayer.controlledAudioTrackCount = 1;
+
                 if (videoScreenObject.GetComponent<RawImage>() != null) {
                     SetupRenderTexture();
                 }
@@ -100,8 +103,9 @@ namespace Vimeo
             Setup();
             this.stereoFormat = stereoFormat;
             this.is3D = is3D;
+
             videoPlayer.url = file_url;
-            videoPlayer.Play();
+            videoPlayer.Prepare();
         }
 
         public void SeekBackward(float amount)
@@ -169,6 +173,8 @@ namespace Vimeo
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
+            source.Play();
+
             if (OnVideoStart != null) {
                 width  = videoPlayer.texture.width;
                 height = videoPlayer.texture.height;

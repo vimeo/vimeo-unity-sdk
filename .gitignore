@@ -25,8 +25,9 @@ ExportedObj/
 *.pdb
 *.vscode
 
-# Unity3D generated meta files
+# Unity3D generated files
 *.pidb.meta
+UnityPackageManager/manifest.json
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
