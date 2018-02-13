@@ -29,10 +29,10 @@ namespace Vimeo.Config
                 GUILayout.BeginHorizontal("box");
                 if (GUILayout.Button("Get Token", GUILayout.Height(30))) {
                     if (auth is VimeoPlayer) {
-                        Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity?scope=public%20private%20video_files");
+                        Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity?scope=public%20private%20video_files");
                     }
                     else {
-                        Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/vimeo/unity");
+                        Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity");
                     }
                 }
 
@@ -109,7 +109,7 @@ namespace Vimeo.Config
             if (!Authenticated(_token)) {
                 EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
                 if (GUILayout.Button("Sign into Slack")) {
-                    Application.OpenURL("https://vimeo-authy.herokuapp.com/auth/slack");
+                    Application.OpenURL("https://authy.vimeo.com/auth/slack");
                 }
             } 
             else {
