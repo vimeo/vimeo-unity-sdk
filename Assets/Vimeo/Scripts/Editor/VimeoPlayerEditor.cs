@@ -4,7 +4,7 @@ using UnityEditor;
 namespace Vimeo
 {
     [CustomEditor(typeof(VimeoPlayer))]
-    public class VimeoPlayerInspector : BaseEditor
+    public class VimeoPlayerEditor : BaseEditor
     {
         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
         private static void CreateCanvasPrefab() {

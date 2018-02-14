@@ -8,7 +8,6 @@ namespace Vimeo
 {  
     public class BaseEditor : Editor 
     {
-
         public bool Authenticated(string token)
         {
             return token != "" && token != null;

@@ -6,34 +6,43 @@ using UnityEditor;
 namespace Vimeo 
 {
     [CustomEditor(typeof(VimeoRecorder))]
-    public class RecorderEditor : BaseEditor
+    public class VimeoRecorderEditor : BaseEditor
     {
-        bool slackFold;
+        bool recordingFold;
         bool vimeoFold;
+        bool slackFold;
 
         public override void OnInspectorGUI()
         {
             var recorder = target as VimeoRecorder;
-            DrawVimeoConfig(recorder);
+            DrawConfig(recorder);
             EditorUtility.SetDirty(target);
         }
             
-        public void DrawVimeoConfig(VimeoRecorder recorder)
+        public void DrawConfig(VimeoRecorder recorder)
         {
             var so = serializedObject;
 
             if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
                 EditorGUILayout.Space();
 
-                EditorGUILayout.PropertyField(so.FindProperty("_camera"));
                 EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
                 EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
 
-                vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo Default Settings");
+                recordingFold = EditorGUILayout.Foldout(recordingFold, "Recording");
+                if (recordingFold) {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(so.FindProperty("videoInput"));
+                    EditorGUILayout.PropertyField(so.FindProperty("videoResolution"));
+                    EditorGUILayout.PropertyField(so.FindProperty("videoAspectRatio"));
+                    EditorGUI.indentLevel--;
+                }
+
+                vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Publish to");
                 if (vimeoFold) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                    EditorGUILayout.PropertyField(so.FindProperty("m_privacyMode"));
+                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
                     EditorGUI.indentLevel--;
                 }
 

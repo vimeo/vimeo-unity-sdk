@@ -11,7 +11,6 @@ using SimpleJSON;
 
 namespace Vimeo {
 
-    [AddComponentMenu("Vimeo/Video Recorder")]
     public class VimeoPublisher : MonoBehaviour {
     
         public delegate void UploadAction(string status, float progress);
@@ -42,7 +41,7 @@ namespace Vimeo {
         public string GetVimeoPermalink()
         {
             if (recorder.videoPermalink != null) {
-                if (recorder.defaultShareLink == RecorderSettings.LinkType.ReviewPage) {
+                if (recorder.defaultShareLink == LinkType.ReviewPage) {
                     return recorder.videoReviewPermalink;
                 } 
                 else {

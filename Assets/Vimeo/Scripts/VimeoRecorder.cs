@@ -11,9 +11,9 @@ using SimpleJSON;
 
 namespace Vimeo
 {
-    [AddComponentMenu("Vimeo/Video Recorder")]
-    public class VimeoRecorder : RecorderSettings {
-
+    [AddComponentMenu("Video/Vimeo Recorder")]
+    public class VimeoRecorder : RecorderSettings 
+    {
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
