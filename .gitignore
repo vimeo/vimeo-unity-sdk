@@ -5,6 +5,7 @@
 /[Bb]uilds/
 /Assets/AssetStoreTools*
 /Assets/Unity Technologies*
+/Assets/FrameRecorder*
 
 # Visual Studio 2015 cache directory
 /.vs/
