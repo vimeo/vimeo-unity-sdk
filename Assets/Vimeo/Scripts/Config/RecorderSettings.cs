@@ -10,12 +10,10 @@ namespace Vimeo.Config
         ReviewPage
     }
     
-    public enum InputType
+    public enum VideoInputType
     {
         Screen,
-        Beta360,
-        ActiveCamera,
-        MainCamera
+        Camera
     }
 
     public enum Resolution
@@ -44,7 +42,11 @@ namespace Vimeo.Config
     public class RecorderSettings : VimeoAuth
     {
         public VimeoApi.PrivacyMode privacyMode = VimeoApi.PrivacyMode.anybody;
-        public LinkType defaultShareLink = LinkType.VideoPage;
+        public LinkType defaultShareLink        = LinkType.VideoPage;
+
+        public VideoInputType defaultVideoInput = VideoInputType.Screen;
+        public Resolution defaultResolution     = Resolution.Window;        
+        public AspectRatio defaultAspectRatio   = AspectRatio.x16_9;
 
         public bool recordOnStart = false;
         public bool openInBrowser = false;

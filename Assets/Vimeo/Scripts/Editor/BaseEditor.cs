@@ -44,7 +44,6 @@ namespace Vimeo
                 GUILayout.EndHorizontal();
             } 
             else {
-                
                 GUI.backgroundColor = Color.red;
                 if (GUILayout.Button("Switch accounts")) {
                     auth.vimeoSignIn = false;

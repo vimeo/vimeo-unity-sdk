@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Recorder;
+using Vimeo.Config;
 
 namespace Vimeo 
 {
@@ -27,23 +28,26 @@ namespace Vimeo
             if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
                 EditorGUILayout.Space();
 
-                EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
-                EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
-
                 recordingFold = EditorGUILayout.Foldout(recordingFold, "Recording");
                 if (recordingFold) {
                     EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField(so.FindProperty("videoInput"));
-                    EditorGUILayout.PropertyField(so.FindProperty("videoResolution"));
-                    EditorGUILayout.PropertyField(so.FindProperty("videoAspectRatio"));
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"));
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"));
+
+                    if (recorder.defaultResolution != Vimeo.Config.Resolution.Window) {
+                        EditorGUILayout.PropertyField(so.FindProperty("defaultAspectRatio"));
+                    }
+                    EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
                     EditorGUI.indentLevel--;
                 }
 
                 vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Publish to");
+                //vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Publish to");
                 if (vimeoFold) {
                     EditorGUI.indentLevel++;
                     EditorGUILayout.PropertyField(so.FindProperty("videoName"));
                     EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+                    EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
                     EditorGUI.indentLevel--;
                 }
 
