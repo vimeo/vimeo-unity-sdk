@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Vimeo;
+using Vimeo.Player;
 
 namespace Vimeo.Utils {
 	[RequireComponent(typeof(VimeoPlayer))]

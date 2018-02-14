@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Vimeo;
+using Vimeo.Recorder;
 using Vimeo.Services;
 
 namespace Vimeo.Controls {

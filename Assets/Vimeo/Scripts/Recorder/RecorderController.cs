@@ -13,7 +13,7 @@ using System;
 using System.IO;
 using System.Collections;
 
-namespace Vimeo {
+namespace Vimeo.Recorder {
 
     [RequireComponent(typeof(Camera))]
     public class RecorderController : MonoBehaviour

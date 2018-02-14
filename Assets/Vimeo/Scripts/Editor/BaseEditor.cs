@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Config;
+using Vimeo.Player;
 
 namespace Vimeo
 {  

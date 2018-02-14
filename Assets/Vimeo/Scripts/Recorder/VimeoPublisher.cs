@@ -4,13 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
-using Vimeo;
 using Vimeo.Config;
 using Vimeo.Services;
 using SimpleJSON;
 
-namespace Vimeo {
-
+namespace Vimeo.Recorder
+{
     public class VimeoPublisher : MonoBehaviour {
     
         public delegate void UploadAction(string status, float progress);

@@ -7,7 +7,7 @@ using Vimeo.Services;
 using Vimeo.Config;
 using System.Text.RegularExpressions;
 
-namespace Vimeo
+namespace Vimeo.Player
 {
     [AddComponentMenu("Video/Vimeo Player")]
     public class VimeoPlayer : PlayerSettings 

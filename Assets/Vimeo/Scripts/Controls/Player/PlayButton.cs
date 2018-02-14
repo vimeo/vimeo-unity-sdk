@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Vimeo.Player;
 
 namespace Vimeo.Controls.Player {
     public class PlayButton : MonoBehaviour {

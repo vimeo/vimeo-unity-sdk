@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEditor;
+using Vimeo.Recorder;
 
 namespace Vimeo 
 {
