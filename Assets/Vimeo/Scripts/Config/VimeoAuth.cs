@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Vimeo.Config 
 {  
-    public class VimeoBehavior : MonoBehaviour
+    public class VimeoAuth : MonoBehaviour
     {
         public string vimeoToken;
         public bool   saveVimeoToken = true;

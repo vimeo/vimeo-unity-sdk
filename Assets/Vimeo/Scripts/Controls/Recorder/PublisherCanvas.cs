@@ -9,7 +9,7 @@ using Vimeo.Services;
 namespace Vimeo.Controls {
     public class PublisherCanvas : MonoBehaviour
     {
-        private VimeoPublisher vimeoPublisher;
+        private VimeoRecorder recorder;
 
         public GameObject container;
         public GameObject cancelButton;
@@ -26,46 +26,46 @@ namespace Vimeo.Controls {
 
         void Start()
         {
-            vimeoPublisher = GetComponent<VimeoPublisher>();
-            vimeoPublisher.OnUploadProgress += UploadProgress;
+            recorder = GetComponent<VimeoRecorder>();
+            recorder.OnUploadProgress += UploadProgress;
 
-            titleField.GetComponent<InputField>().text = vimeoPublisher.videoName;
-            slackChannelField.GetComponent<InputField>().text = vimeoPublisher.slackChannel;
-            privacyTypeDropdown.value = GetPrivacyTypeIndex(vimeoPublisher.m_privacyMode);
+            titleField.GetComponent<InputField>().text = recorder.videoName;
+            slackChannelField.GetComponent<InputField>().text = recorder.slackChannel;
+            privacyTypeDropdown.value = GetPrivacyTypeIndex(recorder.privacyMode);
 
-			recordButton.GetComponent<Button>().onClick.AddListener(delegate {
-                vimeoPublisher.BeginRecording();
+            recordButton.GetComponent<Button>().onClick.AddListener(delegate {
+                recorder.BeginRecording();
             });
 
-			cancelButton.GetComponent<Button>().onClick.AddListener(delegate {
-                vimeoPublisher.CancelRecording();
+            cancelButton.GetComponent<Button>().onClick.AddListener(delegate {
+                recorder.CancelRecording();
             });
 
-			finishButton.GetComponent<Button>().onClick.AddListener(delegate {
-                vimeoPublisher.EndRecording();
+            finishButton.GetComponent<Button>().onClick.AddListener(delegate {
+                recorder.EndRecording();
             });
 
-            titleField.GetComponent<InputField> ().onValueChanged.AddListener (delegate {
+            titleField.GetComponent<InputField>().onValueChanged.AddListener (delegate {
                 TitleFieldChange();
             });
 
-            recordInputField.GetComponent<InputField> ().onValueChanged.AddListener (delegate {
+            recordInputField.GetComponent<InputField>().onValueChanged.AddListener(delegate {
                 RecordInputFieldChange();
             });
 
-            slackChannelField.GetComponent<InputField> ().onValueChanged.AddListener (delegate {
+            slackChannelField.GetComponent<InputField>().onValueChanged.AddListener(delegate {
                 SlackChannelFieldChange();
             });
 
-            recordTypeDropdown.onValueChanged.AddListener (delegate {
+            recordTypeDropdown.onValueChanged.AddListener(delegate {
                 RecordTypeChange();
             });
 
-            privacyTypeDropdown.onValueChanged.AddListener (delegate {
+            privacyTypeDropdown.onValueChanged.AddListener(delegate {
                 PrivacyTypeChange();
             });
 
-            if (vimeoPublisher.recordOnStart) {
+            if (recorder.recordOnStart) {
                 container.SetActive (true);
                 RecordingState();
             } else {
@@ -83,19 +83,19 @@ namespace Vimeo.Controls {
 
         private void TitleFieldChange()
         {
-            vimeoPublisher.videoName = titleField.GetComponent<InputField> ().text;
-            vimeoPublisher.SetVideoName(vimeoPublisher.videoName);
+            recorder.videoName = titleField.GetComponent<InputField>().text;
+            //recorder.SetVideoName(recorder.videoName);
         }
 
         private void PrivacyTypeChange()
         {
-            vimeoPublisher.m_privacyMode = GetPrivacyType();
-            vimeoPublisher.SetVideoPrivacyMode(vimeoPublisher.m_privacyMode);
+            recorder.privacyMode = GetPrivacyType();
+            //recorder.SetVideoPrivacyMode(recorder.m_privacyMode);
         }
 
         private void SlackChannelFieldChange()
         {
-            vimeoPublisher.slackChannel = slackChannelField.GetComponent<InputField>().text;
+            recorder.slackChannel = slackChannelField.GetComponent<InputField>().text;
         }
 
         // TODO: clean this logic up
@@ -182,7 +182,7 @@ namespace Vimeo.Controls {
 
         private void RecordingState()
         {
-                finishButton.SetActive (true);
+            finishButton.SetActive (true);
 
             cancelButton.SetActive (true);
             recordStatus.SetActive (true);

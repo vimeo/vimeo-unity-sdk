@@ -11,153 +11,53 @@ using SimpleJSON;
 
 namespace Vimeo {
 
-    [CustomEditor(typeof(VimeoPublisher))]
-    public class VimeoPublisherInspector : VimeoConfig
-    {
-        public override void OnInspectorGUI()
-        {
-            var publisher = target as VimeoPublisher;
-            DrawVimeoConfig(publisher);
-            EditorUtility.SetDirty(target);
-        }
-    }
-
     [AddComponentMenu("Vimeo/Video Recorder")]
-    public class VimeoPublisher : VimeoBehavior {
+    public class VimeoPublisher : MonoBehaviour {
     
-        public enum LinkType
-        {
-            VideoPage,
-            ReviewPage
-        }
-
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        public VimeoRecorder recorder;
-        public VimeoApi api;
-        public Camera _camera;
+        public VimeoRecorder recorder; // recorder contains all the settings
 
-        public VimeoApi.PrivacyMode m_privacyMode = VimeoApi.PrivacyMode.anybody;
-        public LinkType defaultShareLink = LinkType.VideoPage;
-
-        public bool recordOnStart = false;
-        public bool openInBrowser = false;
-
-        private Slack slack;
-        public bool shareToSlack = false;
-        public bool autoPostToChannel = false;
-        public string slackToken;
-        public string slackChannel;
-
-        public string videoName;
-        public string videoId;
-        public string videoPermalink;
-        public string videoReviewPermalink;
-
-        private bool isRecording = false;
+        private VimeoApi vimeoApi;
+        private SlackApi slackApi;
+        private string videoId;
 
         private Coroutine saveCoroutine;
 
-        void Start() 
+        void Init(VimeoRecorder _recorder) 
         {
-            if (_camera == null) {
-                _camera = Camera.main;
-            }
-
-            if (_camera == null) {
-                Debug.LogWarning ("VimeoPublisher: No camera was specified.");
-                return;
-            }
-
-            recorder = _camera.GetComponent<VimeoRecorder>();
-
-            if (recorder == null) {
-                recorder = _camera.gameObject.AddComponent<VimeoRecorder>();
-                Debug.Log("VimeoRecorder automatically added to " + _camera.name + ": " + recorder);
-            }
-
-            api = gameObject.AddComponent<VimeoApi> ();
-            api.token = GetVimeoToken();
-
-            api.OnPatchComplete  += VideoUpdated;
-            api.OnUploadComplete += UploadComplete;
-            api.OnUploadProgress += UploadProgress;
-
-            if (recordOnStart) {
-                BeginRecording();
-            }
-        }
-
-        public string GetSlackToken()
-        {
-            var token = PlayerPrefs.GetString("slack-token");
-            if (token == null || token == "") {
-                if (slackToken != null && slackToken != "") {
-                    SetSlackToken(slackToken);
-                }
-                token = slackToken;
-            }
-
-            slackToken = null;
-            return token;
-        }
-
-        public void SetSlackToken(string token)
-        {
-            SetKey("slack-token", token);
-        }
-
-        public void BeginRecording()
-        {
-            videoId = null;
-            videoPermalink = null;
-            videoReviewPermalink = null;
-
-            _camera.GetComponent<VimeoRecorder>().BeginRecording();
-            UploadProgress ("Recording", 0);
-        }
-
-        public void EndRecording()
-        {
-            isRecording = false;
-            recorder.EndRecording();
-
-            PublishVideo();
-        }
+            recorder = _recorder;
             
-        public void CancelRecording()
-        {
-            isRecording = false;
-            recorder.EndRecording();
-            DeleteVideoFile();
+            if (vimeoApi == null) {
+                vimeoApi = gameObject.AddComponent<VimeoApi>();
+                vimeoApi.token = recorder.GetVimeoToken();
+            }
 
-            UploadProgress ("Cancelled", 0);
-        }
-
-        public string GetVideoFilePath()
-        {
-            return recorder.encodedFilePath;
+            if (slackApi == null) {
+                slackApi = gameObject.AddComponent<SlackApi>();
+            }
         }
 
         public string GetVimeoPermalink()
         {
-            if (videoPermalink != null) {
-                if (defaultShareLink == LinkType.ReviewPage) {
-                    return videoReviewPermalink;
+            if (recorder.videoPermalink != null) {
+                if (recorder.defaultShareLink == RecorderSettings.LinkType.ReviewPage) {
+                    return recorder.videoReviewPermalink;
                 } 
                 else {
-                    return videoPermalink;
+                    return recorder.videoPermalink;
                 }
             } 
              
             return "https://vimeo.com/" + videoId;
         }
 
-        private void PublishVideo()
+        private void UploadVideo()
         {
-            api.UploadVideoFile(GetVideoFilePath());
+            vimeoApi.UploadVideoFile(recorder.GetVideoFilePath());
         }
+
 
         private void UploadProgress(string status, float progress)
         {
@@ -166,47 +66,48 @@ namespace Vimeo {
             }
         }
 
-        private void UploadComplete (string video_uri)
+        private void UploadComplete(string video_uri)
         {
-            string[] uri_pieces = video_uri.Split ("/" [0]);
+            string[] uri_pieces = video_uri.Split("/" [0]);
             videoId = uri_pieces [2];
 
-            SetVideoName(videoName);
-            SetVideoPrivacyMode(m_privacyMode);
+            if (vimeoApi != null) {
+                vimeoApi.OnPatchComplete  += VideoUpdated;
+                vimeoApi.OnUploadComplete += UploadComplete;
+                vimeoApi.OnUploadProgress += UploadProgress;
+            }
+           
+            SetVideoName(recorder.videoName);
+            SetVideoPrivacyMode(recorder.privacyMode);
 
             Debug.Log("Video saved!");
-            api.SaveVideo(videoId);
+            vimeoApi.SaveVideo(videoId);
 
-            DeleteVideoFile();
+            //recorder.DeleteVideoFile();
         }
 
         private void VideoUpdated(string response)
         {
             JSONNode json = JSON.Parse (response);
-            videoPermalink = json["link"];
-            videoReviewPermalink = json["review_link"];
+            recorder.videoPermalink = json["link"];
+            recorder.videoReviewPermalink = json["review_link"];
 
-            if (openInBrowser == true) {
-                openInBrowser = false;
+            if (recorder.openInBrowser == true) {
+                recorder.openInBrowser = false;
                 OpenVideo();
             }
 
-            if (autoPostToChannel == true) {
-                autoPostToChannel = false;
+            if (recorder.autoPostToChannel == true) {
+                recorder.autoPostToChannel = false;
                 PostToSlack();
             }
-        }
-
-        private void DeleteVideoFile()
-        {
-            FileUtil.DeleteFileOrDirectory(GetVideoFilePath());
         }
 
         public void SetVideoName(string title)
         {
             if (title != null && title != "") {
-                if (saveCoroutine != null) { StopCoroutine (saveCoroutine); }
-                api.SetVideoName(title);
+                if (saveCoroutine != null) { StopCoroutine (saveCoroutine); } // DRY
+                vimeoApi.SetVideoName(title);
                 saveCoroutine = StartCoroutine("SaveVideo");
             }
         }
@@ -214,17 +115,17 @@ namespace Vimeo {
         public void SetVideoPrivacyMode(VimeoApi.PrivacyMode mode)
         {
             if (saveCoroutine != null) { StopCoroutine (saveCoroutine); }
-            api.SetVideoViewPrivacy(mode.ToString());
+            vimeoApi.SetVideoViewPrivacy(mode.ToString());
             saveCoroutine = StartCoroutine("SaveVideo");
         }
 
         private IEnumerator SaveVideo()
         {
-            yield return new WaitForSeconds (3f);
+            yield return new WaitForSeconds(3f);
 
             if (videoId != null) {
-                Debug.Log ("Video saved!");
-                api.SaveVideo (videoId);
+                Debug.Log("Video saved!");
+                vimeoApi.SaveVideo(videoId);
             }
         }
 
@@ -240,27 +141,13 @@ namespace Vimeo {
 
         public void PostToSlack()
         {
-            if (shareToSlack == true && slackChannel != null) {
-                if (slack == null) {
-                    slack = gameObject.AddComponent<Slack>();
-                }
-
-                if (GetSlackToken() != null && GetSlackToken() != "") {
-                    slack.Init(GetSlackToken(), slackChannel);
-                    slack.PostVideoToChannel(videoName, GetVimeoPermalink());
+            if (recorder.shareToSlack == true && recorder.slackChannel != null) {
+                if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "") {
+                    slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
+                    slackApi.PostVideoToChannel(recorder.videoName, GetVimeoPermalink());
                 }
                 else {
                     Debug.LogWarning("You are not signed into Slack.");
-                }
-            }
-        }
-
-        void LateUpdate()
-        {
-            if (recorder != null) {
-                // Set recording state based upon VimeoRecorder state
-                if (!isRecording && recorder.isRecording) {
-                    isRecording = true;
                 }
             }
         }

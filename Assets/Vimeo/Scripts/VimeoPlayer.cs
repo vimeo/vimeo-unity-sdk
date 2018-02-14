@@ -9,40 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace Vimeo
 {
-#if UNITY_EDITOR  
-    using UnityEditor;
-    [CustomEditor (typeof(VimeoPlayer))]
-    public class VimeoPlayerInspector : VimeoConfig
-    {
-        [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
-        private static void CreateCanvasPrefab() {
-            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
-            go.name = "[VimeoPlayerCanvas]";
-        }
-
-        [MenuItem("GameObject/Video/Vimeo Player (Plane)")]
-        private static void CreatePlanePrefab() {
-            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer]") as GameObject);
-            go.name = "[VimeoPlayer]";
-        }
-
-        [MenuItem("GameObject/Video/Vimeo Player (360)")]
-        private static void Create360Prefab() {
-            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer360]") as GameObject);
-            go.name = "[VimeoPlayer360]";
-        }
-
-        public override void OnInspectorGUI()
-        {
-            var player = target as VimeoPlayer;
-            DrawVimeoConfig(player); 
-            EditorUtility.SetDirty(target);
-        }
-    }
-#endif
-
     [AddComponentMenu("Video/Vimeo Player")]
-    public class VimeoPlayer : VimeoBehavior 
+    public class VimeoPlayer : PlayerSettings 
     {
         public delegate void VimeoEvent();
         public event VimeoEvent OnVideoStart;
