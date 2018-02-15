@@ -3,14 +3,14 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Recorder;
-using Vimeo.Config;
 
-namespace Vimeo 
+namespace Vimeo.Recorder
 {
     [CustomEditor(typeof(VimeoRecorder))]
     public class VimeoRecorderEditor : BaseEditor
     {
         bool recordingFold;
+        bool publishFold;
         bool vimeoFold;
         bool slackFold;
 
@@ -31,27 +31,33 @@ namespace Vimeo
                 recordingFold = EditorGUILayout.Foldout(recordingFold, "Recording");
                 if (recordingFold) {
                     EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"));
-                    EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"));
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"), new GUIContent("Input"));
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"), new GUIContent("Resolution"));
 
-                    if (recorder.defaultResolution != Vimeo.Config.Resolution.Window) {
+                    if (recorder.defaultResolution != Vimeo.Recorder.Resolution.Window) {
                         EditorGUILayout.PropertyField(so.FindProperty("defaultAspectRatio"));
                     }
                     EditorGUILayout.PropertyField(so.FindProperty("recordOnStart"));
                     EditorGUI.indentLevel--;
                 }
 
-                vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Publish to");
-                //vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Publish to");
-                if (vimeoFold) {
+                publishFold = EditorGUILayout.Foldout(publishFold, "Publish to");
+                
+                if (publishFold) {
                     EditorGUI.indentLevel++;
-                    EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
-                    EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
+                    vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo");
+
+                    if (vimeoFold) {
+                        EditorGUI.indentLevel++;
+                        EditorGUILayout.PropertyField(so.FindProperty("videoName"));
+                        EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+                        EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
+                        EditorGUI.indentLevel--;
+                    }
+
+                    DrawSlackConfig(recorder);
                     EditorGUI.indentLevel--;
                 }
-
-                DrawSlackConfig(recorder);
             }
 
             DrawVimeoAuth(recorder);
@@ -78,7 +84,7 @@ namespace Vimeo
         public void DrawSlackConfig(VimeoRecorder recorder)
         {
             var so = serializedObject;
-            slackFold = EditorGUILayout.Foldout(slackFold, "Share to Slack");
+            slackFold = EditorGUILayout.Foldout(slackFold, "Slack");
 
             if (slackFold) {
                 EditorGUI.indentLevel++;

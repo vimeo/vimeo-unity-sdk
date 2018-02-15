@@ -24,6 +24,7 @@ namespace Vimeo.Recorder
         {
             if (controller == null) {
                 controller = gameObject.AddComponent<RecorderController>();
+                controller.recorder = this;
             }
 
             if (recordOnStart) {

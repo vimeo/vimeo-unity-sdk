@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
+using Vimeo;
 using Vimeo.Services;
 
-namespace Vimeo.Config
+namespace Vimeo.Recorder
 {
     public enum LinkType
     {

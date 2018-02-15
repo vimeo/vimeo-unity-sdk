@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Vimeo.Config 
+namespace Vimeo 
 {  
     public class VimeoAuth : MonoBehaviour
     {
