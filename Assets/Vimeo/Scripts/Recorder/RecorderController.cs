@@ -145,11 +145,10 @@ namespace Vimeo.Recorder {
             //FileUtil.
         }
 
-        IEnumerator OnPostRender()
+        IEnumerator RecordFrame()
         {
-            if (isRecording && encoder != null) {
-                yield return new WaitForEndOfFrame();
-
+            yield return new WaitForEndOfFrame();
+            if (encoder != null && isRecording) {
                 encoder.AddFrame(videoInput.GetFrame());
 
                 // RecorderController.CaptureLock(renderBuffer, (data) => {
@@ -159,6 +158,13 @@ namespace Vimeo.Recorder {
                 // Fill 'audioBuffer' with the audio content to be encoded into the file for this frame.
                 // ...
                 //encoder.AddSamples(audioBuffer);
+            }
+        }
+
+        public void LateUpdate()
+        {
+            if (encoder != null && isRecording) {
+                StartCoroutine(RecordFrame());
             }
         }
         

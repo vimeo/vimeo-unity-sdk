@@ -57,7 +57,7 @@ namespace Vimeo.Recorder
 
         private void PublishVideo()
         {
-            publisher.PublishVideo(recorder.encodedFilePath);
+            //publisher.PublishVideo(recorder.encodedFilePath);
         }
 
         private void DeleteVideoFile()
