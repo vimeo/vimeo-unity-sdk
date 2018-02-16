@@ -51,9 +51,9 @@ namespace Vimeo.Recorder
             return "https://vimeo.com/" + videoId;
         }
 
-        private void UploadVideo()
+        private void PublishVideo(string filename)
         {
-            vimeoApi.UploadVideoFile(recorder.GetVideoFilePath());
+            vimeoApi.UploadVideoFile(filename);
         }
 
 

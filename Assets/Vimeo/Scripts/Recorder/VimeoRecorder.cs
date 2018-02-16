@@ -1,6 +1,5 @@
 ﻿#if UNITY_2017_3_OR_NEWER 
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
@@ -16,15 +15,16 @@ namespace Vimeo.Recorder
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        public RecorderController controller;
+        public RecorderController recorder;
+        public VimeoPublisher publisher;
 
         private bool isRecording = false;
 
         void Start() 
         {
-            if (controller == null) {
-                controller = gameObject.AddComponent<RecorderController>();
-                controller.recorder = this;
+            if (recorder == null) {
+                recorder = gameObject.AddComponent<RecorderController>();
+                recorder.recorder = this;
             }
 
             if (recordOnStart) {
@@ -34,47 +34,42 @@ namespace Vimeo.Recorder
     
         public void BeginRecording()
         {
-            controller.BeginRecording();
+            recorder.BeginRecording();
             // UploadProgress("Recording", 0);
         }
 
         public void EndRecording()
         {
             isRecording = false;
-            controller.EndRecording();
+            recorder.EndRecording();
 
-            // PublishVideo();
+            PublishVideo();
         }
             
         public void CancelRecording()
         {
             isRecording = false;
-            controller.EndRecording();
+            recorder.EndRecording();
             DeleteVideoFile();
 
             // UploadProgress("Cancelled", 0);
         }
 
-        public string GetVideoFilePath()
+        private void PublishVideo()
         {
-            return controller.encodedFilePath;
+            publisher.PublishVideo(recorder.encodedFilePath);
         }
-
-        // private void PublishVideo()
-        // {
-        //     api.UploadVideoFile(GetVideoFilePath());
-        // }
 
         private void DeleteVideoFile()
         {
-            FileUtil.DeleteFileOrDirectory(GetVideoFilePath());
+            recorder.DeleteVideoFile();
         }
 
         void LateUpdate()
         {
-            if (controller != null) {
+            if (recorder != null) {
                 // Set recording state based upon VimeoRecorder state
-                if (!isRecording && controller.isRecording) {
+                if (!isRecording && recorder.isRecording) {
                     isRecording = true;
                 }
             }

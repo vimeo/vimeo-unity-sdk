@@ -13,10 +13,10 @@ using UnityEngine.Rendering;
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Vimeo.Recorder {
 
-    [RequireComponent(typeof(Camera))]
     public class RecorderController : MonoBehaviour
     {
         public string outputPath = Path.GetTempPath();
@@ -24,8 +24,6 @@ namespace Vimeo.Recorder {
 
         [HideInInspector] public string encodedFilePath;
         [HideInInspector] public bool isRecording = false;
-
-        private Camera _camera;
 
         private VideoTrackAttributes videoAttrs;
         private AudioTrackAttributes audioAttrs;
@@ -48,11 +46,12 @@ namespace Vimeo.Recorder {
             isRecording = true;
 
             InitVideoInput();
+            videoInput.BeginRecording();
 
             // _camera = GetComponent<Camera>();
-            encodedFilePath = Path.Combine(outputPath, "test-recording.mp4");
-
-            // Debug.Log(encodedFilePath);
+            //encodedFilePath = Path.Combine(Path.GetPathRoot(), "test-recording.mp4");
+            encodedFilePath = Path.Combine("/Users/cpu/dev/unity-vimeo-player/Recordings", Path.GetRandomFileName() + ".mp4");
+            Debug.Log(encodedFilePath);
 
             // Setup shader/material/quad
             // if (shaderCopy == null) {
@@ -78,9 +77,12 @@ namespace Vimeo.Recorder {
             // Debug.Log ("WxH: " + captureWidth + "x" + captureHeight);
 
             // Configure encoder
+            Debug.Log(videoInput.outputWidth);
+            Debug.Log(videoInput.outputHeight);
+
             videoAttrs = new VideoTrackAttributes
             {
-                frameRate = new MediaRational(30),
+                frameRate = new MediaRational(60),
                 width  = (uint)videoInput.outputWidth,
                 height = (uint)videoInput.outputHeight,
                 includeAlpha = false
@@ -93,7 +95,7 @@ namespace Vimeo.Recorder {
                 language = "en"
             };
 
-            encoder = new MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+            encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
 
             //sampleFramesPerVideoFrame = audioAttrs.channelCount * audioAttrs.sampleRate.numerator / videoAttrs.frameRate.numerator;
             //audioBuffer = new NativeArray<float>(sampleFramesPerVideoFrame, Allocator.Temp);
@@ -136,6 +138,11 @@ namespace Vimeo.Recorder {
             }
 
             isRecording = false;
+        }
+
+        public void DeleteVideoFile()
+        {
+            //FileUtil.
         }
 
         IEnumerator OnPostRender()
