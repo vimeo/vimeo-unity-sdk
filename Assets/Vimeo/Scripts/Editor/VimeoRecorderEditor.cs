@@ -9,10 +9,10 @@ namespace Vimeo.Recorder
     [CustomEditor(typeof(VimeoRecorder))]
     public class VimeoRecorderEditor : BaseEditor
     {
-        bool recordingFold;
-        bool publishFold;
-        bool vimeoFold;
-        bool slackFold;
+        protected static bool recordingFold;
+        protected static bool publishFold;
+        protected static bool vimeoFold;
+        protected static bool slackFold;
 
         public override void OnInspectorGUI()
         {
