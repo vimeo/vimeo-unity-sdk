@@ -9,10 +9,26 @@ namespace Vimeo.Recorder
     [CustomEditor(typeof(VimeoRecorder))]
     public class VimeoRecorderEditor : BaseEditor
     {
-        protected static bool recordingFold;
-        protected static bool publishFold;
-        protected static bool vimeoFold;
-        protected static bool slackFold;
+        static bool recordingFold;
+        static bool publishFold;
+        static bool vimeoFold;
+        static bool slackFold;
+
+        void OnDisable()
+        {
+            EditorPrefs.SetBool("recordingFold", recordingFold);
+            EditorPrefs.SetBool("publishFold", publishFold);
+            EditorPrefs.SetBool("vimeoFold", vimeoFold);
+            EditorPrefs.SetBool("slackFold", slackFold);
+        }
+
+        void OnEnable()
+        {
+            recordingFold = EditorPrefs.GetBool("recordingFold");
+            publishFold = EditorPrefs.GetBool("publishFold");
+            vimeoFold = EditorPrefs.GetBool("vimeoFold");
+            slackFold = EditorPrefs.GetBool("slackFold");
+        }
 
         public override void OnInspectorGUI()
         {
@@ -20,7 +36,7 @@ namespace Vimeo.Recorder
             DrawConfig(recorder);
             EditorUtility.SetDirty(target);
         }
-            
+
         public void DrawConfig(VimeoRecorder recorder)
         {
             var so = serializedObject;
