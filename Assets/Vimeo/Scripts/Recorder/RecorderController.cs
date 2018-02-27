@@ -49,8 +49,8 @@ namespace Vimeo.Recorder {
             videoInput.BeginRecording();
 
             // _camera = GetComponent<Camera>();
-            //encodedFilePath = Path.Combine(Path.GetPathRoot(), "test-recording.mp4");
-            encodedFilePath = Path.Combine("/Users/cpu/dev/unity-vimeo-player/Recordings", Path.GetRandomFileName() + ".mp4");
+            encodedFilePath = Path.Combine(outputPath, Path.GetRandomFileName() + ".mp4");
+            //encodedFilePath = Path.Combine("/Users/cpu/dev/unity-vimeo-player/Recordings", Path.GetRandomFileName() + ".mp4");
             Debug.Log(encodedFilePath);
 
             // Setup shader/material/quad
@@ -77,9 +77,6 @@ namespace Vimeo.Recorder {
             // Debug.Log ("WxH: " + captureWidth + "x" + captureHeight);
 
             // Configure encoder
-            Debug.Log(videoInput.outputWidth);
-            Debug.Log(videoInput.outputHeight);
-
             videoAttrs = new VideoTrackAttributes
             {
                 frameRate = new MediaRational(60),
@@ -117,6 +114,7 @@ namespace Vimeo.Recorder {
 
         public void EndRecording()
         {
+            Debug.Log("EndRecording");
             if (encoder != null) {
                 encoder.Dispose();
                 // encoder = null;
@@ -149,7 +147,10 @@ namespace Vimeo.Recorder {
         {
             yield return new WaitForEndOfFrame();
             if (encoder != null && isRecording) {
-                encoder.AddFrame(videoInput.GetFrame());
+                Texture2D tex = videoInput.GetFrame();
+
+                Debug.Log("AddFrame: " + tex.width + "x" + tex.height);
+                encoder.AddFrame(tex);
 
                 // RecorderController.CaptureLock(renderBuffer, (data) => {
                 //     encoder.AddFrame(data);

@@ -1,6 +1,7 @@
 #if UNITY_2017_3_OR_NEWER
 
 using UnityEngine;
+using UnityEditor;
 
 namespace Vimeo.Recorder
 {
@@ -44,8 +45,13 @@ namespace Vimeo.Recorder
                     break;
                 }
             }
+            
+            Debug.Log("Screen resolution: " + outputWidth + "x" + outputHeight);
 
-            Screen.SetResolution(outputWidth, outputHeight, false);
+            object size = UnityEngine.Recorder.Input.GameViewSize.SetCustomSize(outputWidth, outputHeight);
+            UnityEngine.Recorder.Input.GameViewSize.SelectSize(size);
+            //Screen.SetResolution(outputWidth, outputHeight, false);
+            
             //int w, h;
             //GameViewSize.GetGameRenderSize(out w, out h);
             // if (w != outputWidth || h != outputHeight)
