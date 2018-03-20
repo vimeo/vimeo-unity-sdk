@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1632233500069416}
+  m_IsPrefabParent: 1
+--- !u!1 &1632233500069416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 224861955090669034}
+  - component: {fileID: 114381909144653884}
+  m_Layer: 0
+  m_Name: '[VimeoRecorder]'
+  m_TagString: Untagged
+  m_Icon: {fileID: 2800000, guid: f769f33aff14dac43a5e2a682eaf1b33, type: 3}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &114381909144653884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632233500069416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 440baa8f86681074b8944952013cb091, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vimeoToken: 
+  saveVimeoToken: 0
+  vimeoSignIn: 1
+  privacyMode: 3
+  defaultShareLink: 0
+  defaultVideoInput: 0
+  defaultCamera: 0
+  defaultCamera360: 0
+  defaultRenderMode360: 0
+  defaultResolution: 0
+  defaultAspectRatio: 2
+  recordMode: 1
+  recordDuration: 30
+  realTime: 0
+  frameRate: 30
+  recordOnStart: 0
+  openInBrowser: 1
+  autoPostToChannel: 0
+  slackToken: 
+  slackChannel: '#creator-labs'
+  videoName: Audio test!
+  videoPermalink: 
+  videoReviewPermalink: 
+  recorder: {fileID: 0}
+  publisher: {fileID: 0}
+  isRecording: 0
+  isUploading: 0
+  uploadProgress: 0
+--- !u!224 &224861955090669034
+RectTransform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1632233500069416}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 883, y: 497}
+  m_Pivot: {x: 0.5, y: 0.5}

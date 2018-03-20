@@ -47,7 +47,8 @@ namespace Vimeo.Recorder
 
             isUploading = true;
             uploadProgress = 0;
-            PublishVideo();
+           
+           // PublishVideo();
         }
             
         public void CancelRecording()

@@ -63,7 +63,7 @@ namespace Vimeo.Recorder
 
         private void UploadProgress(string status, float progress)
         {
-            Debug.Log("UploadProgress: " + status + " - "  + progress);
+            // Debug.Log("UploadProgress: " + status + " - "  + progress);
             if (OnUploadProgress != null) {
                 OnUploadProgress(status, progress);
             }
