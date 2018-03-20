@@ -46,3 +46,9 @@ Assets/SteamVR/Textures
 # Github for Unity
 *.mp4
 *.blend*
+
+# Libraries
+Assets/FFmpegOut*
+Assets/PCSS*
+Assets/PostProcessing*
+Assets/StreamingAssets*

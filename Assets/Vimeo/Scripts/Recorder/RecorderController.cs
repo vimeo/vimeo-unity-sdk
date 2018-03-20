@@ -19,15 +19,16 @@ namespace Vimeo.Recorder {
 
     public class RecorderController : MonoBehaviour
     {
-        public string outputPath = Path.GetTempPath();
-        public VimeoRecorder recorder;
-
+        [HideInInspector] public string outputPath = Path.GetTempPath();
+        [HideInInspector] public VimeoRecorder recorder;
         [HideInInspector] public string encodedFilePath;
         [HideInInspector] public bool isRecording = false;
 
         private VideoTrackAttributes videoAttrs;
         private AudioTrackAttributes audioAttrs;
-        private int sampleFramesPerVideoFrame;
+        // private int sampleFramesPerVideoFrame;
+
+        [HideInInspector] public int currentFrame = 0;
 
         private Material matCopy;
         private Shader shaderCopy;
@@ -48,38 +49,20 @@ namespace Vimeo.Recorder {
             InitVideoInput();
             videoInput.BeginRecording();
 
-            // _camera = GetComponent<Camera>();
-            encodedFilePath = Path.Combine(outputPath, Path.GetRandomFileName() + ".mp4");
-            //encodedFilePath = Path.Combine("/Users/cpu/dev/unity-vimeo-player/Recordings", Path.GetRandomFileName() + ".mp4");
+            encodedFilePath = Path.Combine(outputPath, GetFileName());
             Debug.Log(encodedFilePath);
 
-            // Setup shader/material/quad
-            // if (shaderCopy == null) {
-            //     shaderCopy = Shader.Find("Hidden/FrameRecorder/CopyFrameBuffer");
-            // }
-
-            // if (matCopy == null) {
-            //     matCopy = new Material(shaderCopy);
-            // }
-
-            // if (fullscreenQuad == null) { 
-            //     fullscreenQuad = RecorderController.CreateFullscreenQuad();
-            // }
-            
-            // Get Camera data and prepare to send to buffer
-            // int captureWidth  = (_camera.pixelWidth + 1) & ~1;
-            // int captureHeight = (_camera.pixelHeight + 1) & ~1;
-
-            // renderBuffer = new RenderTexture(captureWidth, captureHeight, 0);
-            // renderBuffer.wrapMode = TextureWrapMode.Repeat;
-            // renderBuffer.Create();
-
-            // Debug.Log ("WxH: " + captureWidth + "x" + captureHeight);
+            if (recorder.realTime) {
+                Application.targetFrameRate = recorder.frameRate;
+            }
+            else {
+                Time.captureFramerate = recorder.frameRate;
+            }
 
             // Configure encoder
             videoAttrs = new VideoTrackAttributes
             {
-                frameRate = new MediaRational(60),
+                frameRate = new MediaRational(recorder.frameRate),
                 width  = (uint)videoInput.outputWidth,
                 height = (uint)videoInput.outputHeight,
                 includeAlpha = false
@@ -93,79 +76,72 @@ namespace Vimeo.Recorder {
             };
 
             encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
+        }
 
-            //sampleFramesPerVideoFrame = audioAttrs.channelCount * audioAttrs.sampleRate.numerator / videoAttrs.frameRate.numerator;
-            //audioBuffer = new NativeArray<float>(sampleFramesPerVideoFrame, Allocator.Temp);
+        public string GetFileName()
+        {
+            string name = recorder.videoName;
+    
+            if (name.Contains("%R")) {
+                name = name.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
+            }
 
-            // Setup the command buffer 
-            // TODO: Support RenderTexture
-            // int tid = Shader.PropertyToID("_TmpFrameBuffer");
-            // commandBuffer = new CommandBuffer();
-            // commandBuffer.name = "VimeoRecorder: copy frame buffer";
+            if (name.Contains("%TS")) {
+                name = name.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
+            }
 
-            // commandBuffer.GetTemporaryRT(tid, -1, -1, 0, FilterMode.Bilinear);
-            // commandBuffer.Blit(BuiltinRenderTextureType.CurrentActive, tid);
-            // commandBuffer.SetRenderTarget(renderBuffer);
-            // commandBuffer.DrawMesh(fullscreenQuad, Matrix4x4.identity, matCopy, 0, 0);
-            // commandBuffer.ReleaseTemporaryRT(tid);
-
-            // _camera.AddCommandBuffer(CameraEvent.AfterEverything, commandBuffer);
+            return name + ".mp4";
         }
 
         public void EndRecording()
         {
-            Debug.Log("EndRecording");
             if (encoder != null) {
                 encoder.Dispose();
-                // encoder = null;
+                encoder = null;
             }
 
-            // if (commandBuffer != null) {
-            //     // _camera.RemoveCommandBuffer(CameraEvent.AfterEverything, commandBuffer);
-            //     // commandBuffer.Release();
-            //     // commandBuffer = null;
-            // }
+            if (videoInput != null) {
+                videoInput.EndRecording();
+            }
 
-            // if (renderBuffer != null) {
-            //     // renderBuffer.Release();
-            //     // renderBuffer = null;
-            // }
+            Destroy(videoInput);
+
+            Time.captureFramerate = 0;
 
             if (isRecording) {
-                Debug.Log("VimeoRecorder: EndRecording()");
+                Debug.Log("RecorderController.EndRecording()");
             }
 
+            currentFrame = 0;
             isRecording = false;
         }
 
         public void DeleteVideoFile()
         {
-            //FileUtil.
+            File.Delete(encodedFilePath);
         }
 
         IEnumerator RecordFrame()
         {
             yield return new WaitForEndOfFrame();
             if (encoder != null && isRecording) {
-                Texture2D tex = videoInput.GetFrame();
-
-                Debug.Log("AddFrame: " + tex.width + "x" + tex.height);
-                encoder.AddFrame(tex);
-
-                // RecorderController.CaptureLock(renderBuffer, (data) => {
-                //     encoder.AddFrame(data);
-                // });
-
-                // Fill 'audioBuffer' with the audio content to be encoded into the file for this frame.
-                // ...
-                //encoder.AddSamples(audioBuffer);
+                encoder.AddFrame(videoInput.GetFrame());
+                videoInput.EndFrame();
             }
         }
 
         public void LateUpdate()
         {
             if (encoder != null && isRecording) {
-                StartCoroutine(RecordFrame());
+                if (recorder.recordMode == RecordMode.Duration) {
+                    if (currentFrame > recorder.frameRate * recorder.recordDuration) {
+                        recorder.EndRecording();
+                    }
+                    else {
+                        StartCoroutine(RecordFrame());
+                    }
+                }
+                currentFrame++;
             }
         }
         
@@ -180,6 +156,7 @@ namespace Vimeo.Recorder {
                     videoInput = gameObject.AddComponent<ScreenInput>();
                     break;
                 
+                case VideoInputType.Camera360:
                 case VideoInputType.Camera:
                     videoInput = gameObject.AddComponent<CameraInput>();
                     break;
@@ -188,30 +165,10 @@ namespace Vimeo.Recorder {
             videoInput.recorder = recorder;
         }
 
-
-        // public static void CaptureLock(RenderTexture src, Action<Texture2D> body)
-        // {
-        //     Texture2D tex = new Texture2D(src.width, src.height, TextureFormat.RGBA32, false);
-        //     RenderTexture.active = src;
-        //     tex.ReadPixels(new Rect(0, 0, tex.width, tex.height), 0, 0, false);
-        //     tex.Apply();
-        //     body(tex);
-        //     UnityEngine.Object.Destroy(tex);
-        // }
-
-        // public static Mesh CreateFullscreenQuad()
-        // {
-        //     var r = new Mesh();
-        //     r.vertices = new Vector3[4] {
-        //             new Vector3( 1.0f, 1.0f, 0.0f),
-        //             new Vector3(-1.0f, 1.0f, 0.0f),
-        //             new Vector3(-1.0f,-1.0f, 0.0f),
-        //             new Vector3( 1.0f,-1.0f, 0.0f),
-        //         };
-        //     r.triangles = new int[6] { 0, 1, 2, 2, 3, 0 };
-        //     r.UploadMeshData(true);
-        //     return r;
-        // }
+        public void OnDestroy()
+        {
+            Destroy(videoInput);
+        }
     }
 }
 #endif

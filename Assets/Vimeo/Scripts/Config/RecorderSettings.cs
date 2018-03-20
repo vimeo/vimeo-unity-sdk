@@ -14,7 +14,31 @@ namespace Vimeo.Recorder
     public enum VideoInputType
     {
         Screen,
-        Camera
+        Camera,
+        Camera360
+    }
+
+    public enum CameraType
+    {
+        MainCamera,
+        //ActiveCameras
+    }
+
+    public enum Camera360Type
+    {
+        MainCamera
+    }
+
+    public enum RenderMode360
+    {
+        Stereo,
+        Mono
+    }
+
+    public enum RecordMode
+    {
+        Manual,
+        Duration
     }
 
     public enum Resolution
@@ -22,7 +46,7 @@ namespace Vimeo.Recorder
         Window,
         //x8640p_16K = 8640,
         x4320p_8K = 4320,
-        x2880p_5K = 2880,
+        // x2880p_5K = 2880,
         x2160p_4K = 2160,
         x1440P_QHD = 1440,
         x1080p_FHD = 1080,
@@ -39,20 +63,27 @@ namespace Vimeo.Recorder
         x5_4,
         x4_3
     }
-    
+
     public class RecorderSettings : VimeoAuth
     {
         public VimeoApi.PrivacyMode privacyMode = VimeoApi.PrivacyMode.anybody;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 
         public VideoInputType defaultVideoInput = VideoInputType.Screen;
+        public CameraType defaultCamera         = CameraType.MainCamera;
+        public Camera360Type defaultCamera360   = Camera360Type.MainCamera;
+        public RenderMode360 defaultRenderMode360 = RenderMode360.Stereo;
         public Resolution defaultResolution     = Resolution.Window;        
         public AspectRatio defaultAspectRatio   = AspectRatio.x16_9;
+        public RecordMode recordMode            = RecordMode.Manual;
+        public int recordDuration               = 5;
 
+        public bool realTime = false;
+        public int frameRate = 30;
         public bool recordOnStart = false;
         public bool openInBrowser = false;
 
-        public bool shareToSlack = false;
+        //public bool shareToSlack = false;
         public bool autoPostToChannel = false;
         public string slackToken;
         public string slackChannel;
@@ -61,23 +92,16 @@ namespace Vimeo.Recorder
         public string videoPermalink;
         public string videoReviewPermalink;
 
+        private const string SLACK_TOKEN_NAME = "slack-token-";
+
         public string GetSlackToken()
         {
-            var token = PlayerPrefs.GetString("slack-token");
-            if (token == null || token == "") {
-                if (slackToken != null && slackToken != "") {
-                    SetSlackToken(slackToken);
-                }
-                token = slackToken;
-            }
-
-            slackToken = null;
-            return token;
+            return PlayerPrefs.GetString(SLACK_TOKEN_NAME + this.gameObject.scene.name);
         }
 
         public void SetSlackToken(string token)
         {
-            SetKey("slack-token", token);
+            SetKey(SLACK_TOKEN_NAME + this.gameObject.scene.name, token);
         }
     }
 

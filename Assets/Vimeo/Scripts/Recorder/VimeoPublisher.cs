@@ -10,12 +10,12 @@ using SimpleJSON;
 
 namespace Vimeo.Recorder
 {
-    public class VimeoPublisher : MonoBehaviour {
-    
+    public class VimeoPublisher : MonoBehaviour 
+    {
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        public VimeoRecorder recorder; // recorder contains all the settings
+        [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
         private VimeoApi vimeoApi;
         private SlackApi slackApi;
@@ -23,12 +23,16 @@ namespace Vimeo.Recorder
 
         private Coroutine saveCoroutine;
 
-        void Init(VimeoRecorder _recorder) 
+        public void Init(VimeoRecorder _recorder) 
         {
             recorder = _recorder;
             
             if (vimeoApi == null) {
                 vimeoApi = gameObject.AddComponent<VimeoApi>();
+                vimeoApi.OnPatchComplete  += VideoUpdated;
+                vimeoApi.OnUploadComplete += UploadComplete;
+                vimeoApi.OnUploadProgress += UploadProgress;
+
                 vimeoApi.token = recorder.GetVimeoToken();
             }
 
@@ -51,7 +55,7 @@ namespace Vimeo.Recorder
             return "https://vimeo.com/" + videoId;
         }
 
-        private void PublishVideo(string filename)
+        public void PublishVideo(string filename)
         {
             vimeoApi.UploadVideoFile(filename);
         }
@@ -59,29 +63,30 @@ namespace Vimeo.Recorder
 
         private void UploadProgress(string status, float progress)
         {
+            Debug.Log("UploadProgress: " + status + " - "  + progress);
             if (OnUploadProgress != null) {
-                OnUploadProgress (status, progress);
+                OnUploadProgress(status, progress);
             }
         }
 
         private void UploadComplete(string video_uri)
         {
+            UploadProgress("Saving video info", .999f);
+
             string[] uri_pieces = video_uri.Split("/" [0]);
             videoId = uri_pieces [2];
 
             if (vimeoApi != null) {
-                vimeoApi.OnPatchComplete  += VideoUpdated;
-                vimeoApi.OnUploadComplete += UploadComplete;
-                vimeoApi.OnUploadProgress += UploadProgress;
+                
             }
-           
-            SetVideoName(recorder.videoName);
+
+            if (recorder.defaultVideoInput == VideoInputType.Camera360) {
+                vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
+            }
+
+            vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            SetVideoName(recorder.recorder.GetFileName().Replace(".mp4", ""));
             SetVideoPrivacyMode(recorder.privacyMode);
-
-            Debug.Log("Video saved!");
-            vimeoApi.SaveVideo(videoId);
-
-            //recorder.DeleteVideoFile();
         }
 
         private void VideoUpdated(string response)
@@ -99,6 +104,10 @@ namespace Vimeo.Recorder
                 recorder.autoPostToChannel = false;
                 PostToSlack();
             }
+
+            UploadProgress("complete", 1f);
+
+            Dispose();
         }
 
         public void SetVideoName(string title)
@@ -119,7 +128,7 @@ namespace Vimeo.Recorder
 
         private IEnumerator SaveVideo()
         {
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(1f);
 
             if (videoId != null) {
                 Debug.Log("Video saved!");
@@ -139,15 +148,21 @@ namespace Vimeo.Recorder
 
         public void PostToSlack()
         {
-            if (recorder.shareToSlack == true && recorder.slackChannel != null) {
+            if (recorder.slackChannel != null) {
                 if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "") {
                     slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
-                    slackApi.PostVideoToChannel(recorder.videoName, GetVimeoPermalink());
+                    slackApi.PostVideoToChannel(recorder.recorder.GetFileName(), GetVimeoPermalink());
                 }
                 else {
                     Debug.LogWarning("You are not signed into Slack.");
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            Destroy(vimeoApi);
+            Destroy(slackApi);
         }
     }
 }

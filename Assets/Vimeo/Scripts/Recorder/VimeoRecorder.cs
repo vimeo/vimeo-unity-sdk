@@ -18,15 +18,12 @@ namespace Vimeo.Recorder
         public RecorderController recorder;
         public VimeoPublisher publisher;
 
-        private bool isRecording = false;
+        public bool isRecording = false;
+        public bool isUploading = false;
+        public float uploadProgress = 0;
 
         void Start() 
         {
-            if (recorder == null) {
-                recorder = gameObject.AddComponent<RecorderController>();
-                recorder.recorder = this;
-            }
-
             if (recordOnStart) {
                 BeginRecording();
             }
@@ -34,8 +31,13 @@ namespace Vimeo.Recorder
     
         public void BeginRecording()
         {
+            if (recorder == null) {
+                recorder = gameObject.AddComponent<RecorderController>();
+                recorder.recorder = this;
+            }
+
             recorder.BeginRecording();
-            // UploadProgress("Recording", 0);
+            isRecording = true;
         }
 
         public void EndRecording()
@@ -43,26 +45,64 @@ namespace Vimeo.Recorder
             isRecording = false;
             recorder.EndRecording();
 
-            PublishVideo();
+            isUploading = true;
+            //PublishVideo();
         }
             
         public void CancelRecording()
         {
             isRecording = false;
+            isUploading = false;
             recorder.EndRecording();
             DeleteVideoFile();
 
-            // UploadProgress("Cancelled", 0);
+            Dispose();
         }
 
         private void PublishVideo()
         {
-            //publisher.PublishVideo(recorder.encodedFilePath);
+            if (publisher == null) {
+                publisher = gameObject.AddComponent<VimeoPublisher>();
+                publisher.Init(this);
+
+                publisher.OnUploadProgress += UploadProgress;
+            }
+            
+            publisher.PublishVideo(recorder.encodedFilePath);
         }
 
         private void DeleteVideoFile()
         {
             recorder.DeleteVideoFile();
+        }
+
+        private void UploadProgress(string status, float progress)
+        {
+            uploadProgress = progress;
+            if (status == "Complete") {
+                isUploading = false;
+                DeleteVideoFile();
+            }
+        }
+
+        private void Dispose()
+        {
+            Destroy(recorder);
+            Destroy(publisher);
+        }
+
+        void OnDisable()
+        {
+            if (isRecording) {
+                CancelRecording();
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (isRecording) {
+                CancelRecording();
+            }
         }
 
         void LateUpdate()
