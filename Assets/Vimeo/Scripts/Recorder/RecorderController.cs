@@ -78,19 +78,28 @@ namespace Vimeo.Recorder {
             encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
         }
 
+        public string GetVideoName()
+        {
+            return ReplaceSpecialChars(recorder.videoName);
+        }
+
         public string GetFileName()
         {
-            string name = recorder.videoName;
-    
-            if (name.Contains("%R")) {
-                name = name.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
+            string name = "Unity Recording %R %TS";
+            return ReplaceSpecialChars(name) + ".mp4";
+        }
+
+        public string ReplaceSpecialChars(string input)
+        {
+            if (input.Contains("%R")) {
+                input = input.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
             }
 
-            if (name.Contains("%TS")) {
-                name = name.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
+            if (input.Contains("%TS")) {
+                input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
             }
 
-            return name + ".mp4";
+            return input;
         }
 
         public void EndRecording()
@@ -140,6 +149,9 @@ namespace Vimeo.Recorder {
                     else {
                         StartCoroutine(RecordFrame());
                     }
+                }
+                else {
+                    StartCoroutine(RecordFrame());
                 }
                 currentFrame++;
             }

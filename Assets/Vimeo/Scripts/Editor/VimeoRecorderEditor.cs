@@ -141,7 +141,7 @@ namespace Vimeo.Recorder
                 }
 
                 if (recorder.isUploading) {
-                    EditorGUI.ProgressBar(rect, progress, "Uploading to Vimeo...");
+                    EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
                 }
                 else {
                     EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.recorder.currentFrame.ToString() + " frames)");

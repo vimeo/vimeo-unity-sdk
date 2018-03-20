@@ -46,7 +46,8 @@ namespace Vimeo.Recorder
             recorder.EndRecording();
 
             isUploading = true;
-            //PublishVideo();
+            uploadProgress = 0;
+            PublishVideo();
         }
             
         public void CancelRecording()
@@ -79,7 +80,7 @@ namespace Vimeo.Recorder
         private void UploadProgress(string status, float progress)
         {
             uploadProgress = progress;
-            if (status == "Complete") {
+            if (status == "SaveInfoComplete") {
                 isUploading = false;
                 DeleteVideoFile();
             }
