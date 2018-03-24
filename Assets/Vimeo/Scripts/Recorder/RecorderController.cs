@@ -60,15 +60,20 @@ namespace Vimeo.Recorder {
             }
 
             // Configure encoder
+            AudioSpeakerMode speakerMode = AudioSettings.speakerMode;
+
             audioAttrs = new AudioTrackAttributes
             {
-                sampleRate = new MediaRational(48000),
-                channelCount = 2,
-                language = "en"
+                sampleRate = new MediaRational
+                {
+                    numerator = AudioSettings.outputSampleRate,
+                    denominator = 1
+                },
+                channelCount = (ushort)speakerMode,
+                language = ""
             };
 
             videoInput.BeginRecording();
-            audioInput.BeginRecording();
 
             videoAttrs = new VideoTrackAttributes
             {
@@ -77,7 +82,14 @@ namespace Vimeo.Recorder {
                 height = (uint)videoInput.outputHeight,
                 includeAlpha = false
             };
-            encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+
+            if (recorder.recordAudio) {
+                audioInput.BeginRecording();
+                encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+            }
+            else {
+                encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
+            }
         }
 
         public string GetVideoName()
@@ -113,7 +125,10 @@ namespace Vimeo.Recorder {
 
             if (videoInput != null) {
                 videoInput.EndRecording();
-                audioInput.EndRecording();
+
+                if (recorder.recordAudio) {
+                    audioInput.EndRecording();
+                }
             }
 
             Destroy(videoInput);
@@ -137,11 +152,17 @@ namespace Vimeo.Recorder {
         {
             yield return new WaitForEndOfFrame();
             if (encoder != null && isRecording) {
-                encoder.AddFrame(videoInput.GetFrame());
-                encoder.AddSamples(audioInput.GetBuffer());
+                if (recorder.recordAudio) {
+                    audioInput.StartFrame();
+                }
 
+                encoder.AddFrame(videoInput.GetFrame());
                 videoInput.EndFrame();
-                audioInput.EndFrame();
+
+                if (recorder.recordAudio) {
+                    encoder.AddSamples(audioInput.GetBuffer());
+                    audioInput.EndFrame();
+                }
             }
         }
 

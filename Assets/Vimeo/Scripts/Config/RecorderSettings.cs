@@ -78,6 +78,7 @@ namespace Vimeo.Recorder
         public RecordMode recordMode            = RecordMode.Manual;
         public int recordDuration               = 5;
 
+        public bool recordAudio = true;
         public bool realTime = false;
         public int frameRate = 30;
         public bool recordOnStart = false;

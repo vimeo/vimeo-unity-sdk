@@ -174,13 +174,13 @@ namespace Vimeo.Recorder
                     EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"), new GUIContent("Resolution"));
                     
                     if (recorder.defaultResolution != Vimeo.Recorder.Resolution.Window) {
-                        EditorGUILayout.PropertyField(so.FindProperty("defaultAspectRatio"));
+                        EditorGUILayout.PropertyField(so.FindProperty("defaultAspectRatio"), new GUIContent("Aspect ratio"));
                     }
                 }
 
                 EditorGUILayout.PropertyField(so.FindProperty("frameRate"));
                 EditorGUILayout.PropertyField(so.FindProperty("realTime"));
-
+                EditorGUILayout.PropertyField(so.FindProperty("recordAudio"));
                 EditorGUILayout.PropertyField(so.FindProperty("recordMode"));
 
                 if (recorder.recordMode == RecordMode.Duration) {
