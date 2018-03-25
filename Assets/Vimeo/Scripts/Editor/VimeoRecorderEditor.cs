@@ -225,12 +225,12 @@ namespace Vimeo.Recorder
             if (!Authenticated(_token)) {
                 EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
                 if (recorder.slackToken == null || recorder.slackToken == "") {
-                    if (GUILayout.Button("Get Token", GUILayout.Width(75))) {
+                    if (GUILayout.Button("Get token", GUILayout.Width(75))) {
                         Application.OpenURL("https://authy.vimeo.com/auth/slack");
                     }
                 }
                 else {                
-                    if (GUILayout.Button("Get Token", GUILayout.Width(75))) {
+                    if (GUILayout.Button("Get token", GUILayout.Width(75))) {
                         Application.OpenURL("https://authy.vimeo.com/auth/slack");
                     }
 

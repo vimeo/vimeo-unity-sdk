@@ -24,7 +24,7 @@ namespace Vimeo
 
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
                 
-                if (GUILayout.Button("Get Token", GUILayout.Width(80))) {
+                if (GUILayout.Button("Get token", GUILayout.Width(80))) {
                     if (auth is VimeoPlayer) {
                         Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity?scope=public%20private%20video_files");
                     }
