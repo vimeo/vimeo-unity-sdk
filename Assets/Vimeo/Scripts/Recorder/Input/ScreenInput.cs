@@ -1,4 +1,4 @@
-#if UNITY_2017_3_OR_NEWER
+#if UNITY_2018_1_OR_NEWER
 
 using UnityEngine;
 using UnityEditor;
