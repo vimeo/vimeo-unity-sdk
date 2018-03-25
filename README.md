@@ -3,7 +3,7 @@ Vimeo Unity SDK
 
 This SDK has two major features:
 
-* **[Record video](#recording)** (including 4K, 360, stereo 360) and publish to your Vimeo account. 
+* **[Record video](#recording)** (including 4K, 360, stereo 360) and publish to your Vimeo account and Slack. 
 * **[Stream 2D and 360 videos](#streaming)** from your own Vimeo account into your Unity app.
 
 
@@ -11,9 +11,9 @@ This SDK has two major features:
 
 ## Reasons this might be useful to you
 
-🧠 **Your new creative workflow.** Getting creative feedback from your team, friends, or community can be difficult and usually involves using 3rd party software to capture your experience. Leveraging this plugin and Vimeo's Review Tools, you can easily get feedback on your project.
+🧠 **Your new creative workflow.** Getting creative feedback from your team, friends, or community can be difficult and usually involves using 3rd party software to capture your experience. Leveraging this plugin and [Vimeo's review tools](https://vimeo.com/blog/post/collaboration-meet-efficiency-a-new-way-to-review), you can easily get feedback on your project.
 
-💬 **Slack!** You can choose to automatically post your video to a Slack channel of your choice after it's done recording.
+💬 **Slack!** Automatically post your video to a Slack channel of your choice after it's done recording.
 
 ❤️ **It's simple.** There are a lot of overly complicated recording plugins. We strived to make it as minimalist as possible. With a single click, your recording will publish to Vimeo and Slack!
 
@@ -26,15 +26,48 @@ This SDK has two major features:
 * Requires a [Vimeo account](https://vimeo.com). 
 
 ## Getting started
-We provide a simple demo scene in the `Vimeo/Scenes` folder called `Recorder`. `Recorder` contains the prefab, `[VimeoRecorder]`. Select it and in the component inspector you'll see the recording settings.
+
+### 1. Installation
+Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
+
+### 2. Setup
+
+We provide a simple demo scene in the `Vimeo/Scenes` folder called `Recorder`. The `Recorder` scene contains the prefab, `[VimeoRecorder]`. Select it and in the component inspector you'll see the recording settings.
 
 > Note that in order to record you will need to authorize your Vimeo account. [Learn how to sign in.](#3-sign-into-your-vimeo-account)
 
-## Recording in your own scene
+In order to add the Vimeo recorder in your own Unity scene simply go to the menu, `GameObject > Video > Vimeo Recorder`. You can also right-click in your Game Hiearchy and go to `Video > Vimeo Recorder`.
+
+### 3. Recording
+Once you are signed in, all you have to do is click the button, `Start Recording`. When you're done recording, click `Finish & Upload`.  
 
 
-## Known limitations
+## Recording & Uploading Info
+Here are some more details about all the recording & publishing features.
 
+#### Recording settings
+* **Input** - Select where you want to record from.
+  * `Screen` - Whatever is being displayed to the game screen
+  * `MainCamera` - Records from the MainCamera GameObject
+  * `MainCamera (360)` - Records from the MainCamera and converts into a 360, equirectangular format. Supports both mono and stereo.
+* **Resolution** - Select `Window` to default to whatever the resolution of your game window is already. Otherwise, you can select from various resolutions, up to 4K.
+* **Frame Rate** - The number of frames per second that will be recorded. Defaults to `30`. Vimeo supports up to `60` FPS.
+* **Real Time** - If you'd like to record in real-time, without slowing down game playback, then turn this on. Note: Depending on your app and your hardware, frames might be dropped. The lower the resolution, the easier it is to record in real-time.
+* **Record Audio** - You have the option to disable audio recording.
+* **Record Mode** - There are two ways to control recording:
+  * `Manual` - You determine when you'd like to stop recording by manually clicking "Finish & Done"
+  * `Seconds` - Choose how many seconds you'd like to record for. This makes it simple to do a one-click record & upload to Vimeo.
+
+#### Vimeo settings
+* **Video Name** - Specify the title of the video you want your Vimeo video to have
+* **Privacy Mode** - Choose what privacy level you'd like to set your Vimeo video to. [Learn more.](https://help.vimeo.com/hc/en-us/articles/224817847-Privacy-settings-overview) Note: Currently supports a limited number of Vimeo's privacy levels.
+* **Open In Browser** - After uploading to Vimeo, this will automatically open up the video in your default browser.
+
+#### Slack settings
+Before you can automatically post to a Slack channel, you'll need to authorize Vimeo with your Slack team. Click the `Get Token` button, authorize Slack, and then copy & paste the token into the `Slack Token` field.
+* **Slack Channel** - The name of the channel you want to post to. e.g. `#general`
+* **Share Link** - Choose whether you want to share the standard Vimeo video page, or a [review link](https://vimeo.com/blog/post/collaboration-meet-efficiency-a-new-way-to-review) to get feedback from your team.
+* **Post to Channel** - A simple toggle to disable posting to Slack.
 
 
 # Streaming
@@ -101,5 +134,5 @@ We do not support the following features yet, but we hope to in the near future:
   - Adaptive video playback (HLS/DASH). The `VimeoPlayer` component does allow you to set your streaming quality preference.
   - Vimeo Live streaming playback & publishing
 
-## Contributing
+# Help & Contributing
 There are many ways you can contribute. Make pull requestss or report bugs and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
