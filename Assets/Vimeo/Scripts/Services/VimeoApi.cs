@@ -10,10 +10,20 @@ using SimpleJSON;
 namespace Vimeo.Services
 {
     public class VimeoApi : MonoBehaviour
-    {
+    {   
+        public enum PrivacyModeDisplay
+        {
+            Anyone,
+            OnlyMe,
+            OnlyPeopleWithAPassword,
+            OnlyPeopleWithPrivateLink,
+            HideThisFromVimeo
+        }
+
         public enum PrivacyMode
         {
             anybody,
+            password,
             disable,
             nobody,
             unlisted
@@ -46,9 +56,34 @@ namespace Vimeo.Services
             StartCoroutine("Request", "/videos/" + vimeo_id);
         }
 
-        public void SetVideoViewPrivacy(string type) 
+        public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
         {
-            form.AddField("privacy.view", type);
+            switch (mode) {
+                case PrivacyModeDisplay.Anyone:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.anybody.ToString());
+                    break;
+
+                case PrivacyModeDisplay.OnlyPeopleWithPrivateLink:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.unlisted.ToString());
+                    break;
+
+                case PrivacyModeDisplay.OnlyMe:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.nobody.ToString());
+                    break;
+
+                case PrivacyModeDisplay.HideThisFromVimeo:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.disable.ToString());
+                    break;
+                
+                case PrivacyModeDisplay.OnlyPeopleWithAPassword:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.password.ToString());
+                    break;
+            }
+        }
+
+        public void SetVideoPassword(string password) 
+        {
+            form.AddField("password", password);
         }
 
         public void SetVideoName(string name) 

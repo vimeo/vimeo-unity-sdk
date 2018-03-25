@@ -66,7 +66,7 @@ namespace Vimeo.Recorder
 
     public class RecorderSettings : VimeoAuth
     {
-        public VimeoApi.PrivacyMode privacyMode = VimeoApi.PrivacyMode.anybody;
+        public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 
         public VideoInputType defaultVideoInput = VideoInputType.Screen;
@@ -82,15 +82,16 @@ namespace Vimeo.Recorder
         public bool realTime = false;
         public int frameRate = 30;
         public bool recordOnStart = false;
-        public bool openInBrowser = false;
+        public bool openInBrowser = true;
 
         //public bool shareToSlack = false;
-        public bool autoPostToChannel = false;
+        public bool autoPostToChannel = true;
         public string slackToken;
         public string slackChannel;
 
         public string videoName;
         public string videoPermalink;
+        public string videoPassword;
         public string videoReviewPermalink;
 
         private const string SLACK_TOKEN_NAME = "slack-token-";

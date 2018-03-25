@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Recorder;
+using Vimeo.Services;
 
 namespace Vimeo.Recorder
 {
@@ -13,6 +14,12 @@ namespace Vimeo.Recorder
         static bool publishFold;
         static bool vimeoFold;
         static bool slackFold;
+
+        [MenuItem("GameObject/Video/Vimeo Recorder")]
+        private static void CreateRecorderPrefab() {
+            GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoRecorder]") as GameObject);
+            go.name = "[VimeoRecorder]";
+        }
 
         void OnDisable()
         {
@@ -44,9 +51,18 @@ namespace Vimeo.Recorder
         {
             var so = serializedObject;
 
-            if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
-                EditorGUILayout.Space();
+            // Help Nav            
+            GUILayout.BeginHorizontal();
+            var style = new GUIStyle();
+            style.border = new RectOffset(0,0,0,0);
+            GUILayout.Box("", style);
+            if (GUILayout.Button("Need help?", GUILayout.Width(75))) {
+                Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
+            }
+            GUILayout.EndHorizontal();
 
+            // Vimeo Settings
+            if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
                 DrawRecorderConfig(recorder);
 
                 publishFold = EditorGUILayout.Foldout(publishFold, "Publish to");
@@ -66,6 +82,11 @@ namespace Vimeo.Recorder
                         EditorGUI.indentLevel++;
                         EditorGUILayout.PropertyField(so.FindProperty("videoName"));
                         EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+
+                        if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
+                            EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
+                        }
+
                         EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
                         EditorGUI.indentLevel--;
                     }
@@ -202,12 +223,12 @@ namespace Vimeo.Recorder
             if (!Authenticated(_token)) {
                 EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
                 if (recorder.slackToken == null || recorder.slackToken == "") {
-                    if (GUILayout.Button("Get Token", GUILayout.Width(80))) {
+                    if (GUILayout.Button("Get Token", GUILayout.Width(75))) {
                         Application.OpenURL("https://authy.vimeo.com/auth/slack");
                     }
                 }
                 else {                
-                    if (GUILayout.Button("Get Token", GUILayout.Width(80))) {
+                    if (GUILayout.Button("Get Token", GUILayout.Width(75))) {
                         Application.OpenURL("https://authy.vimeo.com/auth/slack");
                     }
 
@@ -241,8 +262,8 @@ namespace Vimeo.Recorder
                 EditorGUI.indentLevel++;
                 if (Authenticated(recorder.GetSlackToken())) {
                     EditorGUILayout.PropertyField(so.FindProperty("slackChannel"));
-                    EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"));
-                    EditorGUILayout.PropertyField(so.FindProperty("autoPostToChannel"));
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"), new GUIContent("Share Link"));
+                    EditorGUILayout.PropertyField(so.FindProperty("autoPostToChannel"), new GUIContent("Post to Channel"));
                 } 
 
                 DrawSlackAuth(recorder.GetSlackToken(), recorder);
