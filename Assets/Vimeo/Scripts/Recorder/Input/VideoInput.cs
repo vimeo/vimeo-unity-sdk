@@ -46,9 +46,8 @@ namespace Vimeo.Recorder
                 }
             }
          
-            Debug.Log("Screen resolution: " + w + "x" + h);
+            //Debug.Log("Screen resolution: " + w + "x" + h);
 
-            
             if (w != outputWidth || h != outputHeight)
             {
                 Debug.Log("Setting window size to: " + outputWidth + "x" + outputHeight);

@@ -44,13 +44,9 @@ namespace Vimeo.Recorder {
 
         public void BeginRecording()
         {
-            Debug.Log("RecorderController: BeginRecording()");
             isRecording = true;
 
             InitInputs();
-
-            encodedFilePath = Path.Combine(outputPath, GetFileName());
-            Debug.Log(encodedFilePath);
 
             if (recorder.realTime) {
                 Application.targetFrameRate = recorder.frameRate;
@@ -83,6 +79,9 @@ namespace Vimeo.Recorder {
                 includeAlpha = false
             };
 
+            encodedFilePath = Path.Combine(outputPath, GetFileName());
+            Debug.Log(encodedFilePath);
+
             if (recorder.recordAudio) {
                 audioInput.BeginRecording();
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
@@ -99,7 +98,7 @@ namespace Vimeo.Recorder {
 
         public string GetFileName()
         {
-            string name = "Unity Recording %R %TS";
+            string name = "Vimeo Unity Recording %R %TS";
             return ReplaceSpecialChars(name) + ".mp4";
         }
 
@@ -134,10 +133,6 @@ namespace Vimeo.Recorder {
             Destroy(videoInput);
 
             Time.captureFramerate = 0;
-
-            if (isRecording) {
-                Debug.Log("RecorderController.EndRecording()");
-            }
 
             currentFrame = 0;
             isRecording = false;

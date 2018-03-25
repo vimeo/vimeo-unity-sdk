@@ -106,8 +106,6 @@ namespace Vimeo.Recorder
             }
 
             UploadProgress("SaveInfoComplete", 1f);
-
-            Dispose();
         }
 
         public void SetVideoName(string title)
@@ -131,7 +129,6 @@ namespace Vimeo.Recorder
             yield return new WaitForSeconds(1f);
 
             if (videoId != null) {
-                Debug.Log("Video saved!");
                 vimeoApi.SaveVideo(videoId);
             }
         }

@@ -41,25 +41,27 @@ MonoBehaviour:
   vimeoToken: 
   saveVimeoToken: 0
   vimeoSignIn: 1
-  privacyMode: 3
+  privacyMode: 0
   defaultShareLink: 0
   defaultVideoInput: 0
   defaultCamera: 0
   defaultCamera360: 0
-  defaultRenderMode360: 0
+  defaultRenderMode360: 1
   defaultResolution: 0
-  defaultAspectRatio: 2
-  recordMode: 1
-  recordDuration: 30
+  defaultAspectRatio: 0
+  recordMode: 0
+  recordDuration: 5
+  recordAudio: 1
   realTime: 0
   frameRate: 30
   recordOnStart: 0
   openInBrowser: 1
-  autoPostToChannel: 0
+  autoPostToChannel: 1
   slackToken: 
-  slackChannel: '#creator-labs'
-  videoName: Audio test!
+  slackChannel: 
+  videoName: Unity Recording
   videoPermalink: 
+  videoPassword: 
   videoReviewPermalink: 
   recorder: {fileID: 0}
   publisher: {fileID: 0}

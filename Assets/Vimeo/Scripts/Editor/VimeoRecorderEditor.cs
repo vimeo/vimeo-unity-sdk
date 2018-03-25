@@ -60,6 +60,7 @@ namespace Vimeo.Recorder
                 Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
             }
             GUILayout.EndHorizontal();
+            EditorGUILayout.Space();
 
             // Vimeo Settings
             if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
