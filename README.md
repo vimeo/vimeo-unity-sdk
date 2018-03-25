@@ -1,7 +1,6 @@
-Vimeo Unity SDK
-========================
+<h1 align="center">Vimeo Unity SDK</h1>
 
-This SDK has two major features:
+This plugin has two major features:
 
 * **[Record video](#recording)** (including 4K, 360, stereo 360) and publish to your Vimeo account and Slack. 
 * **[Stream 2D and 360 videos](#streaming)** from your own Vimeo account into your Unity app.
@@ -9,7 +8,7 @@ This SDK has two major features:
 
 # Recording
 
-## Reasons this might be useful to you
+## Features
 
 🧠 **Your new creative workflow.** Getting creative feedback from your team, friends, or community can be difficult and usually involves using 3rd party software to capture your experience. Leveraging this plugin and [Vimeo's review tools](https://vimeo.com/blog/post/collaboration-meet-efficiency-a-new-way-to-review), you can easily get feedback on your project.
 
