@@ -35,19 +35,19 @@ Download the most recent `.unitypackage` from the [latest releases](https://gith
 
 We provide a simple demo scene in the `Vimeo/Scenes` folder called `Recorder`. The `Recorder` scene contains the prefab, `[VimeoRecorder]`. Select it and in the component inspector you'll see the recording settings.
 
-> Note that in order to record you will need to authorize your Vimeo account. [Learn how to sign in.](#3-sign-into-your-vimeo-account)
-
 In order to add the Vimeo recorder in your own Unity scene simply go to the menu, `GameObject > Video > Vimeo Recorder`. You can also right-click in your Game Hiearchy and go to `Video > Vimeo Recorder`.
 
 <img src="https://i.imgur.com/cgagVAh.gif" width="300" />
 
+Sign into your Vimeo account by clicking `Get Token`. After you authorize Unity with Vimeo, copy the token, paste it into the `Vimeo Token` field, and click `Sign into Vimeo`.
+
 ### 3. Recording
-Once you are signed in, all you have to do is click the button, `Start Recording`. When you're done recording, click `Finish & Upload`.  
+Once you're signed in, all you have to do is click the `Start Recording` button. When you're done recording, click `Finish & Upload`.  
 
 <img src="https://i.imgur.com/iEyhwBD.gif" />
 
 ## Recording & Uploading Info
-Here are some more details about all the recording & publishing features.
+Learn more about all the recording & publishing features:
 
 #### Recording settings
 * **Input** - Select where you want to record from.
