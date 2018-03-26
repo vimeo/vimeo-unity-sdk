@@ -197,7 +197,7 @@ Transform:
   m_LocalScale: {x: 0.3489546, y: 0.34895456, z: 0.34895456}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!198 &476887275
 ParticleSystem:
@@ -278,7 +278,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 3.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -1089,19 +1089,28 @@ ParticleSystem:
           time: 0
           value: 0
           inSlope: 0
-          outSlope: 1
+          outSlope: 0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0.33333334
           outWeight: 0.33333334
         - serializedVersion: 3
-          time: 1
+          time: 0.49678254
           value: 1
-          inSlope: 1
-          outSlope: 0
+          inSlope: 0.038239356
+          outSlope: 0.038239356
           tangentMode: 0
           weightedMode: 0
-          inWeight: 0.33333334
+          inWeight: 0.25007623
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 0
+          inSlope: -0.04105594
+          outSlope: -0.04105594
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.22946021
           outWeight: 0.33333334
         m_PreInfinity: 2
         m_PostInfinity: 2
@@ -4775,7 +4784,7 @@ Prefab:
     - target: {fileID: 224861955090669034, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
         type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 224861955090669034, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
         type: 2}
@@ -4826,6 +4835,46 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: defaultVideoInput
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: recordMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: recordDuration
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: videoName
+      value: Unity Recording
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: recordOnStart
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: recordAudio
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: privacyMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114381909144653884, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb,
+        type: 2}
+      propertyPath: autoPostToChannel
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d7bf7fecbb5ea7f4bb9595ec0ab03cdb, type: 2}
@@ -4898,12 +4947,12 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 0
-  m_HDR: 1
-  m_AllowMSAA: 1
+  m_TargetEye: 3
+  m_HDR: 0
+  m_AllowMSAA: 0
   m_AllowDynamicResolution: 0
   m_ForceIntoRT: 0
-  m_OcclusionCulling: 1
+  m_OcclusionCulling: 0
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
 --- !u!4 &665133141
@@ -4919,68 +4968,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1886965171
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1886965173}
-  - component: {fileID: 1886965172}
-  m_Layer: 0
-  m_Name: Directional light
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!108 &1886965172
-Light:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1886965171}
-  m_Enabled: 1
-  serializedVersion: 8
-  m_Type: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
-  m_Range: 10
-  m_SpotAngle: 30
-  m_CookieSize: 10
-  m_Shadows:
-    m_Type: 0
-    m_Resolution: -1
-    m_CustomResolution: -1
-    m_Strength: 1
-    m_Bias: 0.05
-    m_NormalBias: 0.4
-    m_NearPlane: 0.2
-  m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
-  m_Flare: {fileID: 0}
-  m_RenderMode: 0
-  m_CullingMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_Lightmapping: 4
-  m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
-  m_ColorTemperature: 6570
-  m_UseColorTemperature: 0
-  m_ShadowRadius: 0
-  m_ShadowAngle: 0
---- !u!4 &1886965173
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1886965171}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: 44.989502, y: -7.300514, z: -20.98146}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
