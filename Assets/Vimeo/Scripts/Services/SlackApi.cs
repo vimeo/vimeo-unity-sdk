@@ -32,18 +32,13 @@ namespace Vimeo.Services
 
         IEnumerator Post(string url, WWWForm form) 
         {
-            Debug.Log(url);
             using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
                 yield return request.SendWebRequest();
 
-                Debug.Log(request.downloadHandler.text);
-
+                // Debug.Log(request.downloadHandler.text);
                 if (request.isNetworkError) {
-                    Debug.Log (request.error);
+                    Debug.LogError(request.error);
                 } 
-                else {
-                    Debug.Log("Posted to Slack!");
-                }
             }
         }
     }
