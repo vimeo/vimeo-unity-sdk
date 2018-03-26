@@ -37,9 +37,12 @@ We provide a simple demo scene in the `Vimeo/Scenes` folder called `Recorder`. T
 
 In order to add the Vimeo recorder in your own Unity scene simply go to the menu, `GameObject > Video > Vimeo Recorder`. You can also right-click in your Game Hiearchy and go to `Video > Vimeo Recorder`.
 
+<img src="https://i.imgur.com/cgagVAh.gif" width="300" />
+
 ### 3. Recording
 Once you are signed in, all you have to do is click the button, `Start Recording`. When you're done recording, click `Finish & Upload`.  
 
+<img src="https://i.imgur.com/iEyhwBD.gif" />
 
 ## Recording & Uploading Info
 Here are some more details about all the recording & publishing features.
