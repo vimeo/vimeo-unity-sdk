@@ -126,12 +126,20 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
  
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
-## Future support
+# Future support
 We do not support the following features yet, but we hope to in the near future:
   
-  - **In progress:** Real-time & offline video capture and uploading to Vimeo
-  - Adaptive video playback (HLS/DASH). The `VimeoPlayer` component does allow you to set your streaming quality preference.
-  - Vimeo Live streaming playback & publishing
+#### Streaming
+* Adaptive video playback (HLS/DASH). The `VimeoPlayer` component does allow you to set your streaming quality preference.
+* Vimeo Live streaming playback & publishing
+
+#### Recording
+
+# Questions
+For questions and support, [ask on StackOverflow](https://stackoverflow.com/questions/ask/?tags=vimeo).
 
 # Help & Contributing
-There are many ways you can contribute. Make pull requestss or report bugs and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
+Questions, comments, concerns? Make pull requestss or report bugs and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
+
+# Thanks
+Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), and [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader) which this is built on top of.
