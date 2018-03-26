@@ -8,7 +8,7 @@ This plugin has two major features:
 
 # Recording
 
-<img src="https://i.imgur.com/tnP8Rl7.gif" height="300" /> <img src="https://i.imgur.com/blyIiks.gif" height="300" />
+<img src="https://i.imgur.com/tnP8Rl7.gif" height="250" /> <img src="https://i.imgur.com/blyIiks.gif" height="250" />
 
 ## Features
 
@@ -83,15 +83,15 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
 <table>
   <tr>
     <td style="width:33%">
-      <img src="https://i.imgur.com/bulVmhe.gif" /><br>
+      <img src="https://i.imgur.com/bulVmhe.gif" height="200" /><br>
       <b>Player</b> - Demos simple video streaming inside of a 3D environment.
     </td>
     <td style="width:33%">
-      <img src="https://i.imgur.com/xAdsGvz.gif" /><br>
+      <img src="https://i.imgur.com/xAdsGvz.gif" height="200" /><br>
       <b>360Player</b> - Demos how to stream 360 videos from Vimeo (supports 3D / stereoscopic video).
     </td>
     <td style="width:33%">
-      <img src="https://i.imgur.com/gNGweB0.gif" /><br>
+      <img src="https://i.imgur.com/gNGweB0.gif" height="200" /><br>
       <b>CanvasPlayer</b> - Demos how to build a canvas-based player with basic playback controls.
     </td>
   </tr>
@@ -130,15 +130,6 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
 * For security reasons, the Vimeo token is not saved into the scene. But, if you plan on building this app so others can watch video, then be sure to check `Save token with scene`
  
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
-
-# Future support
-We do not support the following features yet, but we hope to in the near future:
-  
-#### Streaming
-* Adaptive video playback (HLS/DASH). The `VimeoPlayer` component does allow you to set your streaming quality preference.
-* Vimeo Live streaming playback & publishing
-
-#### Recording
 
 # Questions
 For questions and support, [ask on StackOverflow](https://stackoverflow.com/questions/ask/?tags=vimeo).
