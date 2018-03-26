@@ -2,6 +2,7 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 namespace Vimeo.Recorder
 {
@@ -69,6 +70,7 @@ namespace Vimeo.Recorder
             if (!readTexture) {
                 readTexture = new Texture2D(outputRT.width, outputRT.height, TextureFormat.RGBA32, false);
             }
+
             var backupActiveRT = RenderTexture.active;
             RenderTexture.active = outputRT;
             readTexture.ReadPixels(new Rect(0, 0, outputRT.width, outputRT.height), 0, 0);
@@ -84,11 +86,11 @@ namespace Vimeo.Recorder
             if (recorder.defaultRenderMode360 == RenderMode360.Stereo)
             {
                 targetCamera.stereoSeparation = stereoSeparation;
-                targetCamera.stereoTargetEye = StereoTargetEyeMask.Both;
+                targetCamera.stereoTargetEye = StereoTargetEyeMask.Left;
                 targetCamera.RenderToCubemap(cubemap1, 63, Camera.MonoOrStereoscopicEye.Left);
 
                 targetCamera.stereoSeparation = stereoSeparation;
-                targetCamera.stereoTargetEye = StereoTargetEyeMask.Both;
+                targetCamera.stereoTargetEye = StereoTargetEyeMask.Right;
                 targetCamera.RenderToCubemap(cubemap2, 63, Camera.MonoOrStereoscopicEye.Right);
 
                 cubemap1.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Left);
@@ -172,12 +174,12 @@ namespace Vimeo.Recorder
                 outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32) {
                     wrapMode = TextureWrapMode.Repeat
                 };
-                outputRT.Create();
             }
             else { // 360 
-                outputRT = new RenderTexture(outputWidth, outputHeight, 24, RenderTextureFormat.ARGB32) {
-                    dimension = TextureDimension.Tex2D,
-                    antiAliasing = 8
+                outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32) {
+                    wrapMode = TextureWrapMode.Repeat
+                    // dimension = TextureDimension.Tex2D,
+                    // antiAliasing = 8
                 };
 
                 cubemap1 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32) {
@@ -186,10 +188,12 @@ namespace Vimeo.Recorder
                 };
 
                 cubemap2 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32) {
-                    dimension = TextureDimension.Cube ,
+                    dimension = TextureDimension.Cube,
                     antiAliasing = 8
                 };
             }
+
+            outputRT.Create();
 
             return true;
         }
