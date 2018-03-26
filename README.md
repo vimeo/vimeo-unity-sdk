@@ -75,9 +75,6 @@ Before you can automatically post to a Slack channel, you'll need to authorize V
 
 
 # Streaming
-
-## Getting started
-
 The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` folder. Please note these demos don't work out of the box. You will need to authorize your Vimeo account and select your own video test. [Skip to step #3](#3-sign-into-your-vimeo-account) to learn how to sign in.
 
 <table>
