@@ -8,6 +8,8 @@ This plugin has two major features:
 
 # Recording
 
+<img src="https://i.imgur.com/tnP8Rl7.gif" height="300" /> <img src="https://i.imgur.com/blyIiks.gif" height="300" />
+
 ## Features
 
 🧠 **Your new creative workflow.** Getting creative feedback from your team, friends, or community can be difficult and usually involves using 3rd party software to capture your experience. Leveraging this plugin and [Vimeo's review tools](https://vimeo.com/blog/post/collaboration-meet-efficiency-a-new-way-to-review), you can easily get feedback on your project.
