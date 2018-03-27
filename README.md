@@ -5,6 +5,19 @@ This plugin has two major features:
 * **[Record video](#recording)** (including 4K, 360, stereo 360) and publish to your Vimeo account and Slack. 
 * **[Stream 2D and 360 videos](#streaming)** from your own Vimeo account into your Unity app.
 
+# Installation
+Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
+
+
+# Requirements
+* For recording: 
+  * Unity `2018.1` or higher.
+  * Requires a [Vimeo account](https://vimeo.com). 
+* For streaming playback:
+  * Unity `5.6.0` or higher.
+  * Streaming Vimeo videos requires video file access via the Vimeo API. Accessing video files is limited to [Vimeo Pro and Business](https://vimeo.com/upgrade) customers. 
+  * You can only stream videos from your own Vimeo account. Access to all videos is limited to partnership-level integrations. If you are interested in a partnership, reach out to casey@vimeo.com
+
 
 # Recording
 
@@ -20,28 +33,21 @@ This plugin has two major features:
 
 🌐 **It's cross-platform.** Recording works on both Windows & Mac.
 
-⬆️ **Publish to your social channels.** Once your video is on Vimeo, you can easily publish to both Facebook and YouTube.
-
-## Requirements
-* Requires Unity `2018.1` or higher.
-* Requires a [Vimeo account](https://vimeo.com). 
+⬆️ **Publish to your social channels.** Once your video is on Vimeo, you can easily [publish to both Facebook and YouTube](https://vimeo.com/blog/post/publish-videos-to-your-social-channels-instantly).
 
 ## Getting started
 
-### 1. Installation
-Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
-
-### 2. Setup
+### 1. Setup
 
 We provide a simple demo scene in the `Vimeo/Scenes` folder called `Recorder`. The `Recorder` scene contains the prefab, `[VimeoRecorder]`. Select it and in the component inspector you'll see the recording settings.
 
-In order to add the Vimeo recorder in your own Unity scene simply go to the menu, `GameObject > Video > Vimeo Recorder`. You can also right-click in your Game Hiearchy and go to `Video > Vimeo Recorder`.
+In order to add the Vimeo recorder in your own Unity scene simply go to the menu, `GameObject > Video > Vimeo Recorder`. You can also right-click in your Game Hierarchy and go to `Video > Vimeo Recorder`.
 
 <img src="https://i.imgur.com/cgagVAh.gif" width="300" />
 
 Sign into your Vimeo account by clicking `Get Token`. After you authorize Unity with Vimeo, copy the token, paste it into the `Vimeo Token` field, and click `Sign into Vimeo`.
 
-### 3. Recording
+### 2. Recording
 Once you're signed in, all you have to do is click the `Start Recording` button. When you're done recording, click `Finish & Upload`.  
 
 <img src="https://i.imgur.com/iEyhwBD.gif" />
@@ -94,16 +100,8 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
   </tr>
 </table>
 
-## Requirements
-* Unity `5.6.0` or higher
-* Streaming Vimeo videos requires video file access via the Vimeo API. Accessing video files is limited to [Vimeo Pro and Business](https://vimeo.com/upgrade) customers. 
-* You can only stream videos from your own Vimeo account. Access to all videos is limited to partnership-level integrations. If you are interested in a partnership, reach out to casey@vimeo.com
-
 ## Getting Started
-### 1. Installation
-Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
-
-### 2. Choose your playback method
+### 1. Choose your playback method
 Open up your Unity scene or create a new one. For streaming any Vimeo video, you will be using the `VimeoPlayer` component. There are two ways to setup the Vimeo player in Unity:
 
 #### Prefab setup
@@ -116,7 +114,7 @@ If you are setting up your own scene and want to specify your video "screen" and
 
 <img src="https://i.imgur.com/F9aGHYD.gif"  />
 
-### 3. Sign into your Vimeo account
+### 2. Sign into your Vimeo account
 Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't already) and make sure you have some videos uploaded. Please read the following two requirements to streaming Vimeo videos into Unity:
 
 <img src="https://i.imgur.com/P8F3A6y.gif"  />
@@ -131,10 +129,10 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
 # Questions
-For questions and support, [ask on StackOverflow](https://stackoverflow.com/questions/ask/?tags=vimeo).
+For questions and support, [ask on StackOverflow](https://stackoverflow.com/questions/ask/?tags=vimeo). If you found a bug, please file a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
 # Help & Contributing
-Questions, comments, concerns? Make pull requestss or report bugs and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
+Make pull requests, file bug reports, and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
 # Thanks
 Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), and [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader) which this is built on top of.
