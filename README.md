@@ -52,6 +52,47 @@ Once you're signed in, all you have to do is click the `Start Recording` button.
 
 <img src="https://i.imgur.com/iEyhwBD.gif" />
 
+## Control recording via a script
+Probably the most powerful part about this plugin is that you can control recording via a script. Below is a simple code snippet on how you would do that. 
+
+```csharp
+using UnityEngine;
+using Vimeo.Recorder;
+
+public class CustomRecorder : MonoBehaviour {
+  VimeoRecorder recorder;
+
+  void Start() {
+    recorder = gameObject.GetComponent<VimeoRecorder>();
+    recorder.defaultVideoInput = Vimeo.Recorder.VideoInputType.Camera;		
+    recorder.defaultResolution = Vimeo.Recorder.Resolution.x2160p_4K;
+    recorder.defaultAspectRatio = Vimeo.Recorder.AspectRatio.x16_9;
+    recorder.frameRate = 60;
+    recorder.recordMode = Vimeo.Recorder.RecordMode.Duration;
+    recorder.recordDuration = 5; // in seconds
+
+    recorder.videoName = "My Custom Video";
+    recorder.privacyMode = Vimeo.Services.VimeoApi.PrivacyModeDisplay.HideThisFromVimeo;
+    recorder.autoPostToChannel = false; 
+
+    recorder.OnUploadComplete += UploadComplete;
+
+    recorder.BeginRecording();
+  }
+  
+  void UploadComplete() 
+  {
+    Debug.Log("Uploaded to Vimeo!");
+    // Now you could change the scene and then immediately queue up another recording.
+    // ...
+    // recorder.BeginRecording();
+  }
+}
+
+```
+
+In this sample, `CustomRecorder` is assuming that it is a part of the same GameObject as the `VimeoRecorder`. All the settings that are avaiable in the editor GUI can be controlled via code.
+
 ## Recording & Uploading Info
 Learn more about all the recording & publishing features:
 
