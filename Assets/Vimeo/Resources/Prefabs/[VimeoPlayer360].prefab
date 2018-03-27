@@ -81,6 +81,7 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -96,6 +97,7 @@ MeshRenderer:
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
   m_SelectedEditorRenderState: 3
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
@@ -119,13 +121,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1775618987241786}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ad4f86e0ad84f4380af8f8f22ff0c1, type: 3}
+  m_Script: {fileID: 11500000, guid: 7174a652004baed43b39101d78c36e46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  videoScreen: {fileID: 1332080199964504}
-  audioSource: {fileID: 0}
   vimeoToken: 
   saveVimeoToken: 0
+  vimeoSignIn: 0
+  videoScreen: {fileID: 1332080199964504}
+  audioSource: {fileID: 0}
   vimeoVideoId: 
   videoQualities:
   - Highest

@@ -10,10 +10,20 @@ using SimpleJSON;
 namespace Vimeo.Services
 {
     public class VimeoApi : MonoBehaviour
-    {
+    {   
+        public enum PrivacyModeDisplay
+        {
+            Anyone,
+            OnlyMe,
+            OnlyPeopleWithAPassword,
+            OnlyPeopleWithPrivateLink,
+            HideThisFromVimeo
+        }
+
         public enum PrivacyMode
         {
             anybody,
+            password,
             disable,
             nobody,
             unlisted
@@ -46,14 +56,50 @@ namespace Vimeo.Services
             StartCoroutine("Request", "/videos/" + vimeo_id);
         }
 
-        public void SetVideoViewPrivacy(string type) 
+        public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
         {
-            form.AddField("privacy.view", type);
+            switch (mode) {
+                case PrivacyModeDisplay.Anyone:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.anybody.ToString());
+                    break;
+
+                case PrivacyModeDisplay.OnlyPeopleWithPrivateLink:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.unlisted.ToString());
+                    break;
+
+                case PrivacyModeDisplay.OnlyMe:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.nobody.ToString());
+                    break;
+
+                case PrivacyModeDisplay.HideThisFromVimeo:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.disable.ToString());
+                    break;
+                
+                case PrivacyModeDisplay.OnlyPeopleWithAPassword:
+                    form.AddField("privacy.view", VimeoApi.PrivacyMode.password.ToString());
+                    break;
+            }
+        }
+
+        public void SetVideoPassword(string password) 
+        {
+            form.AddField("password", password);
         }
 
         public void SetVideoName(string name) 
         {
             form.AddField("name", name);
+        }
+
+        public void SetVideoDescription(string desc)
+        {
+            form.AddField("description", desc);
+        }
+
+        public void SetVideoSpatialMode(string projection, string stereo_format)
+        {
+            form.AddField("spatial.projection", projection);
+            form.AddField("spatial.stereo_format", stereo_format);
         }
 
         public void SaveVideo(string vimeo_id)
@@ -111,13 +157,12 @@ namespace Vimeo.Services
 
         IEnumerator GetTicket()
         {
-        	Debug.Log("VimeoApi: GetTicket");
             if (OnUploadProgress != null) {
-                OnUploadProgress ("Authorizing", 0);
+                OnUploadProgress("Authorizing", 0);
             }
 
             WWWForm form = new WWWForm ();
-            form.AddField ("type", "streaming");
+            form.AddField("type", "streaming");
 
             using (UnityWebRequest request = UnityWebRequest.Post(API_URL + "/me/videos", form)) {
 				request.chunkedTransfer = false;
@@ -128,10 +173,10 @@ namespace Vimeo.Services
                     Debug.LogError (request.error);
                 } 
                 else {
-                    VimeoTicket ticket = VimeoTicket.CreateFromJSON (request.downloadHandler.text);
+                    VimeoTicket ticket = VimeoTicket.CreateFromJSON(request.downloadHandler.text);
 
                     if (ticket.error == null) {
-                        StartCoroutine(UploadVideo (ticket));
+                        StartCoroutine(UploadVideo(ticket));
                     } 
                     else {
                         Debug.LogError(ticket.error);
@@ -143,7 +188,7 @@ namespace Vimeo.Services
         IEnumerator UploadVideo(VimeoTicket ticket)
         {
             if (OnUploadProgress != null) {
-                OnUploadProgress ("Uploading", 0);
+                OnUploadProgress("Uploading", 0);
             }
 
             byte[] data = new byte[0];
@@ -156,9 +201,10 @@ namespace Vimeo.Services
                     // Get local video file and store it in a byte array for uploading
                     data = File.ReadAllBytes(video_file_path);
                     success = true;
-                } catch (IOException e) { 
+                } 
+                catch (IOException e) { 
                     // TODO: fix this ugly code!
-                    Debug.Log ("File is being accessed by another process. " + e.Message);
+                    Debug.Log("File is being accessed by another process. " + e.Message);
                 }
             }
 
@@ -168,7 +214,7 @@ namespace Vimeo.Services
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 uploader = request;
 				request.chunkedTransfer = false;
-                request.SetRequestHeader ("Content-Type", "video/" + video_file.Extension);
+                request.SetRequestHeader("Content-Type", "video/" + video_file.Extension);
                 yield return VimeoApi.SendRequest(request);
 
                 uploader = null;
@@ -176,7 +222,8 @@ namespace Vimeo.Services
                 if (IsNetworkError(request)) {
                     Debug.Log (request.error);
                     Debug.Log (request.responseCode);
-                } else {
+                } 
+                else {
                     StartCoroutine(VerifyUpload(ticket));
                 }
             }
@@ -185,7 +232,7 @@ namespace Vimeo.Services
         IEnumerator VerifyUpload(VimeoTicket ticket)
         {
             if (OnUploadProgress != null) {
-                OnUploadProgress ("Verifying", 0.9999999f);
+                OnUploadProgress("Verifying", 0.9999999f);
             }
 
             byte[] data = new byte[] { 0x00 };
@@ -207,7 +254,7 @@ namespace Vimeo.Services
         IEnumerator CompleteUpload(VimeoTicket ticket) 
         {
             if (OnUploadProgress != null) {
-                OnUploadProgress ("Complete", 1f);
+                OnUploadProgress("Complete", 1f);
             }
 
             // Debug.Log (API_URL + ticket.complete_uri);
@@ -260,7 +307,7 @@ namespace Vimeo.Services
 
         void FixedUpdate()
         {
-            if (uploader != null && uploader.uploadProgress != 1) {
+            if (OnUploadProgress != null && uploader != null && uploader.uploadProgress != 1) {
                 OnUploadProgress("Uploading", uploader.uploadProgress);
             }
         }

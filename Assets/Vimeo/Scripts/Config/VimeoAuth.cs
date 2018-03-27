@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Vimeo.Config 
+namespace Vimeo 
 {  
-    public class VimeoBehavior : MonoBehaviour
+    public class VimeoAuth : MonoBehaviour
     {
         public string vimeoToken;
         public bool   saveVimeoToken = true;

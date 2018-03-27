@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Vimeo;
+using Vimeo.Player;
 
 public class SeekSlider : MonoBehaviour, IPointerDownHandler, IPointerUpHandler {
 

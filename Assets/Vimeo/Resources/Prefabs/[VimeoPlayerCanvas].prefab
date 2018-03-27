@@ -157,11 +157,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224225937751239816}
-  - component: {fileID: 114708236403802286}
   - component: {fileID: 223624136393695396}
   - component: {fileID: 114879082620806960}
   - component: {fileID: 114345067308830292}
   - component: {fileID: 114361331009974742}
+  - component: {fileID: 114552117194758444}
   m_Layer: 0
   m_Name: '[VimeoPlayerCanvas]'
   m_TagString: Untagged
@@ -303,7 +303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9516eb1c694ce74aacc7f618557bdaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vimeoPlayer: {fileID: 114708236403802286}
+  vimeoPlayer: {fileID: 114552117194758444}
   playButtonText: {fileID: 1603006048728946}
 --- !u!114 &114214540109085584
 MonoBehaviour:
@@ -378,6 +378,38 @@ MonoBehaviour:
   m_InputActionsPerSecond: 10
   m_RepeatDelay: 0.5
   m_ForceModuleActive: 0
+--- !u!114 &114552117194758444
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1908571101946040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7174a652004baed43b39101d78c36e46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vimeoToken: 
+  saveVimeoToken: 0
+  vimeoSignIn: 0
+  videoScreen: {fileID: 1014889527798124}
+  audioSource: {fileID: 0}
+  vimeoVideoId: 
+  videoQualities:
+  - Highest
+  - 1080
+  - 720
+  - 540
+  - 480
+  - 360
+  videoQualityIndex: 0
+  videoName: 
+  videoThumbnailUrl: 
+  authorThumbnailUrl: 
+  is3D: 0
+  videoProjection: 
+  videoStereoFormat: 
+  controller: {fileID: 0}
 --- !u!114 &114617903015007310
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -419,37 +451,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &114708236403802286
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1908571101946040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62ad4f86e0ad84f4380af8f8f22ff0c1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  videoScreen: {fileID: 1014889527798124}
-  audioSource: {fileID: 0}
-  vimeoToken: 
-  saveVimeoToken: 0
-  vimeoVideoId: 
-  videoQualities:
-  - Highest
-  - 1080
-  - 720
-  - 540
-  - 480
-  - 360
-  videoQualityIndex: 0
-  videoName: 
-  videoThumbnailUrl: 
-  authorThumbnailUrl: 
-  is3D: 0
-  videoProjection: 
-  videoStereoFormat: 
-  controller: {fileID: 0}
 --- !u!114 &114732975338139932
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -509,7 +510,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72a7510b4e60d4e4dbcbecb4b2d307f6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vimeoPlayer: {fileID: 114708236403802286}
+  vimeoPlayer: {fileID: 114552117194758444}
 --- !u!114 &114870133534877462
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -605,7 +606,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114708236403802286}
+      - m_Target: {fileID: 114552117194758444}
         m_MethodName: ToggleVideoPlayback
         m_Mode: 1
         m_Arguments:
@@ -806,7 +807,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -200}
+  m_SizeDelta: {x: 0, y: -100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224921726650614060
 RectTransform:
