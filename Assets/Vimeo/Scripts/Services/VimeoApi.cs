@@ -157,7 +157,6 @@ namespace Vimeo.Services
 
         IEnumerator GetTicket()
         {
-        	Debug.Log("VimeoApi: GetTicket");
             if (OnUploadProgress != null) {
                 OnUploadProgress("Authorizing", 0);
             }

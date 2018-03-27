@@ -47,7 +47,7 @@ namespace Vimeo.Recorder
     {
         Window,
         //x8640p_16K = 8640,
-        x4320p_8K = 4320,
+        // x4320p_8K = 4320,
         // x2880p_5K = 2880,
         x2160p_4K = 2160,
         x1440P_QHD = 1440,

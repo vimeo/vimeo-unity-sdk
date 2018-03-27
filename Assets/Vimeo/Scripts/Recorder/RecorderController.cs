@@ -74,7 +74,7 @@ namespace Vimeo.Recorder {
             };
 
             encodedFilePath = Path.Combine(outputPath, GetFileName());
-            Debug.Log(encodedFilePath);
+            Debug.Log("Recording: " + GetFileName());
 
             if (recorder.recordAudio) {
                 audioInput.BeginRecording();

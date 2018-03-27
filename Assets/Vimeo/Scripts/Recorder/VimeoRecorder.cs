@@ -12,8 +12,8 @@ namespace Vimeo.Recorder
     [AddComponentMenu("Video/Vimeo Recorder")]
     public class VimeoRecorder : RecorderSettings 
     {
-        public delegate void UploadAction(string status, float progress);
-        public event UploadAction OnUploadProgress;
+        public delegate void RecordAction();
+        public event RecordAction OnUploadComplete;
 
         public RecorderController recorder;
         public VimeoPublisher publisher;
@@ -31,13 +31,15 @@ namespace Vimeo.Recorder
     
         public void BeginRecording()
         {
-            if (recorder == null) {
-                recorder = gameObject.AddComponent<RecorderController>();
-                recorder.recorder = this;
-            }
+            if (!isRecording) {
+                if (recorder == null) {
+                    recorder = gameObject.AddComponent<RecorderController>();
+                    recorder.recorder = this;
+                }
 
-            recorder.BeginRecording();
-            isRecording = true;
+                recorder.BeginRecording();
+                isRecording = true;
+            }
         }
 
         public void EndRecording()
@@ -81,9 +83,14 @@ namespace Vimeo.Recorder
         private void UploadProgress(string status, float progress)
         {
             uploadProgress = progress;
+
             if (status == "SaveInfoComplete") {
                 isUploading = false;
                 DeleteVideoFile();
+
+                if (OnUploadComplete != null) {
+                    OnUploadComplete();
+                }
             }
         }
 
