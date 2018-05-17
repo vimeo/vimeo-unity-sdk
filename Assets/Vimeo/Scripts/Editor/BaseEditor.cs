@@ -34,7 +34,7 @@ namespace Vimeo
                 }
                 GUILayout.EndHorizontal();
 
-                EditorGUILayout.PropertyField(so.FindProperty("saveVimeoToken"), new GUIContent("Save token with scene"));
+                EditorGUILayout.PropertyField(so.FindProperty("saveVimeoToken"), new GUIContent("Save token with object"));
 
                 GUI.backgroundColor = Color.green;
                 if (Authenticated(auth.vimeoToken)) {

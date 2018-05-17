@@ -37,6 +37,11 @@ namespace Vimeo.Player
 
         private void Start()
         {
+            if (!vimeoSignIn) {
+                Debug.LogWarning("You have not signed into the Vimeo Player.");
+                return;
+            }
+
             if (GetVimeoToken() != null) {
                 api = gameObject.AddComponent<VimeoApi>();
                 api.token = GetVimeoToken();
