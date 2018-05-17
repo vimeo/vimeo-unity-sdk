@@ -9,7 +9,12 @@ namespace Vimeo
         public string vimeoToken;
         public bool   saveVimeoToken = true;
         public bool   vimeoSignIn = false;
-        private const string VIMEO_TOKEN_NAME = "vimeo-token-";
+        private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
+
+        private string GetTokenKey()
+        {
+            return VIMEO_TOKEN_PREFIX + this.GetType().Name + "-" + this.gameObject.scene.name;
+        }
 
         public string GetVimeoToken()
         {
@@ -17,14 +22,13 @@ namespace Vimeo
                 return vimeoToken;
             }
             else {
-                return PlayerPrefs.GetString(VIMEO_TOKEN_NAME + this.gameObject.scene.name);
+                return PlayerPrefs.GetString(GetTokenKey());
             }
         }
 
         public void SetVimeoToken(string token)
         {
-            // Wasn't able to DRY this up - PlayerPrefs started causing seg faults :/
-            string token_name = VIMEO_TOKEN_NAME + this.gameObject.scene.name;
+            string token_name = GetTokenKey();
 
             if (saveVimeoToken) {
                 SetKey(token_name, null);

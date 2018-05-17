@@ -12,6 +12,7 @@ Download the most recent `.unitypackage` from the [latest releases](https://gith
 # Requirements
 * For recording: 
   * Unity `2018.1` or higher.
+  * Only available in the `UnityEditor` and not standalone builds.
   * Requires a [Vimeo account](https://vimeo.com). 
 * For streaming playback:
   * Unity `5.6.0` or higher.
