@@ -58,6 +58,7 @@ namespace Vimeo
                 EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
                 EditorGUILayout.PropertyField(so.FindProperty("selectedResolution"), new GUIContent("Resolution"));
+                EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute audio?"));
 
                 EditorGUILayout.Space();
             }

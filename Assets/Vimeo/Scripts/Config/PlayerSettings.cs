@@ -13,5 +13,6 @@ namespace Vimeo.Player
     {
         public StreamingResolution selectedResolution = StreamingResolution.x2160p_4K; 
         public string vimeoVideoId;
+        public bool muteAudio = false;
     }
 }

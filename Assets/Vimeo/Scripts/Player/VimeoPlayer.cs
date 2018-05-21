@@ -58,6 +58,7 @@ namespace Vimeo.Player
 
             controller = gameObject.AddComponent<VideoController>();
             controller.videoScreenObject = videoScreen;
+            controller.playerSettings = this;
 
             controller.OnVideoStart += VideoStarted;
             controller.OnPlay       += VideoPlay;
