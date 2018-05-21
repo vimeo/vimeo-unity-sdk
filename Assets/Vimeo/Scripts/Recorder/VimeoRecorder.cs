@@ -4,7 +4,6 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
-using Vimeo.Config;
 using Vimeo.Services;
 using SimpleJSON;
 

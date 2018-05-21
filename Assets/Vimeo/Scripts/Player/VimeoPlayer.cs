@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SimpleJSON;
 
 using Vimeo.Services;
-using Vimeo.Config;
+using Vimeo.Player;
 using System.Text.RegularExpressions;
 
 namespace Vimeo.Player
@@ -19,11 +19,6 @@ namespace Vimeo.Player
 
         public GameObject videoScreen;
         public GameObject audioSource;
-
-        public string vimeoVideoId;
-
-        public string[] videoQualities = new [] { "Highest", "1080", "720", "540", "480", "360" }; 
-        public int videoQualityIndex = 0;
 
         public string videoName;
         public string videoThumbnailUrl;
@@ -228,27 +223,26 @@ namespace Vimeo.Player
                 qualities.Sort(SortByQuality);
             }
 
-            // If set to highest quality, get the first one
-            if (videoQualities[videoQualityIndex] == "Highest") {
-                return qualities;
-            } 
-            else {
-                return GetPreferredQualities(qualities, videoQualities[videoQualityIndex]);
-            }
+            return GetPreferredQualities(qualities, selectedResolution);
         }
 
-        private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, string quality)
+        private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, StreamingResolution resolution)
         {
+            bool resolution_found = false;
+
             List<JSONNode> preferred_qualities = new List<JSONNode>();
             for (int i = 0; i < qualities.Count; i++) {
-                if (int.Parse(qualities[i]["height"]) <= int.Parse(quality)) {
+                if (int.Parse(qualities[i]["height"]) <= (int)resolution) {
                     preferred_qualities.Add(qualities[i]);
+
+                    if (int.Parse(qualities[i]["height"]) == (int)resolution) {
+                        resolution_found = true;
+                    }
                 }
             }
 
-            if (preferred_qualities.Count == 0) {
-                Debug.LogWarning("Couldnt find quality. Defaulting to " + qualities[0]["height"] + "p");
-                return qualities;
+            if (!resolution_found) {
+                Debug.Log("This video does not have a " + resolution + " resolution. Defaulting to " + preferred_qualities[0]["height"] + "p.");
             }
 
             return preferred_qualities;

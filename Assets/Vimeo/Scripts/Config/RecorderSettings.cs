@@ -50,7 +50,7 @@ namespace Vimeo.Recorder
         // x4320p_8K = 4320,
         // x2880p_5K = 2880,
         x2160p_4K = 2160,
-        x1440P_QHD = 1440,
+        x1440p_QHD = 1440,
         x1080p_FHD = 1080,
         x720p_HD = 720,
         x540p = 540,
