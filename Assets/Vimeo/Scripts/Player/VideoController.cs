@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 using SimpleJSON;
 
-namespace Vimeo
+namespace Vimeo.Player
 {
     public class VideoController : MonoBehaviour {
 
@@ -19,6 +19,7 @@ namespace Vimeo
         public int width;
         public int height;
 
+        public VimeoPlayer playerSettings;
         public VideoPlayer videoPlayer;
         public AudioSource audioSource;
         private RenderTexture videoRT;
@@ -40,7 +41,7 @@ namespace Vimeo
 
                 if (audioSource == null) {
                     audioSource = videoScreenObject.AddComponent<AudioSource>();
-                    audioSource.volume = 1;
+                    audioSource.volume = playerSettings.muteAudio ? 0 : 1;
                 }
 
                 videoPlayer.playOnAwake = false;
