@@ -66,7 +66,7 @@ namespace Vimeo.Player
 
             // Bootup video
             if (vimeoVideoId != null && vimeoVideoId != "") {
-                vimeoVideoId = Regex.Split(vimeoVideoId, "/?([0-9]+)")[1];
+                vimeoVideoId = Regex.Split(vimeoVideoId, "vimeo.com(/channels/[^/]+)?/?([0-9]+)")[2]; // See https://regexr.com/3pps4
                 LoadVimeoVideo(int.Parse(vimeoVideoId));
             } 
             else {

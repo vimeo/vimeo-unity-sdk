@@ -18,6 +18,7 @@ namespace Vimeo.Recorder {
         [HideInInspector] public VimeoRecorder recorder;
         [HideInInspector] public string encodedFilePath;
         [HideInInspector] public bool isRecording = false;
+        [HideInInspector] public bool manualFrameCapture = true;
 
         [HideInInspector] public VideoTrackAttributes videoAttrs;
         [HideInInspector] public AudioTrackAttributes audioAttrs;
@@ -141,6 +142,13 @@ namespace Vimeo.Recorder {
         IEnumerator RecordFrame()
         {
             yield return new WaitForEndOfFrame();
+            if (!manualFrameCapture) {
+                AddFrame();
+            }
+        }
+
+        public void AddFrame()
+        {
             if (encoder != null && isRecording) {
                 if (recorder.recordAudio) {
                     audioInput.StartFrame();
@@ -153,6 +161,8 @@ namespace Vimeo.Recorder {
                     encoder.AddSamples(audioInput.GetBuffer());
                     audioInput.EndFrame();
                 }
+
+                currentFrame++;
             }
         }
 
@@ -170,7 +180,6 @@ namespace Vimeo.Recorder {
                 else {
                     StartCoroutine(RecordFrame());
                 }
-                currentFrame++;
             }
         }
         

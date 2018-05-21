@@ -14,6 +14,7 @@ namespace Vimeo.Player
         public event PlaybackAction OnVideoStart;
         public event PlaybackAction OnPause;
         public event PlaybackAction OnPlay;
+        public event PlaybackAction OnFrameReady;
 
         public GameObject videoScreenObject;
         public int width;
@@ -61,6 +62,9 @@ namespace Vimeo.Player
                 videoPlayer.errorReceived    += VideoPlayerError;
                 videoPlayer.prepareCompleted += VideoPlayerStarted;
                 videoPlayer.seekCompleted    += VideoSeekCompleted;
+
+                videoPlayer.sendFrameReadyEvents = true;
+                videoPlayer.frameReady       += VideoFrameReady;
                 videoPlayer.isLooping = true;
 
                 block = new MaterialPropertyBlock();
@@ -172,9 +176,29 @@ namespace Vimeo.Player
             // TODO: try playing another video file
         }
 
+        void Update()
+        {
+            if (videoPlayer && videoPlayer.canStep) {
+              //  videoPlayer.StepForward();
+            }
+            else {
+              //  Debug.Log("Can't step forward");
+            }
+            //Debug.Log(videoPlayer);
+        }
+
+        void VideoFrameReady(VideoPlayer source, long frameId)
+        {
+            Debug.Log("VideoFrameReady");
+            if (videoPlayer && videoPlayer.canStep) {
+                videoPlayer.StepForward();
+                if (OnFrameReady != null) OnFrameReady(this);
+            }
+        }
+
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            source.Play();
+            //source.Play();
 
             if (OnVideoStart != null) {
                 width  = videoPlayer.texture.width;
