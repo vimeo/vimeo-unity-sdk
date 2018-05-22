@@ -13,6 +13,7 @@ namespace Vimeo.Player
     public class VimeoPlayer : PlayerSettings 
     {
         public delegate void VimeoEvent();
+        public event VimeoEvent OnLoad;
         public event VimeoEvent OnVideoStart;
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
@@ -35,6 +36,10 @@ namespace Vimeo.Player
             if (!vimeoSignIn) {
                 Debug.LogWarning("You have not signed into the Vimeo Player.");
                 return;
+            }
+
+            if (vimeoVideoId == null || vimeoVideoId == "") {
+                Debug.LogWarning("No Vimeo video URL was specified");
             }
 
             if (GetVimeoToken() != null) {
@@ -64,19 +69,25 @@ namespace Vimeo.Player
             controller.OnPlay       += VideoPlay;
             controller.OnPause      += VideoPaused;
 
-            // Bootup video
-            if (vimeoVideoId != null && vimeoVideoId != "") {
-                vimeoVideoId = Regex.Split(vimeoVideoId, "vimeo.com(/channels/[^/]+)?/?([0-9]+)")[2]; // See https://regexr.com/3pps4
-                LoadVimeoVideo(int.Parse(vimeoVideoId));
-            } 
-            else {
-                Debug.LogWarning("No Vimeo video ID was specified");
+            LoadVimeoVideoByUrl(vimeoVideoId);
+
+            if (OnLoad != null) OnLoad();
+        }
+
+        public void LoadVimeoVideoByUrl(string vimeo_url)
+        {
+            if (vimeo_url != null && vimeo_url != "") {
+                string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
+                if (matches.Length == 5) {
+                    vimeoVideoId = matches[3];
+                    LoadVimeoVideoById(int.Parse(vimeoVideoId));
+                }
             }
         }
 
-        public void LoadVimeoVideo(int id)
+        public void LoadVimeoVideoById(int vimeo_id)
         {
-            api.GetVideoFileUrlByVimeoId(id);
+             api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
         public void Play()

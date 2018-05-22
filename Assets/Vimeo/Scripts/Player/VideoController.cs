@@ -175,22 +175,12 @@ namespace Vimeo.Player
         {
             // TODO: try playing another video file
         }
-
-        void Update()
-        {
-            if (videoPlayer && videoPlayer.canStep) {
-              //  videoPlayer.StepForward();
-            }
-            else {
-              //  Debug.Log("Can't step forward");
-            }
-            //Debug.Log(videoPlayer);
-        }
-
+        
         void VideoFrameReady(VideoPlayer source, long frameId)
         {
             Debug.Log("VideoFrameReady");
             if (videoPlayer && videoPlayer.canStep) {
+                Debug.Log("step forward...");
                 videoPlayer.StepForward();
                 if (OnFrameReady != null) OnFrameReady(this);
             }
@@ -198,7 +188,8 @@ namespace Vimeo.Player
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            //source.Play();
+            source.Play();
+           // source.Pause();
 
             if (OnVideoStart != null) {
                 width  = videoPlayer.texture.width;
@@ -242,7 +233,9 @@ namespace Vimeo.Player
                 }
             }
 
-            OnVideoStart(this);
+            // Pause();
+
+            if (OnVideoStart != null) OnVideoStart(this);
         }
 
         private void OnDisable()
