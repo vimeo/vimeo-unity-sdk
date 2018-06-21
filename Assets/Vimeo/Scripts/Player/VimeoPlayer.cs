@@ -1,3 +1,5 @@
+// #define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -61,13 +63,19 @@ namespace Vimeo.Player
                 }
             }
 
-            controller = gameObject.AddComponent<VideoController>();
-            controller.videoScreenObject = videoScreen;
-            controller.playerSettings = this;
+#if AVPROVIDEO_SUPPORT
+            if (!gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
+#endif
+                controller = gameObject.AddComponent<VideoController>();
+                controller.videoScreenObject = videoScreen;
+                controller.playerSettings = this;
 
-            controller.OnVideoStart += VideoStarted;
-            controller.OnPlay       += VideoPlay;
-            controller.OnPause      += VideoPaused;
+                controller.OnVideoStart += VideoStarted;
+                controller.OnPlay       += VideoPlay;
+                controller.OnPause      += VideoPaused;
+#if AVPROVIDEO_SUPPORT
+            }
+#endif
 
             LoadVimeoVideoByUrl(vimeoVideoId);
 
@@ -181,11 +189,33 @@ namespace Vimeo.Player
         {
             var json = JSON.Parse(response);
             if (json["error"] == null) {
+#if AVPROVIDEO_SUPPORT                
+                if (gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
+                    RenderHeads.Media.AVProVideo.MediaPlayer player = gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>();
+                    player.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, GetAdaptiveVideoFileURL(json));
+                }
+                else {
+                    controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
+                }
+#else  
                 controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
+#endif
             } 
             else {
                 Debug.LogError("Video could not be found");
             }
+        }
+
+        private string GetAdaptiveVideoFileURL(JSONNode json) 
+        {
+            JSONNode progressiveFiles = json["files"];
+            for (int i = 0; i < progressiveFiles.Count; i++) {
+                if (progressiveFiles[i]["quality"].Value == "hls") {
+                    Debug.Log(progressiveFiles[i]["link"]);
+                    return progressiveFiles[i]["link"];
+                }
+            }
+            return null;
         }
 
         private List<JSONNode> GetVideoFiles(JSONNode json)
