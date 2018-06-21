@@ -129,6 +129,12 @@ namespace Vimeo.Player
             seekFrame = videoPlayer.frame = (long) (Mathf.Clamp01(seek) * videoPlayer.frameCount);
         }
 
+        public void SeekBySeconds(int seconds)
+        {
+            float duration = ((float)videoPlayer.frameCount / videoPlayer.frameRate);
+            Seek((float)seconds / duration);
+        }
+
         IEnumerator PlayVideo()
         {
             videoPlayer.Play();

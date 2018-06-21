@@ -116,6 +116,11 @@ namespace Vimeo.Player
             controller.Seek(seek);
         }
 
+        public void SeekBySeconds(int seconds)
+        {
+            controller.SeekBySeconds(seconds);
+        }
+
         public void SeekBackward(float seek)
         {
             controller.SeekBackward(seek);
