@@ -247,7 +247,17 @@ namespace Vimeo.Player
         private void OnDisable()
         {
             if (videoPlayer != null) {
+                videoPlayer.Stop();
                 videoPlayer.prepareCompleted -= VideoPlayerStarted;
+                videoPlayer.errorReceived    -= VideoPlayerError;
+                videoPlayer.seekCompleted    -= VideoSeekCompleted;
+
+                if (videoRT != null) {
+                    videoRT.Release();
+                }
+
+                Destroy(videoPlayer);
+                Destroy(audioSource);
             }
         }
     }
