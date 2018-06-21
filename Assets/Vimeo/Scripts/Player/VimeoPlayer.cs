@@ -78,10 +78,13 @@ namespace Vimeo.Player
         {
             if (vimeo_url != null && vimeo_url != "") {
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
-                if (matches.Length == 5) {
+                if (matches[3] != null) {
                     vimeoVideoId = matches[3];
                     LoadVimeoVideoById(int.Parse(vimeoVideoId));
                 }
+                else {
+                    Debug.LogWarning("Invalid Vimeo URL");
+            }
             }
         }
 
