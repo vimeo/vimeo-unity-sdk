@@ -42,6 +42,13 @@ namespace Vimeo.Recorder
             }
         }
 
+        // Used if you want to script when you want to call AddFrame
+        public void BeginManualRecording()
+        {
+            BeginRecording();
+            recorder.manualFrameCapture = true;
+        }
+
         public void EndRecording()
         {
             isRecording = false;
