@@ -19,6 +19,7 @@ namespace Vimeo.Player
         public event VimeoEvent OnVideoStart;
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
+        public event VimeoEvent OnFrameReady;
 
         public GameObject videoScreen;
         public GameObject audioSource;
@@ -73,6 +74,7 @@ namespace Vimeo.Player
                 controller.OnVideoStart += VideoStarted;
                 controller.OnPlay       += VideoPlay;
                 controller.OnPause      += VideoPaused;
+                controller.OnFrameReady += VideoFrameReady;
 #if AVPROVIDEO_SUPPORT
             }
 #endif
@@ -187,6 +189,13 @@ namespace Vimeo.Player
         {
             if (OnPause != null) {
                 OnPause();
+            }
+        }
+
+        private void VideoFrameReady(VideoController controller)
+        {
+            if (OnFrameReady != null) {
+                OnFrameReady();
             }
         }
 

@@ -34,6 +34,7 @@ namespace Vimeo.Player
 
         public bool isSeeking = false;
         public long seekFrame = 0;
+        private long prevFrameIndex = 1;
 
         private void Setup()
         {  
@@ -63,8 +64,6 @@ namespace Vimeo.Player
                 videoPlayer.prepareCompleted += VideoPlayerStarted;
                 videoPlayer.seekCompleted    += VideoSeekCompleted;
 
-                videoPlayer.sendFrameReadyEvents = true;
-                videoPlayer.frameReady       += VideoFrameReady;
                 videoPlayer.isLooping = true;
 
                 block = new MaterialPropertyBlock();
@@ -73,6 +72,11 @@ namespace Vimeo.Player
                 Pause();
                 videoPlayer.Stop();
             }
+        }
+
+        public void SendFrameReadyEvents()
+        {
+            videoPlayer.sendFrameReadyEvents = true;
         }
 
         private void SetupRenderTexture()
@@ -131,8 +135,12 @@ namespace Vimeo.Player
 
         public void SeekBySeconds(int seconds)
         {
-            float duration = ((float)videoPlayer.frameCount / videoPlayer.frameRate);
-            Seek((float)seconds / duration);
+            Seek((float)seconds / (float)GetDuration());
+        }
+
+        public int GetDuration()
+        {
+            return (int)(videoPlayer.frameCount / videoPlayer.frameRate);   
         }
 
         IEnumerator PlayVideo()
@@ -179,23 +187,38 @@ namespace Vimeo.Player
 
         private void VideoPlayerError(VideoPlayer source, string message)
         {
-            // TODO: try playing another video file
+            Debug.Log("VideoPlayerError: " + message);
         }
-        
-        void VideoFrameReady(VideoPlayer source, long frameId)
+
+        void Update()
         {
-            Debug.Log("VideoFrameReady");
-            if (videoPlayer && videoPlayer.canStep) {
-                Debug.Log("step forward...");
+            if (videoPlayer != null && videoPlayer.canStep && videoPlayer.sendFrameReadyEvents) {
+                long cur_frame = videoPlayer.frame;
+
                 videoPlayer.StepForward();
-                if (OnFrameReady != null) OnFrameReady(this);
+                
+                // Detect when certain types of encoded videos are skipping frames
+                if (prevFrameIndex + 1 != cur_frame && (cur_frame - prevFrameIndex + 1) > 0) {
+                    Debug.LogWarning((cur_frame - prevFrameIndex + 1) + " frame(s) dropped");
+                }
+
+                if (cur_frame != prevFrameIndex) {
+                    prevFrameIndex = cur_frame;
+                    if (OnFrameReady != null) { 
+                        OnFrameReady(this);
+                    }
+                }
             }
         }
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            source.Play();
-           // source.Pause();
+            if (videoPlayer.sendFrameReadyEvents) {
+                source.Pause();
+            }
+            else {
+                source.Play();
+            }
 
             if (OnVideoStart != null) {
                 width  = videoPlayer.texture.width;
@@ -238,8 +261,6 @@ namespace Vimeo.Player
                     rend.SetPropertyBlock(block);
                 }
             }
-
-            // Pause();
 
             if (OnVideoStart != null) OnVideoStart(this);
         }
