@@ -1,4 +1,14 @@
 {
-	"dependencies": {
-	}
+  "dependencies": {
+    "com.unity.analytics": "exclude",
+    "com.unity.ads": "exclude",
+    "com.unity.standardevents": "exclude",
+    "com.unity.purchasing": "exclude",
+    "com.unity.package-manager-ui": "1.9.11",
+    "com.unity.textmeshpro": "exclude",
+    "com.unity.modules.unityanalytics": "exclude",
+    "com.unity.modules.ai": "exclude",
+    "com.unity.modules.terrain": "exclude",
+    "com.unity.modules.terrainphysics": "exclude"
+  }
 }
