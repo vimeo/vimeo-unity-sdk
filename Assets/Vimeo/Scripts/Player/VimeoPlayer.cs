@@ -197,7 +197,18 @@ namespace Vimeo.Player
 #if AVPROVIDEO_SUPPORT                
                 if (gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
                     RenderHeads.Media.AVProVideo.MediaPlayer player = gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>();
-                    player.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, GetAdaptiveVideoFileURL(json));
+
+                    string file_url = null;
+
+                    if (this.selectedResolution == StreamingResolution.Adaptive) {
+                        file_url = GetAdaptiveVideoFileURL(json);
+                    }
+
+                    if (file_url == null) {
+                        List<JSONNode> files = GetVideoFiles(json);
+                        file_url = files[0]["link"];
+                    }
+                    player.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url);
                 }
                 else {
                     controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);

@@ -7,7 +7,8 @@ namespace Vimeo.Player
         x1080p_FHD = 1080,
         x720p_HD = 720,
         x540p = 540,
-        x360p = 360
+        x360p = 360,
+        Adaptive = 0,
     }
     public class PlayerSettings : VimeoAuth
     {
