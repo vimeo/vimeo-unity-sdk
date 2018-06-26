@@ -146,7 +146,7 @@ namespace Vimeo.Recorder
 
         public void PostToSlack()
         {
-            if (recorder.slackChannel != null) {
+            if (recorder.slackChannel != null && (recorder.slackToken != null || recorder.slackToken != "")) {
                 if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "" && recorder.slackChannel != "") {
                     slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
                     slackApi.PostVideoToChannel(recorder.controller.GetVideoName(), GetVimeoPermalink());
