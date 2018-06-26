@@ -4,8 +4,10 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Networking;
+using System.IO;
 using Vimeo.Services;
 using SimpleJSON;
+
 
 namespace Vimeo.Recorder
 {
@@ -15,7 +17,7 @@ namespace Vimeo.Recorder
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
 
-        public RecorderController recorder;
+        public RecorderController controller;
         public VimeoPublisher publisher;
 
         public bool isRecording = false;
@@ -32,12 +34,11 @@ namespace Vimeo.Recorder
         public void BeginRecording()
         {
             if (!isRecording) {
-                if (recorder == null) {
-                    recorder = gameObject.AddComponent<RecorderController>();
-                    recorder.recorder = this;
+                if (controller == null) {
+                    controller = gameObject.AddComponent<RecorderController>();
+                    controller.recorder = this;
                 }
-
-                recorder.BeginRecording();
+                controller.BeginRecording();
                 isRecording = true;
             }
         }
@@ -46,32 +47,32 @@ namespace Vimeo.Recorder
         public void BeginManualRecording()
         {
             BeginRecording();
-            recorder.manualFrameCapture = true;
+            controller.manualFrameCapture = true;
         }
 
         public void EndRecording()
         {
             isRecording = false;
-            recorder.EndRecording();
+            controller.EndRecording();
 
-            isUploading = true;
-            uploadProgress = 0;
-           
-            PublishVideo();
+            PublishVideo(controller.encodedFilePath);
         }
             
         public void CancelRecording()
         {
             isRecording = false;
             isUploading = false;
-            recorder.EndRecording();
+            controller.EndRecording();
             DeleteVideoFile();
 
             Dispose();
         }
 
-        private void PublishVideo()
+        private void PublishVideo(string filePath)
         {
+            isUploading = true;
+            uploadProgress = 0;
+
             if (publisher == null) {
                 publisher = gameObject.AddComponent<VimeoPublisher>();
                 publisher.Init(this);
@@ -79,12 +80,12 @@ namespace Vimeo.Recorder
                 publisher.OnUploadProgress += UploadProgress;
             }
             
-            publisher.PublishVideo(recorder.encodedFilePath);
+            publisher.PublishVideo(filePath);
         }
 
         private void DeleteVideoFile()
         {
-            recorder.DeleteVideoFile();
+            controller.DeleteVideoFile();
         }
 
         private void UploadProgress(string status, float progress)
@@ -103,7 +104,7 @@ namespace Vimeo.Recorder
 
         private void Dispose()
         {
-            Destroy(recorder);
+            Destroy(controller);
             Destroy(publisher);
         }
 
@@ -121,11 +122,34 @@ namespace Vimeo.Recorder
             }
         }
 
+        
+        void Update()
+        {
+#if AVPROCAPTURE_SUPPORT
+            if (encoderType == EncoderType.AVProCapture) {
+                // rename encoderObject to avpro
+                if (encoderObject.IsCapturing()) {
+                    isRecording = true;
+                }
+                else if (isRecording) {
+                    isRecording = false;
+                    if (File.Exists(encoderObject.LastFilePath)) {
+                        Debug.Log("[VimeoRecorder] Uploading video - " + encoderObject.LastFilePath);
+                        PublishVideo(encoderObject.LastFilePath);
+                    }
+                    else {
+                        Debug.Log("[VimeoRecorder] Recording cancelled");
+                    }
+                }
+            }
+#endif
+        }
+
         void LateUpdate()
         {
-            if (recorder != null) {
+            if (controller != null) {
                 // Set recording state based upon VimeoRecorder state
-                if (!isRecording && recorder.isRecording) {
+                if (!isRecording && controller.isRecording) {
                     isRecording = true;
                 }
             }

@@ -3,6 +3,10 @@ using Vimeo.Recorder;
 using Vimeo.Player;
 using System.Collections;
 
+#if AVPROCAPTURE_SUPPORT
+using RenderHeads.Media.AVProMovieCapture;
+#endif
+
 namespace Vimeo.Recorder 
 {
 	public class VideoExporter : MonoBehaviour {
@@ -33,17 +37,18 @@ namespace Vimeo.Recorder
 
 		void VideoStart()
 		{
-			// vimeoPlayer.SeekBySeconds(14);
 			recorder.videoName = vimeoPlayer.videoName + " (Tiny Planet)";
+
+			vimeoPlayer.controller.SendFrameReadyEvents();
+			vimeoPlayer.controller.EnableFrameStepping();
+			vimeoPlayer.controller.OnFrameReady += FrameReady; 
+
 			recorder.frameRate = (int)vimeoPlayer.controller.videoPlayer.frameRate;
 
 			if (syncDuration) {
 				recorder.recordMode     = Vimeo.Recorder.RecordMode.Duration;
 				recorder.recordDuration = vimeoPlayer.controller.GetDuration(); 
 			}
-
-			vimeoPlayer.controller.SendFrameReadyEvents();
-			vimeoPlayer.controller.OnFrameReady += FrameReady; 
 
 			recorder.BeginManualRecording(); 
 		}
@@ -55,8 +60,8 @@ namespace Vimeo.Recorder
 
 		IEnumerator RecordFrame()
 		{
-			yield return new WaitForEndOfFrame();
-			recorder.recorder.AddFrame();	
+ 			yield return new WaitForEndOfFrame();
+			recorder.controller.AddFrame();	
 		}
 	
 		void UploadComplete() 

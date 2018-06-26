@@ -1,4 +1,4 @@
-// #define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
+#define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
 
 using UnityEngine;
 using System.Collections;
@@ -312,7 +312,7 @@ namespace Vimeo.Player
             }
 
             if (!resolution_found) {
-                Debug.Log("This video does not have a " + resolution + " resolution. Defaulting to " + preferred_qualities[0]["height"] + "p.");
+                Debug.Log("[VimeoPlayer] This video does not have a " + resolution + " resolution. Defaulting to " + preferred_qualities[0]["height"] + "p.");
             }
 
             return preferred_qualities;

@@ -7,6 +7,12 @@ using Vimeo.Services;
 
 namespace Vimeo.Recorder
 {
+    public enum EncoderType
+    {
+        AVProCapture,
+        MediaEncoder
+    }
+
     public enum LinkType
     {
         VideoPage,
@@ -68,6 +74,9 @@ namespace Vimeo.Recorder
 
     public class RecorderSettings : VimeoAuth
     {
+        public EncoderType encoderType          = EncoderType.MediaEncoder;
+        public RenderHeads.Media.AVProMovieCapture.CaptureBase encoderObject;
+        
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 

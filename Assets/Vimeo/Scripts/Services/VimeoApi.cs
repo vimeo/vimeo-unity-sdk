@@ -170,7 +170,7 @@ namespace Vimeo.Services
                 yield return VimeoApi.SendRequest(request);
 
                 if (IsNetworkError(request)) {
-                    Debug.LogError (request.error);
+                    Debug.LogError(request.error);
                 } 
                 else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON(request.downloadHandler.text);

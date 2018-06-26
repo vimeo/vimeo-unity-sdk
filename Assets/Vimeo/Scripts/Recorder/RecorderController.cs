@@ -10,6 +10,10 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
+#if AVPROCAPTURE_SUPPORT
+using RenderHeads.Media.AVProMovieCapture;
+#endif
+
 namespace Vimeo.Recorder {
 
     public class RecorderController : MonoBehaviour
@@ -41,7 +45,16 @@ namespace Vimeo.Recorder {
         public void BeginRecording()
         {
             isRecording = true;
+            if (recorder.encoderType == EncoderType.AVProCapture) {
+                BeginAVProCaptureRecording();
+            }
+            else {
+                BeginMediaEncoderRecording();
+            }
+        }
 
+        private void BeginMediaEncoderRecording()
+        {
             InitInputs();
 
             if (recorder.realTime) {
@@ -85,6 +98,15 @@ namespace Vimeo.Recorder {
             else {
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
             }
+        }
+
+        private void BeginAVProCaptureRecording()
+        {
+#if AVPROCAPTURE_SUPPORT
+            if (recorder.encoderObject != null) {
+                recorder.encoderObject.StartCapture();
+            }
+#endif             
         }
 
         public string GetVideoName()
@@ -210,7 +232,7 @@ namespace Vimeo.Recorder {
             audioInput.recorder = recorder;
         }
 
-        public void OnDestroy()
+        void OnDestroy()
         {
             Destroy(videoInput);
         }

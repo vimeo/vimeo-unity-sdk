@@ -34,7 +34,8 @@ namespace Vimeo.Player
 
         public bool isSeeking = false;
         public long seekFrame = 0;
-        private long prevFrameIndex = 1;
+        private long prevFrameIndex = 0;
+        private bool frameStepping = false;
 
         private void Setup()
         {  
@@ -63,6 +64,7 @@ namespace Vimeo.Player
                 videoPlayer.errorReceived    += VideoPlayerError;
                 videoPlayer.prepareCompleted += VideoPlayerStarted;
                 videoPlayer.seekCompleted    += VideoSeekCompleted;
+                videoPlayer.frameReady       += VideoFrameReady;
 
                 videoPlayer.isLooping = true;
 
@@ -77,6 +79,11 @@ namespace Vimeo.Player
         public void SendFrameReadyEvents()
         {
             videoPlayer.sendFrameReadyEvents = true;
+        }
+
+        public void EnableFrameStepping()
+        {
+            frameStepping = true;
         }
 
         private void SetupRenderTexture()
@@ -174,7 +181,7 @@ namespace Vimeo.Player
         public long GetCurrentFrame()
         {
             if (isSeeking) {
-                return seekFrame;	
+                return seekFrame;
             }
             
             return videoPlayer.frame; 
@@ -192,29 +199,38 @@ namespace Vimeo.Player
 
         void Update()
         {
-            if (videoPlayer != null && videoPlayer.canStep && videoPlayer.sendFrameReadyEvents) {
-                long cur_frame = videoPlayer.frame;
-
-                videoPlayer.StepForward();
-                
-                // Detect when certain types of encoded videos are skipping frames
-                if (prevFrameIndex + 1 != cur_frame && (cur_frame - prevFrameIndex + 1) > 0) {
-                    Debug.LogWarning((cur_frame - prevFrameIndex + 1) + " frame(s) dropped");
+            if (videoPlayer != null && videoPlayer.sendFrameReadyEvents) {
+                if (videoPlayer.canStep && frameStepping && (videoPlayer.frame == prevFrameIndex+1 || videoPlayer.frame == prevFrameIndex)) {
+                    videoPlayer.StepForward();
                 }
+            }
+        }
 
-                if (cur_frame != prevFrameIndex) {
-                    prevFrameIndex = cur_frame;
-                    if (OnFrameReady != null) { 
+        private void VideoFrameReady(VideoPlayer source, long frameIdx)
+        {
+            // Detect when frames are skipped
+            if (prevFrameIndex + 1 != frameIdx) {
+                long droppedFrames = frameIdx - prevFrameIndex - 1;
+                if (droppedFrames > 0) {
+                   // Debug.LogWarning("Dropped frames: " + droppedFrames + " - cur:" + frameIdx + " prev:" + prevFrameIndex);
+
+                    // Trigger frame ready event to make up for lost frames
+                    for (int i = 0; i < droppedFrames; i++) {
                         OnFrameReady(this);
                     }
                 }
+            }
+            prevFrameIndex = frameIdx;
+
+            if (OnFrameReady != null) { 
+                OnFrameReady(this);
             }
         }
 
         private void VideoPlayerStarted(VideoPlayer source)
         {
-            if (videoPlayer.sendFrameReadyEvents) {
-                source.Pause();
+            if (frameStepping) {
+                source.Play();
             }
             else {
                 source.Play();

@@ -140,12 +140,14 @@ namespace Vimeo.Recorder
                 GUI.backgroundColor = Color.white;
             }
             else {
-                GUI.backgroundColor = Color.green;
-                if (GUILayout.Button("Start Recording", GUILayout.Height(30))) {
-                    recorder.recordOnStart = true;
-                    EditorApplication.isPlaying = true;
+                if (recorder.encoderType != EncoderType.AVProCapture) {
+                    GUI.backgroundColor = Color.green;
+                    if (GUILayout.Button("Start Recording", GUILayout.Height(30))) {
+                        recorder.recordOnStart = true;
+                        EditorApplication.isPlaying = true;
+                    }
+                    GUI.backgroundColor = Color.white;
                 }
-                GUI.backgroundColor = Color.white;
             }
             GUILayout.EndHorizontal();
 
@@ -156,19 +158,21 @@ namespace Vimeo.Recorder
                 rect.height = 20;
                 GUILayout.Box("", GUILayout.Height(20));
 
-                int seconds = recorder.recorder.currentFrame / recorder.frameRate;
-                float progress = recorder.recorder.currentFrame / (float)(recorder.recordDuration * recorder.frameRate);
-
-                if (recorder.recordMode != RecordMode.Duration) {
-                    progress = 0;
-                }
-
                 if (recorder.isUploading) {
                     EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
                 }
-                else {
-                    EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.recorder.currentFrame.ToString() + " frames)");
+                
+                if (recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
+                    int seconds = recorder.controller.currentFrame / recorder.frameRate;
+                    float progress = recorder.controller.currentFrame / (float)(recorder.recordDuration * recorder.frameRate);
+                    
+                    if (recorder.recordMode != RecordMode.Duration) {
+                        progress = 0;
+                    }
+
+                    EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.controller.currentFrame.ToString() + " frames)");
                 }
+
                 GUILayout.EndHorizontal();
             }
         }
@@ -183,6 +187,15 @@ namespace Vimeo.Recorder
 
             if (recordingFold) {
                 EditorGUI.indentLevel++;
+
+#if AVPROCAPTURE_SUPPORT
+                EditorGUILayout.PropertyField(so.FindProperty("encoderType"), new GUIContent("Encoder"));    
+
+                if (recorder.encoderType == Vimeo.Recorder.EncoderType.AVProCapture) {
+                    EditorGUILayout.PropertyField(so.FindProperty("encoderObject"), new GUIContent("Encoder Object"));
+                }
+                else {
+#endif
                 EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"), new GUIContent("Input"));
 
                 if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera) {
@@ -209,6 +222,9 @@ namespace Vimeo.Recorder
                 if (recorder.recordMode == RecordMode.Duration) {
                     EditorGUILayout.PropertyField(so.FindProperty("recordDuration"), new GUIContent("Duration (sec)"));
                 }
+#if AVPROCAPTURE_SUPPORT
+                }
+#endif
 
                 EditorGUI.indentLevel--;
             }

@@ -82,7 +82,7 @@ namespace Vimeo.Recorder
             }
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
-            SetVideoName(recorder.recorder.GetVideoName());
+            SetVideoName(recorder.controller.GetVideoName());
             
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
                 vimeoApi.SetVideoPassword(recorder.videoPassword);
@@ -149,7 +149,7 @@ namespace Vimeo.Recorder
             if (recorder.slackChannel != null) {
                 if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "" && recorder.slackChannel != "") {
                     slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
-                    slackApi.PostVideoToChannel(recorder.recorder.GetVideoName(), GetVimeoPermalink());
+                    slackApi.PostVideoToChannel(recorder.controller.GetVideoName(), GetVimeoPermalink());
                 }
                 else {
                     Debug.LogWarning("You are not signed into Slack.");
