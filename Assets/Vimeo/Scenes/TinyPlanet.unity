@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.37311947, g: 0.38074005, b: 0.35872722, a: 1}
+  m_IndirectSpecularColor: {r: 0.37311953, g: 0.38074014, b: 0.3587274, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -116,9 +116,9 @@ NavMeshSettings:
 --- !u!1 &936980945
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 5
   m_Component:
   - component: {fileID: 936980947}
   - component: {fileID: 936980946}
@@ -132,7 +132,7 @@ GameObject:
 --- !u!114 &936980946
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 936980945}
   m_Enabled: 1
@@ -144,7 +144,7 @@ MonoBehaviour:
   saveVimeoToken: 0
   vimeoSignIn: 1
   selectedResolution: 2160
-  vimeoVideoId: https://vimeo.com/261363083
+  vimeoVideoId: 266948610
   muteAudio: 1
   videoScreen: {fileID: 2133818563}
   audioSource: {fileID: 0}
@@ -158,7 +158,7 @@ MonoBehaviour:
 --- !u!4 &936980947
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 936980945}
   m_LocalRotation: {x: 0.000000014901161, y: -0, z: -0, w: 1}
@@ -172,9 +172,9 @@ Transform:
 --- !u!1 &1303343400
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 5
   m_Component:
   - component: {fileID: 1303343404}
   - component: {fileID: 1303343403}
@@ -191,31 +191,27 @@ GameObject:
 --- !u!81 &1303343401
 AudioListener:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1303343400}
   m_Enabled: 1
 --- !u!124 &1303343402
 Behaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1303343400}
   m_Enabled: 1
 --- !u!20 &1303343403
 Camera:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1303343400}
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
-  m_projectionMatrixMode: 1
-  m_SensorSize: {x: 36, y: 24}
-  m_LensShift: {x: 0, y: 0}
-  m_FocalLength: 50
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
@@ -224,7 +220,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 120.1
+  field of view: 120.2
   orthographic: 0
   orthographic size: 5
   m_Depth: -1
@@ -245,11 +241,11 @@ Camera:
 --- !u!4 &1303343404
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1303343400}
   m_LocalRotation: {x: 0.7071057, y: -0, z: -0, w: 0.7071079}
-  m_LocalPosition: {x: 0, y: 16.14, z: 0.12}
+  m_LocalPosition: {x: 0, y: 33.7, z: 0.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -258,10 +254,10 @@ Transform:
 --- !u!114 &1303343405
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1303343400}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68fd54db2edab41e8a8154640be2ffc6, type: 3}
   m_Name: 
@@ -269,16 +265,16 @@ MonoBehaviour:
   fovAmplitude: 13
   fovRange: 6
   yAxisAmplitude: 0.0023
-  yAxisRange: 2
+  yAxisRange: 9
   rotationAmplitude: 0.3
   rotationRange: 12
   vimeoPlayer: {fileID: 936980946}
 --- !u!1 &1461962394
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 5
   m_Component:
   - component: {fileID: 1461962397}
   - component: {fileID: 1461962396}
@@ -293,7 +289,7 @@ GameObject:
 --- !u!114 &1461962395
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1461962394}
   m_Enabled: 1
@@ -306,7 +302,7 @@ MonoBehaviour:
 --- !u!114 &1461962396
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1461962394}
   m_Enabled: 1
@@ -317,6 +313,8 @@ MonoBehaviour:
   vimeoToken: 
   saveVimeoToken: 0
   vimeoSignIn: 1
+  encoderType: 1
+  encoderObject: {fileID: 0}
   privacyMode: 3
   defaultShareLink: 0
   defaultVideoInput: 0
@@ -339,7 +337,7 @@ MonoBehaviour:
   videoPermalink: 
   videoPassword: 
   videoReviewPermalink: 
-  recorder: {fileID: 0}
+  controller: {fileID: 0}
   publisher: {fileID: 0}
   isRecording: 0
   isUploading: 0
@@ -347,7 +345,7 @@ MonoBehaviour:
 --- !u!224 &1461962397
 RectTransform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1461962394}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -365,13 +363,12 @@ RectTransform:
 --- !u!1 &2133818563
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  serializedVersion: 6
+  serializedVersion: 5
   m_Component:
   - component: {fileID: 2133818567}
   - component: {fileID: 2133818566}
-  - component: {fileID: 2133818565}
   - component: {fileID: 2133818564}
   m_Layer: 0
   m_Name: Sphere
@@ -383,7 +380,7 @@ GameObject:
 --- !u!23 &2133818564
 MeshRenderer:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2133818563}
   m_Enabled: 1
@@ -415,29 +412,17 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!135 &2133818565
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 2133818563}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!33 &2133818566
 MeshFilter:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2133818563}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 58b4e7e2d64d7a04fbeac5bc35e15047, type: 2}
 --- !u!4 &2133818567
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2133818563}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}

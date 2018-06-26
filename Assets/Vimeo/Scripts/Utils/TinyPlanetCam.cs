@@ -28,14 +28,15 @@ public class TinyPlanetCam : MonoBehaviour {
 	public VimeoPlayer vimeoPlayer;
 	private float timePassed = 0;
 
-    void Start()
-    {
-        startYPos = Camera.main.transform.position.y;
+	void Awake()
+	{
+		startYPos = Camera.main.transform.position.y;
 
 		if (vimeoPlayer != null) {
+			vimeoPlayer.OnVideoStart += VideoStart;
 			vimeoPlayer.OnFrameReady += VideoFrameUpdate;
 		}
-    }
+	}
 
 	void Update() 
     {
@@ -45,7 +46,12 @@ public class TinyPlanetCam : MonoBehaviour {
 		}
 	}
 
-	public void VideoFrameUpdate()
+	private void VideoStart()
+	{
+		vimeoPlayer.controller.SendFrameReadyEvents();
+	}
+
+	private void VideoFrameUpdate()
 	{
 		// Update time passed based upon the frame rate of the video
 		timePassed += 1f / vimeoPlayer.controller.videoPlayer.frameRate;
