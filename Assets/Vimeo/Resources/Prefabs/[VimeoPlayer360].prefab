@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4095449416328334}
   - component: {fileID: 33806953863579282}
-  - component: {fileID: 135024306115374058}
   - component: {fileID: 23416316517131148}
   m_Layer: 0
   m_Name: Sphere
@@ -85,6 +84,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 1ffe957299247ae4ba0ee0bd7e805e6c, type: 2}
   m_StaticBatchInfo:
@@ -112,7 +112,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1332080199964504}
-  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 4300000, guid: 58b4e7e2d64d7a04fbeac5bc35e15047, type: 2}
 --- !u!114 &114151494372987810
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -127,17 +127,11 @@ MonoBehaviour:
   vimeoToken: 
   saveVimeoToken: 0
   vimeoSignIn: 0
+  selectedResolution: 2160
+  vimeoVideoId: 
+  muteAudio: 0
   videoScreen: {fileID: 1332080199964504}
   audioSource: {fileID: 0}
-  vimeoVideoId: 
-  videoQualities:
-  - Highest
-  - 1080
-  - 720
-  - 540
-  - 480
-  - 360
-  videoQualityIndex: 0
   videoName: 
   videoThumbnailUrl: 
   authorThumbnailUrl: 
@@ -145,15 +139,3 @@ MonoBehaviour:
   videoProjection: 
   videoStereoFormat: 
   controller: {fileID: 0}
---- !u!135 &135024306115374058
-SphereCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1332080199964504}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
