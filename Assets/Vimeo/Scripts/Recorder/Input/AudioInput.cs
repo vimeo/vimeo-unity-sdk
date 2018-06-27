@@ -18,7 +18,7 @@ namespace Vimeo.Recorder
 
         public override void StartFrame()
         {
-            buffer = new NativeArray<float>(AudioRenderer.GetSampleCountForCaptureFrame() * recorder.controller.audioAttrs.channelCount, Allocator.Temp);
+            buffer = new NativeArray<float>(AudioRenderer.GetSampleCountForCaptureFrame() * encoder.audioAttrs.channelCount, Allocator.Temp);
         }
 
         public override void EndFrame() { 

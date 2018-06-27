@@ -1,8 +1,6 @@
 ﻿#if UNITY_2018_1_OR_NEWER 
-#if UNITY_EDITOR
 
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.Networking;
 using System.IO;
 using Vimeo.Services;
@@ -17,7 +15,7 @@ namespace Vimeo.Recorder
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
 
-        public RecorderController controller;
+        public EncoderManager encoder;
         public VimeoPublisher publisher;
 
         public bool isRecording = false;
@@ -34,11 +32,12 @@ namespace Vimeo.Recorder
         public void BeginRecording()
         {
             if (!isRecording) {
-                if (controller == null) {
-                    controller = gameObject.AddComponent<RecorderController>();
-                    controller.recorder = this;
+                if (encoder == null) {
+                    encoder = gameObject.AddComponent<EncoderManager>();
+                    encoder.Init(this);
                 }
-                controller.BeginRecording();
+                
+                encoder.BeginRecording();
                 isRecording = true;
             }
         }
@@ -47,23 +46,22 @@ namespace Vimeo.Recorder
         public void BeginManualRecording()
         {
             BeginRecording();
-            controller.manualFrameCapture = true;
+            encoder.ManualFrameCapture();
         }
 
         public void EndRecording()
         {
             isRecording = false;
-            controller.EndRecording();
+            encoder.EndRecording();
 
-            PublishVideo(controller.encodedFilePath);
+            PublishVideo(encoder.GetVideoFilePath());
         }
             
         public void CancelRecording()
         {
             isRecording = false;
             isUploading = false;
-            controller.EndRecording();
-            DeleteVideoFile();
+            encoder.CancelRecording();
 
             Dispose();
         }
@@ -83,18 +81,13 @@ namespace Vimeo.Recorder
             publisher.PublishVideo(filePath);
         }
 
-        private void DeleteVideoFile()
-        {
-            controller.DeleteVideoFile();
-        }
-
         private void UploadProgress(string status, float progress)
         {
             uploadProgress = progress;
 
             if (status == "SaveInfoComplete") {
                 isUploading = false;
-                DeleteVideoFile();
+                encoder.DeleteVideoFile();
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete();
@@ -104,7 +97,7 @@ namespace Vimeo.Recorder
 
         private void Dispose()
         {
-            Destroy(controller);
+            Destroy(encoder);
             Destroy(publisher);
         }
 
@@ -122,34 +115,11 @@ namespace Vimeo.Recorder
             }
         }
 
-        
-        void Update()
-        {
-#if AVPROCAPTURE_SUPPORT
-            if (encoderType == EncoderType.AVProCapture) {
-                // rename encoderObject to avpro
-                if (encoderObject.IsCapturing()) {
-                    isRecording = true;
-                }
-                else if (isRecording) {
-                    isRecording = false;
-                    if (File.Exists(encoderObject.LastFilePath)) {
-                        Debug.Log("[VimeoRecorder] Uploading video - " + encoderObject.LastFilePath);
-                        PublishVideo(encoderObject.LastFilePath);
-                    }
-                    else {
-                        Debug.Log("[VimeoRecorder] Recording cancelled");
-                    }
-                }
-            }
-#endif
-        }
-
         void LateUpdate()
         {
-            if (controller != null) {
+            if (encoder != null) {
                 // Set recording state based upon VimeoRecorder state
-                if (!isRecording && controller.isRecording) {
+                if (!isRecording && encoder.isRecording) {
                     isRecording = true;
                 }
             }
@@ -157,5 +127,4 @@ namespace Vimeo.Recorder
     }
 }
 
-#endif
 #endif

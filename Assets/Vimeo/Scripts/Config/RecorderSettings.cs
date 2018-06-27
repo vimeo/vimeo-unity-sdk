@@ -75,8 +75,9 @@ namespace Vimeo.Recorder
     public class RecorderSettings : VimeoAuth
     {
         public EncoderType encoderType          = EncoderType.MediaEncoder;
-        public RenderHeads.Media.AVProMovieCapture.CaptureBase encoderObject;
-        
+#if AVPROCAPTURE_SUPPORT        
+        public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
+#endif        
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 
@@ -115,6 +116,24 @@ namespace Vimeo.Recorder
         public void SetSlackToken(string token)
         {
             SetKey(SLACK_TOKEN_NAME + this.gameObject.scene.name, token);
+        }
+
+        public string GetVideoName()
+        {
+            return ReplaceSpecialChars(videoName);
+        }
+
+        public string ReplaceSpecialChars(string input)
+        {
+            // if (input.Contains("%R")) {
+                // input = input.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
+            // }
+
+            if (input.Contains("%TS")) {
+                input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
+            }
+
+            return input;
         }
     }
 

@@ -163,14 +163,14 @@ namespace Vimeo.Recorder
                 }
                 
                 if (recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
-                    int seconds = recorder.controller.currentFrame / recorder.frameRate;
-                    float progress = recorder.controller.currentFrame / (float)(recorder.recordDuration * recorder.frameRate);
+                    int seconds = recorder.encoder.GetCurrentFrame() / recorder.frameRate;
+                    float progress = recorder.encoder.GetCurrentFrame() / (float)(recorder.recordDuration * recorder.frameRate);
                     
                     if (recorder.recordMode != RecordMode.Duration) {
                         progress = 0;
                     }
 
-                    EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.controller.currentFrame.ToString() + " frames)");
+                    EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.encoder.GetCurrentFrame().ToString() + " frames)");
                 }
 
                 GUILayout.EndHorizontal();

@@ -10,23 +10,18 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-#if AVPROCAPTURE_SUPPORT
-using RenderHeads.Media.AVProMovieCapture;
-#endif
-
-namespace Vimeo.Recorder {
-
+namespace Vimeo.Recorder 
+{
     public class RecorderController : MonoBehaviour
     {
         [HideInInspector] public string outputPath = Path.GetTempPath();
         [HideInInspector] public VimeoRecorder recorder;
         [HideInInspector] public string encodedFilePath;
         [HideInInspector] public bool isRecording = false;
-        [HideInInspector] public bool manualFrameCapture = true;
+        [HideInInspector] public bool manualFrameCapture = false;
 
         [HideInInspector] public VideoTrackAttributes videoAttrs;
         [HideInInspector] public AudioTrackAttributes audioAttrs;
-        private int sampleFramesPerVideoFrame;
 
         [HideInInspector] public int currentFrame = 0;
 
@@ -42,15 +37,15 @@ namespace Vimeo.Recorder {
         private VideoInput videoInput;
         private AudioInput audioInput;
 
+        public void Init(VimeoRecorder r)
+        {
+            recorder = r;
+        }
+
         public void BeginRecording()
         {
             isRecording = true;
-            if (recorder.encoderType == EncoderType.AVProCapture) {
-                BeginAVProCaptureRecording();
-            }
-            else {
-                BeginMediaEncoderRecording();
-            }
+            BeginMediaEncoderRecording();
         }
 
         private void BeginMediaEncoderRecording()
@@ -89,7 +84,7 @@ namespace Vimeo.Recorder {
             };
 
             encodedFilePath = Path.Combine(outputPath, GetFileName());
-            Debug.Log("Recording: " + GetFileName());
+            Debug.Log("[VimeoRecorder] Recording to " + GetFileName());
 
             if (recorder.recordAudio) {
                 audioInput.BeginRecording();
@@ -100,38 +95,12 @@ namespace Vimeo.Recorder {
             }
         }
 
-        private void BeginAVProCaptureRecording()
-        {
-#if AVPROCAPTURE_SUPPORT
-            if (recorder.encoderObject != null) {
-                recorder.encoderObject.StartCapture();
-            }
-#endif             
-        }
-
-        public string GetVideoName()
-        {
-            return ReplaceSpecialChars(recorder.videoName);
-        }
-
         public string GetFileName()
         {
             string name = "Vimeo Unity Recording %R %TS";
-            return ReplaceSpecialChars(name) + ".mp4";
+            return recorder.ReplaceSpecialChars(name) + ".mp4";
         }
 
-        public string ReplaceSpecialChars(string input)
-        {
-            if (input.Contains("%R")) {
-                input = input.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
-            }
-
-            if (input.Contains("%TS")) {
-                input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
-            }
-
-            return input;
-        }
 
         public void EndRecording()
         {
@@ -216,6 +185,7 @@ namespace Vimeo.Recorder {
             }
 
             audioInput = gameObject.AddComponent<AudioInput>();
+            audioInput.encoder = this;
 
             switch(recorder.defaultVideoInput) {
                 case VideoInputType.Screen:

@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#if UNITY_2018_1_OR_NEWER 
+
+using UnityEngine;
 using Vimeo.Recorder;
 using Vimeo.Player;
 using System.Collections;
@@ -61,7 +63,7 @@ namespace Vimeo.Recorder
 		IEnumerator RecordFrame()
 		{
  			yield return new WaitForEndOfFrame();
-			recorder.controller.AddFrame();	
+			recorder.encoder.AddFrame();	
 		}
 	
 		void UploadComplete() 
@@ -77,3 +79,4 @@ namespace Vimeo.Recorder
 		}
 	}
 }
+#endif

@@ -1,4 +1,4 @@
-#define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
+// #define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
 
 using UnityEngine;
 using System.Collections;
