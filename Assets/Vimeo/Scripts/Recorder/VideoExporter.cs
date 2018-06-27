@@ -28,7 +28,6 @@ namespace Vimeo.Recorder
 			recorder.defaultVideoInput = Vimeo.Recorder.VideoInputType.Screen;		
 			recorder.frameRate = 30;
 			recorder.realTime = false;
-			recorder.recordAudio = false;
 			recorder.OnUploadComplete += UploadComplete;
 		}
 

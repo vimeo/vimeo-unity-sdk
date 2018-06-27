@@ -216,7 +216,10 @@ namespace Vimeo.Recorder
 
                 EditorGUILayout.PropertyField(so.FindProperty("frameRate"));
                 EditorGUILayout.PropertyField(so.FindProperty("realTime"));
-                EditorGUILayout.PropertyField(so.FindProperty("recordAudio"));
+
+                if (recorder.realTime) {
+                    EditorGUILayout.PropertyField(so.FindProperty("recordAudio"));
+                }
                 EditorGUILayout.PropertyField(so.FindProperty("recordMode"));
 
                 if (recorder.recordMode == RecordMode.Duration) {

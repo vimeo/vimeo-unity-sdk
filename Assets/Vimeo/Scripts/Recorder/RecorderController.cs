@@ -86,6 +86,10 @@ namespace Vimeo.Recorder
             encodedFilePath = Path.Combine(outputPath, GetFileName());
             Debug.Log("[VimeoRecorder] Recording to " + GetFileName());
 
+            if (!recorder.realTime) {
+                recorder.recordAudio = false;
+            }   
+
             if (recorder.recordAudio) {
                 audioInput.BeginRecording();
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
@@ -118,6 +122,7 @@ namespace Vimeo.Recorder
             }
 
             Destroy(videoInput);
+            Destroy(audioInput);
 
             Time.captureFramerate = 0;
 

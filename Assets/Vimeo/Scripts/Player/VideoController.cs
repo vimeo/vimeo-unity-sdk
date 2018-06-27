@@ -208,18 +208,6 @@ namespace Vimeo.Player
 
         private void VideoFrameReady(VideoPlayer source, long frameIdx)
         {
-            // Detect when frames are skipped
-            if (prevFrameIndex + 1 != frameIdx) {
-                long droppedFrames = frameIdx - prevFrameIndex - 1;
-                if (droppedFrames > 0) {
-                   // Debug.LogWarning("Dropped frames: " + droppedFrames + " - cur:" + frameIdx + " prev:" + prevFrameIndex);
-
-                    // Trigger frame ready event to make up for lost frames
-                    for (int i = 0; i < droppedFrames; i++) {
-                        OnFrameReady(this);
-                    }
-                }
-            }
             prevFrameIndex = frameIdx;
 
             if (OnFrameReady != null) { 
