@@ -29,6 +29,13 @@ namespace Vimeo.Services
             unlisted
         }
 
+        public enum CommentMode
+        {
+            Anyone,
+            NoOne,
+            PeopleIFollow
+        }
+
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
         public event RequestAction OnUploadComplete;
@@ -79,6 +86,28 @@ namespace Vimeo.Services
                     form.AddField("privacy.view", VimeoApi.PrivacyMode.password.ToString());
                     break;
             }
+        }
+
+        public void SetVideoComments(CommentMode mode) 
+        {
+            switch (mode) {
+                case CommentMode.Anyone:
+                    form.AddField("privacy.comments", "");
+                    break;
+
+                case CommentMode.NoOne:
+                    form.AddField("privacy.comments", "");
+                    break;
+
+                case CommentMode.PeopleIFollow:
+                    form.AddField("privacy.comments", "");
+                    break;
+            }
+        }
+
+        public void SetVideoDownload(bool enabled) 
+        {
+            form.AddField("privacy.download", enabled ? "true" : "false");
         }
 
         public void SetVideoPassword(string password) 
