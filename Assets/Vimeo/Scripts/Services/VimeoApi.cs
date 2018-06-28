@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 
-namespace Vimeo.Services
+namespace Vimeo
 {
     public class VimeoApi : MonoBehaviour
     {   
@@ -66,6 +66,7 @@ namespace Vimeo.Services
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
         {
             switch (mode) {
+                
                 case PrivacyModeDisplay.Anyone:
                     form.AddField("privacy.view", VimeoApi.PrivacyMode.anybody.ToString());
                     break;
@@ -170,7 +171,6 @@ namespace Vimeo.Services
         IEnumerator Patch(string url)
         {
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
-                Debug.Log("[VimeoApi] " + form.ToString());
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");

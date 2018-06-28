@@ -23,15 +23,11 @@ public class TinyPlanetCam : MonoBehaviour {
 	[Range(0f, 20f)]
 	public float rotationRange = 1f;
 
-    private float startYPos;
-
 	public VimeoPlayer vimeoPlayer;
 	private float timePassed = 0;
 
 	void Awake()
 	{
-		startYPos = Camera.main.transform.position.y;
-
 		if (vimeoPlayer != null) {
 			vimeoPlayer.OnVideoStart += VideoStart;
 			vimeoPlayer.OnFrameReady += VideoFrameUpdate;

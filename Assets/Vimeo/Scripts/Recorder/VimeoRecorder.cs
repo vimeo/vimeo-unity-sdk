@@ -1,11 +1,8 @@
-﻿#if UNITY_2018_1_OR_NEWER 
-
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Networking;
 using System.IO;
-using Vimeo.Services;
+using Vimeo;
 using SimpleJSON;
-
 
 namespace Vimeo.Recorder
 {
@@ -126,5 +123,3 @@ namespace Vimeo.Recorder
         }
     }
 }
-
-#endif

@@ -1,9 +1,5 @@
-#if UNITY_2018_1_OR_NEWER 
-
 using UnityEngine;
 using System;
-using Vimeo;
-using Vimeo.Services;
 
 namespace Vimeo.Recorder
 {
@@ -23,7 +19,9 @@ namespace Vimeo.Recorder
     {
         Screen,
         Camera,
-        Camera360
+#if UNITY_2018_1_OR_NEWER
+        Camera360,
+#endif        
     }
 
     public enum CameraType
@@ -75,7 +73,7 @@ namespace Vimeo.Recorder
     public class RecorderSettings : VimeoAuth
     {
         public EncoderType encoderType          = EncoderType.MediaEncoder;
-#if AVPROCAPTURE_SUPPORT        
+#if VIMEO_AVPRO_CAPTURE_SUPPORT        
         public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
 #endif        
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
@@ -162,5 +160,3 @@ namespace Vimeo.Recorder
         }
     }
 }
-
-#endif

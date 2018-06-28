@@ -1,8 +1,13 @@
+#if UNITY_2017_2_OR_NEWER
+    #define MEDIA_ENCODER_SUPPORT
+#endif
+
 using UnityEngine;
 using System;
+using System.IO;
 using Vimeo.Recorder;
 
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
 using RenderHeads.Media.AVProMovieCapture;
 #endif
 
@@ -13,11 +18,11 @@ namespace Vimeo.Recorder
         private VimeoRecorder _recorder;
         public bool isRecording = false;
 
-        #if AVPROCAPTURE_SUPPORT
-            private RenderHeads.Media.AVProMovieCapture.CaptureBase _avproEncoder;
+        #if VIMEO_AVPRO_CAPTURE_SUPPORT
+            private CaptureBase _avproEncoder;
         #endif 
 
-        #if UNITY_EDITOR            
+        #if MEDIA_ENCODER_SUPPORT            
             private RecorderController _vimeoEncoder;
         #endif
 
@@ -26,14 +31,14 @@ namespace Vimeo.Recorder
             _recorder = r;
 
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
-#if UNITY_EDITOR                
+#if MEDIA_ENCODER_SUPPORT                
                 _vimeoEncoder = gameObject.AddComponent<RecorderController>();
                 _vimeoEncoder.Init(_recorder);
 #endif
             }
             else if (_recorder.encoderType == EncoderType.AVProCapture) {
-#if AVPROCAPTURE_SUPPORT
-                _avproEncoder = _vimeoEncoder.avproEncoder;
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
+                _avproEncoder = r.avproEncoder;
 #endif            
             }
         }
@@ -43,12 +48,12 @@ namespace Vimeo.Recorder
             isRecording = true;
 
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
-#if UNITY_EDITOR                                
+#if MEDIA_ENCODER_SUPPORT                                
                 _vimeoEncoder.BeginRecording();
 #endif                
             }
             else {
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder.StartCapture();
 #endif             
             }
@@ -59,12 +64,12 @@ namespace Vimeo.Recorder
             isRecording = false;   
 
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
-#if UNITY_EDITOR                          
+#if MEDIA_ENCODER_SUPPORT                          
                 _vimeoEncoder.EndRecording();
 #endif
             }
             else {
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 // _avproEncoder.StartCapture();
 #endif                    
             }
@@ -78,7 +83,7 @@ namespace Vimeo.Recorder
 
         public void AddFrame()
         {
-#if UNITY_EDITOR                             
+#if MEDIA_ENCODER_SUPPORT                             
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
                 _vimeoEncoder.AddFrame();                
             }
@@ -91,28 +96,28 @@ namespace Vimeo.Recorder
         public string GetVideoFilePath()
         {
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
-#if UNITY_EDITOR                                             
+#if MEDIA_ENCODER_SUPPORT                                             
                 return _vimeoEncoder.encodedFilePath;
 #endif                
             }
-            else {
-#if AVPROCAPTURE_SUPPORT
+            else if (_recorder.encoderType == EncoderType.AVProCapture) {
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 return _avproEncoder.LastFilePath;
 #endif                    
             }
-
+        
             return null;
         }
 
         public int GetCurrentFrame()
         {
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
-#if UNITY_EDITOR                
+#if MEDIA_ENCODER_SUPPORT                
                 return _vimeoEncoder.currentFrame;
 #endif
             }
             else if (_recorder.encoderType == EncoderType.AVProCapture) {
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProCapture");
                 return -1;
 #endif            
@@ -123,14 +128,14 @@ namespace Vimeo.Recorder
 
         public void DeleteVideoFile()
         {
-#if UNITY_EDITOR               
+#if MEDIA_ENCODER_SUPPORT               
             // controller.DeleteVideoFile();
 #endif            
         }
 
         public void ManualFrameCapture()
         {
-#if UNITY_EDITOR              
+#if MEDIA_ENCODER_SUPPORT              
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
                 _vimeoEncoder.manualFrameCapture = true;
             }
@@ -142,7 +147,7 @@ namespace Vimeo.Recorder
 
         void OnDestroy()
         {
-#if UNITY_EDITOR             
+#if MEDIA_ENCODER_SUPPORT             
             if (_vimeoEncoder != null) {
                 Destroy(_vimeoEncoder);
             }
@@ -151,7 +156,7 @@ namespace Vimeo.Recorder
         
         void Update()
         {
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
             // Hooking into AVPro by monitoring status changes
             if (_recorder.encoderType == EncoderType.AVProCapture) {
                 if (_avproEncoder.IsCapturing()) {
@@ -161,8 +166,7 @@ namespace Vimeo.Recorder
                     isRecording = false;
 
                     if (File.Exists(_avproEncoder.LastFilePath)) { // if the file exists, then it finished
-                        Debug.Log("[VimeoRecorder] Uploading video - " + _avproEncoder.LastFilePath);
-                        PublishVideo(_avproEncoder.LastFilePath);
+                        _recorder.EndRecording();
                     }
                     else {
                         Debug.Log("[VimeoRecorder] Recording cancelled");
@@ -171,5 +175,6 @@ namespace Vimeo.Recorder
             }
 #endif
         }
+        
     }
 }

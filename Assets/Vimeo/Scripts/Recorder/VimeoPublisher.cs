@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using Vimeo.Services;
+using Vimeo;
 using SimpleJSON;
 
 namespace Vimeo.Recorder
@@ -73,9 +73,11 @@ namespace Vimeo.Recorder
             string[] uri_pieces = video_uri.Split("/" [0]);
             videoId = uri_pieces [2];
 
+#if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
                 vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
             }
+#endif
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
             vimeoApi.SetVideoDownload(recorder.enableDownloads);

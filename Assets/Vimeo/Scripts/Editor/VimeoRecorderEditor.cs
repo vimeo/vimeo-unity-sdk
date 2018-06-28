@@ -1,10 +1,8 @@
-#if UNITY_2018_1_OR_NEWER 
 #if UNITY_EDITOR
 
 using UnityEngine;
 using UnityEditor;
-using Vimeo.Recorder;
-using Vimeo.Services;
+using Vimeo;
 
 namespace Vimeo.Recorder
 {
@@ -65,7 +63,10 @@ namespace Vimeo.Recorder
     
             // Vimeo Settings
             if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
-                DrawRecorderConfig(recorder);
+                
+                if (!recorder.isRecording) {
+                    DrawRecorderConfig(recorder);
+                }
 
                 publishFold = EditorGUILayout.Foldout(publishFold, "Publish to");
                 
@@ -191,11 +192,11 @@ namespace Vimeo.Recorder
             if (recordingFold) {
                 EditorGUI.indentLevel++;
 
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 EditorGUILayout.PropertyField(so.FindProperty("encoderType"), new GUIContent("Encoder"));    
 
                 if (recorder.encoderType == Vimeo.Recorder.EncoderType.AVProCapture) {
-                    EditorGUILayout.PropertyField(so.FindProperty("encoderObject"), new GUIContent("Encoder Object"));
+                    EditorGUILayout.PropertyField(so.FindProperty("avproEncoder"), new GUIContent("AVPro Object"));
                 }
                 else {
 #endif
@@ -204,12 +205,15 @@ namespace Vimeo.Recorder
                 if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera) {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultCamera"), new GUIContent("Camera"));
                 }
+#if UNITY_2018_1_OR_NEWER
                 else if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera360) {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultCamera360"), new GUIContent("Camera"));
                     EditorGUILayout.PropertyField(so.FindProperty("defaultRenderMode360"), new GUIContent("Render mode"));
                 }
+#endif
 
-                if (recorder.defaultVideoInput != Vimeo.Recorder.VideoInputType.Camera360) {
+                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera || 
+                    recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Screen) {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"), new GUIContent("Resolution"));
                     
                     if (recorder.defaultResolution != Vimeo.Recorder.Resolution.Window) {
@@ -221,14 +225,18 @@ namespace Vimeo.Recorder
                 EditorGUILayout.PropertyField(so.FindProperty("realTime"));
 
                 if (recorder.realTime) {
+#if UNITY_2018_1_OR_NEWER
                     EditorGUILayout.PropertyField(so.FindProperty("recordAudio"));
+#else
+                    recorder.recordAudio = false;
+#endif 
                 }
                 EditorGUILayout.PropertyField(so.FindProperty("recordMode"));
 
                 if (recorder.recordMode == RecordMode.Duration) {
                     EditorGUILayout.PropertyField(so.FindProperty("recordDuration"), new GUIContent("Duration (sec)"));
                 }
-#if AVPROCAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
                 }
 #endif
 
@@ -296,6 +304,4 @@ namespace Vimeo.Recorder
         }
     }
 }
-
-#endif
 #endif

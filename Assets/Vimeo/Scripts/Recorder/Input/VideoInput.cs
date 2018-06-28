@@ -1,4 +1,4 @@
-#if UNITY_2018_1_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
 #if UNITY_EDITOR
 
 using UnityEngine;

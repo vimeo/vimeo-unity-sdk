@@ -1,13 +1,11 @@
-// #define AVPROVIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
+// #define VIMEO_AVPRO_VIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
 
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
-
-using Vimeo.Services;
-using Vimeo.Player;
 using System.Text.RegularExpressions;
+using Vimeo;
 
 namespace Vimeo.Player
 {
@@ -64,7 +62,7 @@ namespace Vimeo.Player
                 }
             }
 
-#if AVPROVIDEO_SUPPORT
+#if VIMEO_AVPRO_VIDEO_SUPPORT
             if (!gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
 #endif
                 controller = gameObject.AddComponent<VideoController>();
@@ -75,7 +73,7 @@ namespace Vimeo.Player
                 controller.OnPlay       += VideoPlay;
                 controller.OnPause      += VideoPaused;
                 controller.OnFrameReady += VideoFrameReady;
-#if AVPROVIDEO_SUPPORT
+#if VIMEO_AVPRO_VIDEO_SUPPORT
             }
 #endif
 
@@ -203,7 +201,7 @@ namespace Vimeo.Player
         {
             var json = JSON.Parse(response);
             if (json["error"] == null) {
-#if AVPROVIDEO_SUPPORT                
+#if VIMEO_AVPRO_VIDEO_SUPPORT                
                 if (gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
                     RenderHeads.Media.AVProVideo.MediaPlayer player = gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>();
 

@@ -1,9 +1,8 @@
-﻿#if UNITY_2018_1_OR_NEWER
+﻿#if UNITY_2017_2_OR_NEWER
 #if UNITY_EDITOR
 
 using UnityEditor.Media;
 using UnityEngine;
-using Unity.Collections;
 using UnityEngine.Rendering;
 using System;
 using System.IO;
@@ -30,12 +29,13 @@ namespace Vimeo.Recorder
         private Mesh fullscreenQuad;
 
         private MediaEncoder encoder;
-        private NativeArray<float> audioBuffer;
         private RenderTexture renderBuffer;
         private CommandBuffer commandBuffer;
 
         private VideoInput videoInput;
+#if UNITY_2018_1_OR_NEWER
         private AudioInput audioInput;
+#endif
 
         public void Init(VimeoRecorder r)
         {
@@ -91,8 +91,12 @@ namespace Vimeo.Recorder
             }   
 
             if (recorder.recordAudio) {
+#if UNITY_2018_1_OR_NEWER 
                 audioInput.BeginRecording();
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+#else
+                encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
+#endif
             }
             else {
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
@@ -115,15 +119,16 @@ namespace Vimeo.Recorder
 
             if (videoInput != null) {
                 videoInput.EndRecording();
-
-                if (recorder.recordAudio) {
-                    audioInput.EndRecording();
-                }
+                 Destroy(videoInput);
             }
 
-            Destroy(videoInput);
-            Destroy(audioInput);
-
+#if UNITY_2018_1_OR_NEWER            
+            if (recorder.recordAudio) {
+                audioInput.EndRecording();
+                Destroy(audioInput);
+            }
+#endif
+            
             Time.captureFramerate = 0;
 
             currentFrame = 0;
@@ -146,17 +151,16 @@ namespace Vimeo.Recorder
         public void AddFrame()
         {
             if (encoder != null && isRecording) {
-                if (recorder.recordAudio) {
-                    audioInput.StartFrame();
-                }
-
                 encoder.AddFrame(videoInput.GetFrame());
                 videoInput.EndFrame();
 
+#if UNITY_2018_1_OR_NEWER
                 if (recorder.recordAudio) {
+                    audioInput.StartFrame();
                     encoder.AddSamples(audioInput.GetBuffer());
                     audioInput.EndFrame();
                 }
+#endif
 
                 currentFrame++;
             }
@@ -185,26 +189,29 @@ namespace Vimeo.Recorder
                 Destroy(videoInput);
             }
 
+#if UNITY_2018_1_OR_NEWER
             if (audioInput != null) {
                 Destroy(audioInput);
             }
 
             audioInput = gameObject.AddComponent<AudioInput>();
             audioInput.encoder = this;
+            audioInput.recorder = recorder;
+#endif 
 
             switch(recorder.defaultVideoInput) {
                 case VideoInputType.Screen:
                     videoInput = gameObject.AddComponent<ScreenInput>();
                     break;
-                
+#if UNITY_2018_1_OR_NEWER        
                 case VideoInputType.Camera360:
+#endif
                 case VideoInputType.Camera:
                     videoInput = gameObject.AddComponent<CameraInput>();
                     break;
             }
-
+            
             videoInput.recorder = recorder;
-            audioInput.recorder = recorder;
         }
 
         void OnDestroy()

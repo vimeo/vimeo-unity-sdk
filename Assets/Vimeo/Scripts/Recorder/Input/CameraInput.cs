@@ -1,5 +1,4 @@
-#if UNITY_2018_1_OR_NEWER
-#if UNITY_EDITOR
+#if UNITY_2017_2_OR_NEWER
 
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -11,10 +10,13 @@ namespace Vimeo.Recorder
     {
         public RenderTexture outputRT { get; set; }
 
+#if UNITY_2018_1_OR_NEWER
         private float stereoSeparation = 0.064f;
+#endif
         private int cubeMapSize = 2048 * 2;
         private int outputWidth360 = 4096;
         private int outputHeight360 = 2048;
+
         private Texture2D readTexture;
 
         private Camera targetCamera;
@@ -64,9 +66,11 @@ namespace Vimeo.Recorder
 
         public override Texture2D GetFrame()
         {
+#if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
                 Get360Frame();
             }
+#endif
 
             if (!readTexture) {
                 readTexture = new Texture2D(outputRT.width, outputRT.height, TextureFormat.RGBA32, false);
@@ -79,6 +83,7 @@ namespace Vimeo.Recorder
             return readTexture;
         }
 
+#if UNITY_2018_1_OR_NEWER
         public void Get360Frame()
         {
             var eyesEyeSepBackup = targetCamera.stereoSeparation;
@@ -106,6 +111,7 @@ namespace Vimeo.Recorder
             targetCamera.stereoSeparation = eyesEyeSepBackup;
             targetCamera.stereoTargetEye = eyeMaskBackup;
         }
+#endif
 
         public override void EndFrame()
         {
@@ -114,7 +120,8 @@ namespace Vimeo.Recorder
 
         public override void BeginRecording()
         {
-            if (recorder.defaultVideoInput != VideoInputType.Camera360) {
+            if (recorder.defaultVideoInput == VideoInputType.Camera ||
+                recorder.defaultVideoInput == VideoInputType.Screen) {
                 base.BeginRecording();
                 AddCameraFollower();
                 SetupCommandBuffer();
@@ -132,7 +139,8 @@ namespace Vimeo.Recorder
         {
             base.EndRecording();
 
-            if (recorder.defaultVideoInput != VideoInputType.Camera360) {
+            if (recorder.defaultVideoInput != VideoInputType.Camera || 
+                recorder.defaultVideoInput == VideoInputType.Screen) {
                 ReleaseCamera();
                 ReleaseBuffer();
             }
@@ -171,7 +179,8 @@ namespace Vimeo.Recorder
                 ReleaseBuffer();
             } 
 
-            if (recorder.defaultVideoInput != VideoInputType.Camera360) {
+            if (recorder.defaultVideoInput == VideoInputType.Camera || 
+                recorder.defaultVideoInput == VideoInputType.Screen) {
                 outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32) {
                     wrapMode = TextureWrapMode.Repeat
                 };
@@ -259,5 +268,4 @@ namespace Vimeo.Recorder
     }
 }
 
-#endif
 #endif
