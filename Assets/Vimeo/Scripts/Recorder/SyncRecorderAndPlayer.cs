@@ -1,17 +1,11 @@
-﻿#if UNITY_2018_1_OR_NEWER 
-
-using UnityEngine;
+﻿using UnityEngine;
 using Vimeo.Recorder;
 using Vimeo.Player;
 using System.Collections;
 
-#if AVPROCAPTURE_SUPPORT
-using RenderHeads.Media.AVProMovieCapture;
-#endif
-
 namespace Vimeo.Recorder 
 {
-	public class VideoExporter : MonoBehaviour {
+	public class SyncRecorderAndPlayer : MonoBehaviour {
 		private VimeoRecorder recorder;
 		public VimeoPlayer vimeoPlayer;
 		public bool syncDuration = false;
@@ -78,4 +72,3 @@ namespace Vimeo.Recorder
 		}
 	}
 }
-#endif

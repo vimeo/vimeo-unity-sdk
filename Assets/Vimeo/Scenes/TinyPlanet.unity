@@ -294,7 +294,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1461962394}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6e6ef09d6a5af064aa500c30316b1fd2, type: 3}
+  m_Script: {fileID: 11500000, guid: d0c2a844cb1233e4db3172607581d1ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   vimeoPlayer: {fileID: 936980946}
@@ -314,7 +314,6 @@ MonoBehaviour:
   saveVimeoToken: 0
   vimeoSignIn: 1
   encoderType: 1
-  encoderObject: {fileID: 0}
   privacyMode: 3
   defaultShareLink: 0
   defaultVideoInput: 0
@@ -337,7 +336,7 @@ MonoBehaviour:
   videoPermalink: 
   videoPassword: 
   videoReviewPermalink: 
-  controller: {fileID: 0}
+  encoder: {fileID: 0}
   publisher: {fileID: 0}
   isRecording: 0
   isUploading: 0
