@@ -54,13 +54,13 @@ namespace Vimeo.Recorder
 
         public void PublishVideo(string filename)
         {
+            Debug.Log("[VimeoRecorder] Uploading to Vimeo");            
             vimeoApi.UploadVideoFile(filename);
         }
 
 
         private void UploadProgress(string status, float progress)
         {
-            // Debug.Log("UploadProgress: " + status + " - "  + progress);
             if (OnUploadProgress != null) {
                 OnUploadProgress(status, progress);
             }
@@ -78,6 +78,9 @@ namespace Vimeo.Recorder
             }
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            vimeoApi.SetVideoDownload(recorder.enableDownloads);
+            vimeoApi.SetVideoComments(recorder.commentMode);
+            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
             
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
@@ -88,6 +91,8 @@ namespace Vimeo.Recorder
 
         private void VideoUpdated(string response)
         {
+             Debug.Log("[VimeoRecorder] Uploading to Vimeo");  
+             
             JSONNode json = JSON.Parse (response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];

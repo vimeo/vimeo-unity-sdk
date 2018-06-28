@@ -92,15 +92,15 @@ namespace Vimeo.Services
         {
             switch (mode) {
                 case CommentMode.Anyone:
-                    form.AddField("privacy.comments", "");
+                    form.AddField("privacy.comments", "anybody");
                     break;
 
                 case CommentMode.NoOne:
-                    form.AddField("privacy.comments", "");
+                    form.AddField("privacy.comments", "nobody");
                     break;
 
                 case CommentMode.PeopleIFollow:
-                    form.AddField("privacy.comments", "");
+                    form.AddField("privacy.comments", "contacts");
                     break;
             }
         }
@@ -108,6 +108,11 @@ namespace Vimeo.Services
         public void SetVideoDownload(bool enabled) 
         {
             form.AddField("privacy.download", enabled ? "true" : "false");
+        }
+
+        public void SetVideoReviewPage(bool enabled) 
+        {
+            form.AddField("review_page.active", enabled ? "true" : "false");
         }
 
         public void SetVideoPassword(string password) 
@@ -165,6 +170,7 @@ namespace Vimeo.Services
         IEnumerator Patch(string url)
         {
             using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
+                Debug.Log("[VimeoApi] " + form.ToString());
 				request.chunkedTransfer = false;
                 request.SetRequestHeader("Authorization", "Bearer " + token);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");

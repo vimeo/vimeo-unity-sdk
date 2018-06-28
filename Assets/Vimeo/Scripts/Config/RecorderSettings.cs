@@ -79,6 +79,9 @@ namespace Vimeo.Recorder
         public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
 #endif        
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
+        public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
+        public bool enableDownloads = true;
+        public bool enableReviewPage = true;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 
         public VideoInputType defaultVideoInput = VideoInputType.Screen;
