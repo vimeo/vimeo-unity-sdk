@@ -27,5 +27,6 @@ namespace Vimeo.Player
         public string vimeoVideoId;
         public bool muteAudio = false;
         public bool autoPlay = true;
+        public int startTime = 0;
     }
 }

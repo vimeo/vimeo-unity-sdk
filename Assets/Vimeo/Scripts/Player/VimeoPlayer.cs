@@ -195,6 +195,10 @@ namespace Vimeo.Player
 
         // Events below
         private void VideoStarted(VideoController controller) {
+            if (startTime > 0) {
+                controller.SeekBySeconds(startTime);
+            }
+
             if (OnVideoStart != null) {
                 OnVideoStart();
             }

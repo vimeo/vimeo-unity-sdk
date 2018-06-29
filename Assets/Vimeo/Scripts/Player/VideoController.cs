@@ -94,7 +94,12 @@ namespace Vimeo.Player
         private void SetupMaterialOverride()
         {
             videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
-            videoPlayer.targetMaterialProperty = "_MainTex";
+            if (videoScreenObject.GetComponent<Renderer>().material.name.StartsWith("360VideoScreen")) {
+                videoPlayer.targetMaterialProperty = "_Tex";
+            } 
+            else {
+                videoPlayer.targetMaterialProperty = "_MainTex";
+            }
         }
 
         public void PlayVideos(List<JSONNode> files, bool is3D, string stereoFormat, bool autoPlay = true) 
