@@ -56,24 +56,58 @@ namespace Vimeo
             
             if (Authenticated(player.GetVimeoToken()) && player.vimeoSignIn) {
 #if VIMEO_AVPRO_VIDEO_SUPPORT
-                EditorGUILayout.PropertyField(so.FindProperty("videoPlayerType"), new GUIContent("Video Player"));
-                if (player.videoPlayerType == VideoPlayerType.AVProVideo) {
-                    EditorGUILayout.PropertyField(so.FindProperty("mediaPlayer"), new GUIContent("AVPro Media Player"));
+                if (!player.IsVideoMetadataLoaded()) {
+                    EditorGUILayout.PropertyField(so.FindProperty("videoPlayerType"), new GUIContent("Video Player"));
+                    if (player.videoPlayerType == VideoPlayerType.AVProVideo) {
+                        EditorGUILayout.PropertyField(so.FindProperty("mediaPlayer"), new GUIContent("AVPro Media Player"));
+                        if (player.mediaPlayer == null) {
+                            EditorGUILayout.HelpBox("You need to select a MediaPlayer object.", MessageType.Warning);
+                        }
+                    }
                 }
 #else
                 player.videoPlayerType = VideoPlayerType.UnityPlayer;
 #endif
 
-                if (player.videoPlayerType != VideoPlayerType.AVProVideo) {
+                if (player.videoPlayerType != VideoPlayerType.AVProVideo && !player.IsVideoMetadataLoaded()) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                     EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
-                    EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute audio?"));
+                    EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute Audio"));
+                    EditorGUILayout.PropertyField(so.FindProperty("autoPlay"));
                 }
 
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
                 EditorGUILayout.PropertyField(so.FindProperty("selectedResolution"), new GUIContent("Resolution"));
 
+                
+                if (player.selectedResolution == StreamingResolution.Adaptive && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
+                    EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
+                }
+
                 EditorGUILayout.Space();
+
+                if (EditorApplication.isPlaying) {
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Load Video", GUILayout.Height(30), GUILayout.Width(100))) {
+                        player.autoPlay = true;
+                        player.LoadVimeoVideoByUrl(player.vimeoVideoId);   
+                    }
+
+                    if (player.videoPlayerType == VideoPlayerType.UnityPlayer && player.IsVideoMetadataLoaded()) {
+                        if (!player.IsPlaying()) {
+                            GUI.backgroundColor = Color.green;
+                            if (GUILayout.Button("Play Video", GUILayout.Height(30))) {
+                                player.Play();
+                            }
+                        }
+
+                        GUI.backgroundColor = Color.white;
+                        if (player.IsPlaying() && GUILayout.Button("Pause Video", GUILayout.Height(30))) {
+                            player.Pause();
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+                }
             }
 
             DrawVimeoAuth(player);

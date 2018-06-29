@@ -94,24 +94,21 @@ namespace Vimeo.Player
         private void SetupMaterialOverride()
         {
             videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
-            if (videoScreenObject.GetComponent<Renderer>().material.name.StartsWith("360VideoScreen")) {
-                videoPlayer.targetMaterialProperty = "_Tex";
-            } 
-            else {
-                videoPlayer.targetMaterialProperty = "_MainTex";
-            }
+            videoPlayer.targetMaterialProperty = "_MainTex";
         }
 
-        public void PlayVideos(List<JSONNode> files, bool is3D, string stereoFormat) 
+        public void PlayVideos(List<JSONNode> files, bool is3D, string stereoFormat, bool autoPlay = true) 
         {
             video_files = files;
-            if (video_files[cur_file_index]["link_secure"] == null) {
-                PlayVideoByUrl(video_files[cur_file_index]["link"], is3D, stereoFormat);
+
+            if (autoPlay) {
+                if (video_files[cur_file_index]["link_secure"] == null) {
+                    PlayVideoByUrl(video_files[cur_file_index]["link"], is3D, stereoFormat);
+                }
+                else{
+                    PlayVideoByUrl(video_files[cur_file_index]["link_secure"], is3D, stereoFormat);
+                }
             }
-            else{
-                PlayVideoByUrl(video_files[cur_file_index]["link_secure"], is3D, stereoFormat);
-            }
-            
         }
 
         public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat) 
@@ -224,20 +221,18 @@ namespace Vimeo.Player
                 source.Play();
             }
 
-            if (OnVideoStart != null) {
-                width  = videoPlayer.texture.width;
-                height = videoPlayer.texture.height;
+            width  = videoPlayer.texture.width;
+            height = videoPlayer.texture.height;
 
-                if (videoPlayer.renderMode == VideoRenderMode.RenderTexture) {
-                    videoRT = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
-                    videoRT.Create();
-                    videoPlayer.targetTexture = videoRT;
-                    RawImage img = videoScreenObject.GetComponent<RawImage>();
-                    img.texture = videoRT;
-                }
-
-                StartCoroutine("WaitForRenderTexture");
+            if (videoPlayer.renderMode == VideoRenderMode.RenderTexture) {
+                videoRT = new RenderTexture(width, height, 16, RenderTextureFormat.ARGB32);
+                videoRT.Create();
+                videoPlayer.targetTexture = videoRT;
+                RawImage img = videoScreenObject.GetComponent<RawImage>();
+                img.texture = videoRT;
             }
+
+            StartCoroutine("WaitForRenderTexture");
         }
 
         private void VideoSeekCompleted(VideoPlayer source)

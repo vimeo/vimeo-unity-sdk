@@ -1,5 +1,3 @@
-// #define VIMEO_AVPRO_VIDEO_SUPPORT  // Uncomment this line if you are using AVPro Video https://assetstore.unity.com/packages/tools/video/avpro-video-56355
-
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -31,6 +29,7 @@ namespace Vimeo.Player
 
         private VimeoApi api;
         public VideoController controller;
+        private List<JSONNode> videoFiles;
 
         private void Start()
         {
@@ -82,6 +81,7 @@ namespace Vimeo.Player
         public void LoadVimeoVideoByUrl(string vimeo_url)
         {
             if (vimeo_url != null && vimeo_url != "") {
+                videoFiles = null;
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
                 if (matches[3] != null) {
                     vimeoVideoId = matches[3];
@@ -89,7 +89,7 @@ namespace Vimeo.Player
                 }
                 else {
                     Debug.LogWarning("Invalid Vimeo URL");
-            }
+                }
             }
         }
 
@@ -98,9 +98,35 @@ namespace Vimeo.Player
              api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
+        public bool IsPlaying()
+        {
+            if (IsPlayerLoaded()) { 
+                return controller.videoPlayer.isPlaying;
+            }
+            else {
+                return false;
+            }
+        }
+
+        public bool IsVideoMetadataLoaded()
+        {
+            return videoFiles != null;
+        }
+
+        public bool IsPlayerLoaded()
+        {
+            return controller != null && controller.videoPlayer != null;
+        }
+
         public void Play()
         {
-            controller.Play();
+            if (!IsPlayerLoaded()) {
+                autoPlay = true;
+                LoadVideo();
+            }
+            else {
+                controller.Play();
+            }
         }
 
         public void Pause()
@@ -197,7 +223,10 @@ namespace Vimeo.Player
         private void OnLoadVimeoVideoComplete(string response)
         {
             var json = JSON.Parse(response);
+            
             if (json["error"] == null) {
+                videoFiles = GetVideoFiles(json);
+
 #if VIMEO_AVPRO_VIDEO_SUPPORT                
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     string file_url = null;
@@ -205,23 +234,28 @@ namespace Vimeo.Player
                     if (this.selectedResolution == StreamingResolution.Adaptive) {
                         file_url = GetAdaptiveVideoFileURL(json);
                     }
-
-                    if (file_url == null) {
-                        List<JSONNode> files = GetVideoFiles(json);
-                        file_url = files[0]["link"];
+                    else {
+                        file_url = videoFiles[0]["link"];
                     }
                     
-                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url);
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
                 }
                 else {
-                    controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
-                }
+                    LoadVideo();
+                }   
 #else  
-                controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
+                LoadVideo();
 #endif
             } 
             else {
                 Debug.LogError("Video could not be found");
+            }
+        }
+
+        public void LoadVideo()
+        {
+            if (IsVideoMetadataLoaded()) {
+                controller.PlayVideos(videoFiles, is3D, videoStereoFormat, autoPlay);
             }
         }
 
@@ -293,6 +327,10 @@ namespace Vimeo.Player
 
         private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, StreamingResolution resolution)
         {
+            if (resolution == StreamingResolution.Adaptive) {
+                return null;
+            }
+
             bool resolution_found = false;
 
             List<JSONNode> preferred_qualities = new List<JSONNode>();
