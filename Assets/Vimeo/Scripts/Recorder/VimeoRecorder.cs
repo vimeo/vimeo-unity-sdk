@@ -22,6 +22,11 @@ namespace Vimeo.Recorder
 
         void Start() 
         {
+            if (encoder == null) {
+                encoder = gameObject.AddComponent<EncoderManager>();
+                encoder.Init(this);
+            }
+            
             if (recordOnStart) {
                 BeginRecording();
             }
@@ -30,11 +35,6 @@ namespace Vimeo.Recorder
         public void BeginRecording()
         {
             if (!isRecording) {
-                if (encoder == null) {
-                    encoder = gameObject.AddComponent<EncoderManager>();
-                    encoder.Init(this);
-                }
-                
                 encoder.BeginRecording();
                 isRecording = true;
             }

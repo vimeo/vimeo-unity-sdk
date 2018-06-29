@@ -166,10 +166,11 @@ namespace Vimeo.Recorder
                     isRecording = false;
 
                     if (File.Exists(_avproEncoder.LastFilePath)) { // if the file exists, then it finished
+                        Debug.Log("[VimeoRecorder] AVPro recording finished");
                         _recorder.EndRecording();
                     }
                     else {
-                        Debug.Log("[VimeoRecorder] Recording cancelled");
+                        Debug.Log("[VimeoRecorder] AVPro recording cancelled");
                     }
                 }
             }

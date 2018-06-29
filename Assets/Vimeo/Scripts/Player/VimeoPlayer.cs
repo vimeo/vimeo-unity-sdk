@@ -49,7 +49,7 @@ namespace Vimeo.Player
                 api.OnRequestComplete += OnLoadVimeoVideoComplete;
             }
 
-            if (videoScreen == null) {
+            if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
                 Debug.LogWarning("No video screen was specified.");
             }
 
