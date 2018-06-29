@@ -7,6 +7,7 @@ using SimpleJSON;
 namespace Vimeo.Recorder
 {
     [AddComponentMenu("Video/Vimeo Recorder")]
+    [HelpURL("https://github.com/vimeo/vimeo-unity-sdk")]
     public class VimeoRecorder : RecorderSettings 
     {
         public delegate void RecordAction();

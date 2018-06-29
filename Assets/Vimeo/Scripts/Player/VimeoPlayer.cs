@@ -8,6 +8,7 @@ using Vimeo;
 namespace Vimeo.Player
 {
     [AddComponentMenu("Video/Vimeo Player")]
+    [HelpURL("https://github.com/vimeo/vimeo-unity-sdk")]
     public class VimeoPlayer : PlayerSettings 
     {
         public delegate void VimeoEvent();
