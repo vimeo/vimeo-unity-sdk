@@ -62,9 +62,8 @@ namespace Vimeo.Player
                 }
             }
 
-#if VIMEO_AVPRO_VIDEO_SUPPORT
-            if (!gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
-#endif
+            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
                 controller = gameObject.AddComponent<VideoController>();
                 controller.videoScreenObject = videoScreen;
                 controller.playerSettings = this;
@@ -73,9 +72,7 @@ namespace Vimeo.Player
                 controller.OnPlay       += VideoPlay;
                 controller.OnPause      += VideoPaused;
                 controller.OnFrameReady += VideoFrameReady;
-#if VIMEO_AVPRO_VIDEO_SUPPORT
             }
-#endif
 
             LoadVimeoVideoByUrl(vimeoVideoId);
 
@@ -202,9 +199,7 @@ namespace Vimeo.Player
             var json = JSON.Parse(response);
             if (json["error"] == null) {
 #if VIMEO_AVPRO_VIDEO_SUPPORT                
-                if (gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>()) {
-                    RenderHeads.Media.AVProVideo.MediaPlayer player = gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>();
-
+                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     string file_url = null;
 
                     if (this.selectedResolution == StreamingResolution.Adaptive) {
@@ -215,7 +210,8 @@ namespace Vimeo.Player
                         List<JSONNode> files = GetVideoFiles(json);
                         file_url = files[0]["link"];
                     }
-                    player.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url);
+                    
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url);
                 }
                 else {
                     controller.PlayVideos(GetVideoFiles(json), is3D, videoStereoFormat);
@@ -249,6 +245,7 @@ namespace Vimeo.Player
             }
 
             // Set the metadata
+            // TODO separate this from fetching video files
             videoName = json["name"];
             videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
 

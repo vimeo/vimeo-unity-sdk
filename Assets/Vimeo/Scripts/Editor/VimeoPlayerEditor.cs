@@ -50,15 +50,28 @@ namespace Vimeo
             if (GUILayout.Button("Need help?", GUILayout.Width(70))) {
                 Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
             }
+            
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
             
             if (Authenticated(player.GetVimeoToken()) && player.vimeoSignIn) {
-                EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
-                EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+#if VIMEO_AVPRO_VIDEO_SUPPORT
+                EditorGUILayout.PropertyField(so.FindProperty("videoPlayerType"), new GUIContent("Video Player"));
+                if (player.videoPlayerType == VideoPlayerType.AVProVideo) {
+                    EditorGUILayout.PropertyField(so.FindProperty("mediaPlayer"), new GUIContent("AVPro Media Player"));
+                }
+#else
+                player.videoPlayerType = VideoPlayerType.UnityPlayer;
+#endif
+
+                if (player.videoPlayerType != VideoPlayerType.AVProVideo) {
+                    EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
+                    EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+                    EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute audio?"));
+                }
+
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
                 EditorGUILayout.PropertyField(so.FindProperty("selectedResolution"), new GUIContent("Resolution"));
-                EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute audio?"));
 
                 EditorGUILayout.Space();
             }

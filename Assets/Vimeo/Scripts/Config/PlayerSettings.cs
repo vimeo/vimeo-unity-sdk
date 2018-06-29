@@ -10,8 +10,19 @@ namespace Vimeo.Player
         x360p = 360,
         Adaptive = 0,
     }
+
+    public enum VideoPlayerType
+    {
+        UnityPlayer,
+        AVProVideo
+    }
+    
     public class PlayerSettings : VimeoAuth
     {
+        public VideoPlayerType videoPlayerType = VideoPlayerType.UnityPlayer;
+#if VIMEO_AVPRO_VIDEO_SUPPORT
+        public RenderHeads.Media.AVProVideo.MediaPlayer mediaPlayer;
+#endif         
         public StreamingResolution selectedResolution = StreamingResolution.x2160p_4K; 
         public string vimeoVideoId;
         public bool muteAudio = false;
