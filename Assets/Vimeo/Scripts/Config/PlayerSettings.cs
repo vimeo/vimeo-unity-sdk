@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Vimeo.Player
 {
     public enum StreamingResolution
@@ -28,5 +30,8 @@ namespace Vimeo.Player
         public bool muteAudio = false;
         public bool autoPlay = true;
         public int startTime = 0;
+
+        public int currentVideoIndex = 0;
+        public List<string> vimeoVideos = new List<string>();
     }
 }

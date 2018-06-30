@@ -3,12 +3,16 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo;
+using SimpleJSON;
+using System.Linq;
 
 namespace Vimeo.Recorder
 {
     [CustomEditor(typeof(VimeoRecorder))]
     public class VimeoRecorderEditor : BaseEditor
     {
+        VimeoApi api;
+
         static bool recordingFold;
         static bool publishFold;
         static bool vimeoFold;
@@ -85,9 +89,34 @@ namespace Vimeo.Recorder
                         EditorGUI.indentLevel++;
                         EditorGUILayout.PropertyField(so.FindProperty("videoName"));
                         EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+
+                        GUILayout.BeginHorizontal();
+                        int cur_index = 0;
+                        if (recorder.currentFolder != null) {
+                            for (int i = 0; i < recorder.vimeoFolders.Count; i++) {
+                                if (recorder.vimeoFolders[i].uri == recorder.currentFolder.uri) {
+                                    cur_index = i; break;
+                                }
+                            }
+                        }
+                        int new_index = EditorGUILayout.Popup("Add to Project", cur_index, recorder.vimeoFolders.Select(folder => folder.name).ToArray()); 
+
+                        if (new_index != cur_index) {
+                            recorder.currentFolder = recorder.vimeoFolders[new_index];
+                        }
+
+                        if (GUILayout.Button("↺", GUILayout.Width(25))) { // Refresh folders
+                            FetchFolders();
+                        }
+                        if (GUILayout.Button("+", GUILayout.Width(25))) { // Add folder
+                            Application.OpenURL("https://vimeo.com/manage/folders");
+                        }
+
+                        GUILayout.EndHorizontal();
+
                         EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));
                         EditorGUILayout.PropertyField(so.FindProperty("enableDownloads"));
-                        // EditorGUILayout.PropertyField(so.FindProperty("enableReviewPage"));
+                        EditorGUILayout.PropertyField(so.FindProperty("enableReviewPage"));
 
                         if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
                             EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
@@ -107,6 +136,44 @@ namespace Vimeo.Recorder
             DrawVimeoAuth(recorder);
 
             so.ApplyModifiedProperties();
+        }
+
+        private void FetchFolders()
+        {
+            var recorder = target as VimeoRecorder;
+
+            if (api == null) {
+                if (recorder.gameObject.GetComponent<VimeoApi>()) {
+                    api = recorder.gameObject.GetComponent<VimeoApi>();
+                }
+                else {
+                    api = recorder.gameObject.AddComponent<VimeoApi>();
+                }
+                api.token = recorder.GetVimeoToken();
+                api.OnRequestComplete += GetFoldersComplete;
+            }
+
+          api.GetUserFolders();
+        }
+
+        private void GetFoldersComplete(string response)
+        {
+            var recorder = target as VimeoRecorder;
+            api.OnRequestComplete -= GetFoldersComplete;
+            DestroyImmediate(recorder.gameObject.GetComponent<VimeoApi>());
+
+            var json = JSON.Parse(response);
+            
+            recorder.vimeoFolders.Clear();
+
+            var videoData = json["data"];
+
+            recorder.vimeoFolders.Add(new VimeoFolder("No project", null));
+
+            for (int i = 0; i < videoData.Count; i++) {
+                VimeoFolder folder = new VimeoFolder(videoData[i]["name"], videoData[i]["uri"]);
+                recorder.vimeoFolders.Add(folder);
+            }
         }
 
         public void DrawRecordingControls()

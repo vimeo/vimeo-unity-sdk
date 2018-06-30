@@ -16,7 +16,7 @@ namespace Vimeo.Recorder
 
         private VimeoApi vimeoApi;
         private SlackApi slackApi;
-        private string videoId;
+        private VimeoVideo video;
 
         private Coroutine saveCoroutine;
 
@@ -49,7 +49,7 @@ namespace Vimeo.Recorder
                 }
             } 
              
-            return "https://vimeo.com/" + videoId;
+            return "https://vimeo.com/" + video.id;
         }
 
         public void PublishVideo(string filename)
@@ -70,8 +70,7 @@ namespace Vimeo.Recorder
         {
             UploadProgress("SavingInfo", .999f);
 
-            string[] uri_pieces = video_uri.Split("/" [0]);
-            videoId = uri_pieces [2];
+            video = new VimeoVideo("", video_uri);
 
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
@@ -84,7 +83,7 @@ namespace Vimeo.Recorder
             vimeoApi.SetVideoComments(recorder.commentMode);
             vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
-            
+
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
                 vimeoApi.SetVideoPassword(recorder.videoPassword);
             }
@@ -93,7 +92,7 @@ namespace Vimeo.Recorder
 
         private void VideoUpdated(string response)
         {
-             Debug.Log("[VimeoRecorder] Uploading to Vimeo");  
+            Debug.Log("[VimeoRecorder] Uploading to Vimeo");  
              
             JSONNode json = JSON.Parse (response);
             recorder.videoPermalink = json["link"];
@@ -108,6 +107,8 @@ namespace Vimeo.Recorder
                 recorder.autoPostToChannel = false;
                 PostToSlack();
             }
+
+            vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
 
             UploadProgress("SaveInfoComplete", 1f);
         }
@@ -132,8 +133,8 @@ namespace Vimeo.Recorder
         {
             yield return new WaitForSeconds(1f);
 
-            if (videoId != null) {
-                vimeoApi.SaveVideo(videoId);
+            if (video != null) {
+                vimeoApi.SaveVideo(video);
             }
         }
 
@@ -144,7 +145,7 @@ namespace Vimeo.Recorder
 
         public void OpenSettings()
         {
-            Application.OpenURL("https://vimeo.com/" + videoId + "/settings");
+            Application.OpenURL("https://vimeo.com/" + video.id + "/settings");
         }
 
         public void PostToSlack()

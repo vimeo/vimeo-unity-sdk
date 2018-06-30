@@ -9,6 +9,7 @@ using SimpleJSON;
 
 namespace Vimeo
 {
+    [ExecuteInEditMode] 
     public class VimeoApi : MonoBehaviour
     {   
         public enum PrivacyModeDisplay
@@ -58,9 +59,25 @@ namespace Vimeo
             form = new WWWForm();
         }
 
-        public void GetVideoFileUrlByVimeoId(int vimeo_id)
+        public void GetVideoFileUrlByVimeoId(int video_id)
         {
-            StartCoroutine("Request", "/videos/" + vimeo_id);
+            StartCoroutine("Request", "/videos/" + video_id);
+        }
+
+        public void GetUserFolders()
+        {
+            StartCoroutine("Request", "/me/folders"); 
+        }
+
+        public void AddVideoToFolder(VimeoVideo video, VimeoFolder folder)
+        {
+            IEnumerator coroutine = Put("/me/folders/" + folder.id + "/videos?uris=" + video.uri);
+            StartCoroutine(coroutine);            
+        }
+
+        public void GetRecentUserVideos()
+        {
+            StartCoroutine("Request", "/me/videos?per_page=100"); 
         }
 
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
@@ -137,9 +154,9 @@ namespace Vimeo
             form.AddField("spatial.stereo_format", stereo_format);
         }
 
-        public void SaveVideo(string vimeo_id)
+        public void SaveVideo(VimeoVideo video)
         {
-            StartCoroutine(Patch(API_URL + "/videos/" + vimeo_id));
+            StartCoroutine(Patch(API_URL + "/videos/" + video.id));
         }
 
         public void UploadVideoFile(string file_path)
@@ -150,7 +167,7 @@ namespace Vimeo
 
         IEnumerator Patch(string url)
         {
-            using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
+            using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
                 PrepareHeaders(request);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
 
@@ -260,7 +277,7 @@ namespace Vimeo
                     StartCoroutine(CompleteUpload(ticket));
                 } 
                 else {
-                    Debug.Log (request.responseCode);
+                    Debug.Log(request.responseCode);
                 }
             }
         }
@@ -271,13 +288,29 @@ namespace Vimeo
                 OnUploadProgress("Complete", 1f);
             }
 
-            // Debug.Log (API_URL + ticket.complete_uri);
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
                 PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete(request.GetResponseHeader("Location"));
+                }
+            }
+        }
+
+        IEnumerator Put(string api_path)
+        {
+            if (token != null) {
+                byte[] data = new byte[] { 0x00 };
+                using(UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, data)) {
+                    PrepareHeaders(request);
+                    yield return VimeoApi.SendRequest(request);
+
+                    if (request.error != null) {
+                        Debug.LogError(request.downloadHandler.text);
+                    } 
+                    else {
+                    }
                 }
             }
         }
