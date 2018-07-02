@@ -158,6 +158,11 @@ namespace Vimeo.Recorder
             }
         }
 
+        void OnDestroy()
+        {
+            Dispose();            
+        }
+
         public void Dispose()
         {
             Destroy(vimeoApi);

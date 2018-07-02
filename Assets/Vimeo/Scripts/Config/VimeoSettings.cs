@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Vimeo 
 {  
-    public class VimeoAuth : MonoBehaviour
+    public class VimeoSettings : MonoBehaviour
     {
         public VimeoVideo currentVideo;
         public List<VimeoVideo> vimeoVideos = new List<VimeoVideo>();

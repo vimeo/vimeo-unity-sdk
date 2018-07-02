@@ -19,7 +19,7 @@ namespace Vimeo.Player
         AVProVideo
     }
     
-    public class PlayerSettings : VimeoAuth
+    public class PlayerSettings : VimeoSettings
     {
         public VideoPlayerType videoPlayerType = VideoPlayerType.UnityPlayer;
 #if VIMEO_AVPRO_VIDEO_SUPPORT

@@ -14,7 +14,7 @@ namespace Vimeo
 
         private void InitAPI()
         {
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
             if (api == null) {
                 if (settings.gameObject.GetComponent<VimeoApi>()) {
                     api = settings.gameObject.GetComponent<VimeoApi>();
@@ -31,7 +31,7 @@ namespace Vimeo
         protected void GetRecentVideos()
         {
             InitAPI();
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
 
             settings.vimeoVideos.Clear();
             settings.vimeoVideos.Add(
@@ -47,7 +47,7 @@ namespace Vimeo
         protected void GetVideosInFolder(VimeoFolder folder)
         {
             InitAPI();
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
 
             settings.vimeoVideos.Clear();
             settings.vimeoVideos.Add(
@@ -93,7 +93,7 @@ namespace Vimeo
         {
             InitAPI();
 
-            var recorder = target as VimeoAuth;
+            var recorder = target as VimeoSettings;
 
             recorder.vimeoFolders.Clear();
             recorder.vimeoFolders.Add(
@@ -107,7 +107,7 @@ namespace Vimeo
 
         private void GetFoldersComplete(string response)
         {
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
             settings.vimeoFolders.Clear();
 
             api.OnRequestComplete -= GetFoldersComplete;
@@ -146,7 +146,7 @@ namespace Vimeo
 
         private void OnRequestError(string error)
         {
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
             if (!EditorApplication.isPlaying) {
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
@@ -156,7 +156,7 @@ namespace Vimeo
         protected bool GUISelectFolder()
         {   
             var so = serializedObject;
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
             
             // Folder selection
             GUILayout.BeginHorizontal();
@@ -181,7 +181,7 @@ namespace Vimeo
         
         protected void GUISignOutButton()
         {
-            var settings = target as VimeoAuth;
+            var settings = target as VimeoSettings;
             if (Authenticated(settings.GetVimeoToken()) && settings.vimeoSignIn && GUILayout.Button("Sign out", GUILayout.Width(60))) {
                 settings.vimeoVideos.Clear();
                 settings.vimeoFolders.Clear();
@@ -195,7 +195,7 @@ namespace Vimeo
             return token != "" && token != null;
         }
 
-        public void DrawVimeoAuth(VimeoAuth auth)
+        public void DrawVimeoAuth(VimeoSettings auth)
         {
             var so = serializedObject;
 

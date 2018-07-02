@@ -71,7 +71,7 @@ namespace Vimeo.Recorder
         x4_3
     }
 
-    public class RecorderSettings : VimeoAuth
+    public class RecorderSettings : VimeoSettings
     {
         public EncoderType encoderType          = EncoderType.MediaEncoder;
 #if VIMEO_AVPRO_CAPTURE_SUPPORT        
