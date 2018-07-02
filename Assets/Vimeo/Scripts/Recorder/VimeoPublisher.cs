@@ -92,8 +92,6 @@ namespace Vimeo.Recorder
 
         private void VideoUpdated(string response)
         {
-            Debug.Log("[VimeoRecorder] Uploading to Vimeo");  
-             
             JSONNode json = JSON.Parse (response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
