@@ -16,8 +16,8 @@ namespace Vimeo
         public string vimeoToken;
         public bool   saveVimeoToken = true;
         public bool   vimeoSignIn = false;
+        public bool   signInError = false;
         private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
-
 
         public int GetCurrentFolderIndex()
         {
@@ -81,6 +81,15 @@ namespace Vimeo
                 PlayerPrefs.SetString(key, val);
             }
             PlayerPrefs.Save(); 
+        }
+
+        public void SignOut()
+        {
+            vimeoVideos.Clear();
+            vimeoFolders.Clear();
+            vimeoSignIn = false;
+            signInError = false;
+            SetVimeoToken(null);
         }
     }
 }

@@ -66,6 +66,7 @@ namespace Vimeo
             settings.vimeoVideos.Clear();
 
             api.OnRequestComplete -= GetVideosComplete;
+            api.OnError -= OnRequestError;
             
             if (!EditorApplication.isPlaying) {
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
@@ -80,11 +81,11 @@ namespace Vimeo
                 );
             }
 
-            if (settings.vimeoVideos.Count > 0) {
+            if (settings.vimeoVideos.Count > 0 && settings.currentVideo == null) {
                 settings.currentVideo = settings.vimeoVideos[0];
                 settings.vimeoVideoId = settings.currentVideo.id.ToString();
             }
-            else {
+            else if (settings.vimeoVideos.Count == 0) {
                 settings.vimeoVideos.Add(new VimeoVideo("(No videos found)"));
             }
         }
@@ -150,7 +151,7 @@ namespace Vimeo
             if (!EditorApplication.isPlaying) {
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
-
+            settings.signInError = true;
         }
 
         protected bool GUISelectFolder()
@@ -183,10 +184,7 @@ namespace Vimeo
         {
             var settings = target as VimeoSettings;
             if (Authenticated(settings.GetVimeoToken()) && settings.vimeoSignIn && GUILayout.Button("Sign out", GUILayout.Width(60))) {
-                settings.vimeoVideos.Clear();
-                settings.vimeoFolders.Clear();
-                settings.vimeoSignIn = false;
-                settings.SetVimeoToken(null);
+                settings.SignOut();
             }
         }
 
@@ -198,6 +196,10 @@ namespace Vimeo
         public void DrawVimeoAuth(VimeoSettings auth)
         {
             var so = serializedObject;
+
+            if (auth.signInError) {
+            //    EditorGUILayout.HelpBox("There was an issue.", MessageType.Error); 
+            }
 
             if (!Authenticated(auth.GetVimeoToken()) || !auth.vimeoSignIn) {
                 
