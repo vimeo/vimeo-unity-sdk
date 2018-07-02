@@ -108,7 +108,9 @@ namespace Vimeo.Recorder
                 PostToSlack();
             }
 
-            vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
+            if (recorder.currentFolder.uri != null) {
+                vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
+            }
 
             UploadProgress("SaveInfoComplete", 1f);
         }

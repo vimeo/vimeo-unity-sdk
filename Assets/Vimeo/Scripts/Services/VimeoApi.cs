@@ -41,6 +41,7 @@ namespace Vimeo
         public event RequestAction OnRequestComplete;
         public event RequestAction OnUploadComplete;
         public event RequestAction OnPatchComplete;
+        public event RequestAction OnError;
 
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
@@ -78,6 +79,11 @@ namespace Vimeo
         public void GetRecentUserVideos()
         {
             StartCoroutine("Request", "/me/videos?per_page=100"); 
+        }
+
+        public void GetVideosInFolder(VimeoFolder folder)
+        {
+            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?per_page=100"); 
         }
 
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
@@ -326,6 +332,7 @@ namespace Vimeo
                 if (OnRequestComplete != null) {
                     if (request.responseCode != 200) {
                         Debug.LogError(request.downloadHandler.text);
+                        if (OnError != null) OnError(request.downloadHandler.text);
                     }
                     else {
                         OnRequestComplete(request.downloadHandler.text);

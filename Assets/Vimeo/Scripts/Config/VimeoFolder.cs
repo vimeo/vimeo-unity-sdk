@@ -14,9 +14,12 @@ namespace Vimeo
         {
             name = _name;
             uri = _uri;
+            
             if (_uri != null) {
                 string[] matches = Regex.Split(_uri, "/([0-9]+)$"); 
-                id = int.Parse(matches[1]);
+                if (matches.Length > 1) {
+                    id = int.Parse(matches[1]);
+                }
             }
         }
         

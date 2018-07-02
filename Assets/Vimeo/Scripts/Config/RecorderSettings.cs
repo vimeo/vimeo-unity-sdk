@@ -108,9 +108,6 @@ namespace Vimeo.Recorder
         public string videoPassword;
         public string videoReviewPermalink;
 
-        public VimeoFolder currentFolder;
-        public List<VimeoFolder> vimeoFolders = new List<VimeoFolder>();
-
         private const string SLACK_TOKEN_NAME = "slack-token-";
 
         public string GetSlackToken()

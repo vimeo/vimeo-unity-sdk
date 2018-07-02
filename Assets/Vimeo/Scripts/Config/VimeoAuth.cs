@@ -1,15 +1,47 @@
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+
 
 namespace Vimeo 
 {  
     public class VimeoAuth : MonoBehaviour
     {
+        public VimeoVideo currentVideo;
+        public List<VimeoVideo> vimeoVideos = new List<VimeoVideo>();
+
+        public VimeoFolder currentFolder;
+        public List<VimeoFolder> vimeoFolders = new List<VimeoFolder>();
+
         public string vimeoToken;
         public bool   saveVimeoToken = true;
         public bool   vimeoSignIn = false;
         private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
+
+
+        public int GetCurrentFolderIndex()
+        {
+            if (currentFolder != null) {
+                for (int i = 0; i < vimeoFolders.Count; i++) {
+                    if (vimeoFolders[i].uri == currentFolder.uri) {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public int GetCurrentVideoIndex()
+        {
+            if (currentVideo != null) {
+                for (int i = 0; i < vimeoVideos.Count; i++) {
+                    if (vimeoVideos[i].uri == currentVideo.uri) {
+                        return i;
+                    }
+                }
+            }
+            return 0;
+        }
 
         private string GetTokenKey()
         {

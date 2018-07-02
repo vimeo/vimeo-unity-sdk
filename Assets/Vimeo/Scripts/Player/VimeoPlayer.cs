@@ -46,7 +46,6 @@ namespace Vimeo.Player
             if (GetVimeoToken() != null) {
                 api = gameObject.AddComponent<VimeoApi>();
                 api.token = GetVimeoToken();
-                api.OnRequestComplete += OnLoadVimeoVideoComplete;
             }
 
             if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
@@ -86,6 +85,7 @@ namespace Vimeo.Player
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
                 if (matches[3] != null) {
                     vimeoVideoId = matches[3];
+                    api.OnRequestComplete += OnLoadVimeoVideoComplete;
                     LoadVimeoVideoById(int.Parse(vimeoVideoId));
                 }
                 else {
@@ -227,7 +227,8 @@ namespace Vimeo.Player
 
         private void OnLoadVimeoVideoComplete(string response)
         {
-            var json = JSON.Parse(response);
+            JSONNode json = JSON.Parse(response);
+            api.OnRequestComplete -= OnLoadVimeoVideoComplete;
             
             if (json["error"] == null) {
                 videoFiles = GetVideoFiles(json);
