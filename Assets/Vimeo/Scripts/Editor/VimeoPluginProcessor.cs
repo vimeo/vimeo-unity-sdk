@@ -10,7 +10,7 @@ using System.IO;
 namespace Vimeo
 {
     [InitializeOnLoad]
-    public class VimeoProcesser : AssetPostprocessor
+    public class VimeoPluginProcesser : AssetPostprocessor
     {
         static void AddPlayerDefine(string target)
         {
