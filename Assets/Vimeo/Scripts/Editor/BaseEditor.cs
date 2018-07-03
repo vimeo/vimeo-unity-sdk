@@ -76,18 +76,17 @@ namespace Vimeo
             var json = JSON.Parse(response);
             JSONNode videoData = json["data"];
 
-            for (int i = 0; i < videoData.Count; i++) {
-                settings.vimeoVideos.Add(
-                    new VimeoVideo(videoData[i])
-                );
-            }
-
-            if (settings.vimeoVideoId == null || settings.vimeoVideoId == "") {
-                settings.currentVideo = settings.vimeoVideos[0];
-                settings.vimeoVideoId = settings.currentVideo.id.ToString();
-            }
-            else if (settings.vimeoVideos.Count == 0) {
+            if (videoData.Count == 0) {
                 settings.vimeoVideos.Add(new VimeoVideo("(No videos found)"));
+            }
+            else {
+                settings.vimeoVideos.Add(new VimeoVideo("---- Select a video ----", null));
+
+                for (int i = 0; i < videoData.Count; i++) {
+                    settings.vimeoVideos.Add(
+                        new VimeoVideo(videoData[i])
+                    );
+                }
             }
         }
 
@@ -124,15 +123,18 @@ namespace Vimeo
             string folder_prefix = "";
 
             if (settings is VimeoPlayer) {
-                settings.vimeoFolders.Add(new VimeoFolder("---- Find a video ----", null));
-                settings.vimeoFolders.Add(new VimeoFolder("Get video by ID or URL", "custom"));
-                settings.vimeoFolders.Add(new VimeoFolder("Most recent videos", "recent"));
+                var player = target as VimeoPlayer;
+                player.vimeoFolders.Add(new VimeoFolder("---- Find a video ----", null));
+                player.vimeoFolders.Add(new VimeoFolder("Get video by ID or URL", "custom"));
+                player.vimeoFolders.Add(new VimeoFolder("Most recent videos", "recent"));
 
-                if (settings.currentFolder.uri == null && settings.currentVideo.uri == null) {
-                    settings.currentFolder = settings.vimeoFolders[0];
-                }
-                else if (settings.currentFolder.uri == null && settings.currentVideo.uri != null) {
-                    settings.currentFolder = settings.vimeoFolders[1];
+                if (player.currentFolder == null || !player.currentFolder.IsValid()) {
+                    if (player.vimeoVideoId != null && player.vimeoVideoId != "") {
+                        player.currentFolder = player.vimeoFolders[1];    
+                    }
+                    else {
+                        player.currentFolder = player.vimeoFolders[0];
+                    }
                 }
                 folder_prefix = "Projects / ";
             }
@@ -153,6 +155,14 @@ namespace Vimeo
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
             settings.signInError = true;
+        }
+
+        protected void GUIManageVideosButton() 
+        {
+            var settings = target as VimeoSettings;
+            if (settings.Authenticated() && settings.vimeoSignIn && GUILayout.Button("Manage videos", GUILayout.Width(100))) {
+                Application.OpenURL("https://vimeo.com/manage/videos");
+            }
         }
 
         protected bool GUISelectFolder()

@@ -50,10 +50,7 @@ namespace Vimeo
             style.border = new RectOffset(0,0,0,0);
             GUILayout.Box("", style);
 
-            if (player.Authenticated() && player.vimeoSignIn && GUILayout.Button("⇪ Upload", GUILayout.Width(70))) {
-                Application.OpenURL("https://vimeo.com/upload");
-            }
-
+            GUIManageVideosButton();
             GUIHelpButton();
             GUISignOutButton();
             

@@ -95,7 +95,9 @@ namespace Vimeo
             signInError = false;
             SetVimeoToken(null);
             vimeoVideos.Clear();
+            currentVideo = null;
             vimeoFolders.Clear();
+            currentFolder = null;
         }
     }
 }

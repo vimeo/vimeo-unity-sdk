@@ -22,6 +22,11 @@ namespace Vimeo
                 }
             }
         }
+
+        public bool IsValid()
+        {
+            return uri != null && uri != "";
+        }
         
         public int CompareTo(VimeoFolder other)
         {

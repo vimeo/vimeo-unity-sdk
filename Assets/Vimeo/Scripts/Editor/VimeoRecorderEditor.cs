@@ -56,7 +56,11 @@ namespace Vimeo.Recorder
             var style = new GUIStyle();
             style.border = new RectOffset(0,0,0,0);
             GUILayout.Box("", style);
+            
+            GUIManageVideosButton();
             GUIHelpButton();
+            GUISignOutButton();
+
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
     
@@ -74,7 +78,6 @@ namespace Vimeo.Recorder
 
                     GUILayout.BeginHorizontal();
                     vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo");
-                    GUISignOutButton();
                     GUILayout.EndHorizontal();
 
                     if (vimeoFold) {
