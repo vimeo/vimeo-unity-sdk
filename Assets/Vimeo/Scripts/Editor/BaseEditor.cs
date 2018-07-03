@@ -22,7 +22,6 @@ namespace Vimeo
                 else {
                     api = settings.gameObject.AddComponent<VimeoApi>();
                 }
-
             }
 
             api.token = settings.GetVimeoToken();
@@ -30,8 +29,9 @@ namespace Vimeo
 
         protected void GetRecentVideos()
         {
-            InitAPI();
             var settings = target as VimeoSettings;
+            if (!settings.Authenticated()) return;
+            InitAPI();
 
             settings.vimeoVideos.Clear();
             settings.vimeoVideos.Add(
@@ -46,8 +46,9 @@ namespace Vimeo
 
         protected void GetVideosInFolder(VimeoFolder folder)
         {
-            InitAPI();
             var settings = target as VimeoSettings;
+            if (!settings.Authenticated()) return;
+            InitAPI();
 
             settings.vimeoVideos.Clear();
             settings.vimeoVideos.Add(
@@ -81,7 +82,7 @@ namespace Vimeo
                 );
             }
 
-            if (settings.vimeoVideos.Count > 0 && settings.currentVideo == null) {
+            if (settings.vimeoVideoId == null || settings.vimeoVideoId == "") {
                 settings.currentVideo = settings.vimeoVideos[0];
                 settings.vimeoVideoId = settings.currentVideo.id.ToString();
             }
@@ -92,12 +93,12 @@ namespace Vimeo
 
         protected void FetchFolders()
         {
+            var settings = target as VimeoSettings;
+            if (!settings.Authenticated()) return;
+
             InitAPI();
-
-            var recorder = target as VimeoSettings;
-
-            recorder.vimeoFolders.Clear();
-            recorder.vimeoFolders.Add(
+            settings.vimeoFolders.Clear();
+            settings.vimeoFolders.Add(
                 new VimeoFolder("Loading...", null)
             );
 
@@ -123,7 +124,7 @@ namespace Vimeo
             string folder_prefix = "";
 
             if (settings is VimeoPlayer) {
-                settings.vimeoFolders.Add(new VimeoFolder("---- Select a video ----", null));
+                settings.vimeoFolders.Add(new VimeoFolder("---- Find a video ----", null));
                 settings.vimeoFolders.Add(new VimeoFolder("Get video by ID or URL", "custom"));
                 settings.vimeoFolders.Add(new VimeoFolder("Most recent videos", "recent"));
 
@@ -179,30 +180,65 @@ namespace Vimeo
 
             return folderChanged;
         }
+
+        protected void GUISelectVideo(bool refreshVideos = false)
+        {
+            var so = serializedObject;
+            var player = target as VimeoPlayer;
+
+            if (player.currentFolder.uri == "custom") {
+                EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
+            }
+            else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
+                GUILayout.BeginHorizontal();
+                int cur_video_index = player.GetCurrentVideoIndex();
+                int new_video_index = EditorGUILayout.Popup(" ", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
+
+                if (new_video_index != cur_video_index) {
+                    player.currentVideo = player.vimeoVideos[new_video_index];
+                    player.vimeoVideoId = player.currentVideo.id.ToString();
+                }
+
+                if (GUILayout.Button("↪", GUILayout.Width(25))) {
+                    
+                }
+
+                if (GUILayout.Button("↺", GUILayout.Width(25)) || 
+                    refreshVideos || 
+                    (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoApi>() == null)) {
+                        
+                    if (player.currentFolder.uri == "recent") {
+                        GetRecentVideos();
+                    }
+                    else if (player.currentFolder.id > 0) {
+                        GetVideosInFolder(player.currentFolder);
+                    }
+                }
+
+                GUILayout.EndHorizontal();
+            }
+        }
         
         protected void GUISignOutButton()
         {
             var settings = target as VimeoSettings;
-            if (Authenticated(settings.GetVimeoToken()) && settings.vimeoSignIn && GUILayout.Button("Sign out", GUILayout.Width(60))) {
+            if (settings.Authenticated() && settings.vimeoSignIn && GUILayout.Button("Sign out", GUILayout.Width(60))) {
                 settings.SignOut();
             }
         }
 
-        public bool Authenticated(string token)
+        protected void GUIHelpButton()
         {
-            return token != "" && token != null;
+            if (GUILayout.Button("Help", GUILayout.Width(50))) {
+                Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
+            } 
         }
 
         public void DrawVimeoAuth(VimeoSettings auth)
         {
             var so = serializedObject;
 
-            if (auth.signInError) {
-            //    EditorGUILayout.HelpBox("There was an issue.", MessageType.Error); 
-            }
-
-            if (!Authenticated(auth.GetVimeoToken()) || !auth.vimeoSignIn) {
-                
+            if (!auth.Authenticated() || !auth.vimeoSignIn) {
                 GUILayout.BeginHorizontal();
 
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
@@ -217,10 +253,12 @@ namespace Vimeo
                 }
                 GUILayout.EndHorizontal();
 
-                EditorGUILayout.PropertyField(so.FindProperty("saveVimeoToken"), new GUIContent("Save token with object"));
+                if (auth.vimeoToken != null && auth.vimeoToken != "") {
+                    if (auth is VimeoPlayer) {
+                        EditorGUILayout.HelpBox("Reminder: Streaming videos is limited to Vimeo Pro and Business customers.", MessageType.Warning);
+                    }
 
-                GUI.backgroundColor = Color.green;
-                if (Authenticated(auth.vimeoToken)) {
+                    GUI.backgroundColor = Color.green;
                     if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
                         auth.SetVimeoToken(auth.vimeoToken);
                         auth.vimeoSignIn = true;

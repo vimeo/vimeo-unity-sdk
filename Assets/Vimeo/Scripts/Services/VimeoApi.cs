@@ -329,14 +329,14 @@ namespace Vimeo
                 PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
 
-                if (OnRequestComplete != null) {
-                    if (request.responseCode != 200) {
-                        Debug.LogError(request.downloadHandler.text);
-                        if (OnError != null) OnError(request.downloadHandler.text);
+                if (request.responseCode != 200) {
+                    if (request.responseCode == 401) {
+                        Debug.LogError("[VimeoApi] Unauthorized request.");
                     }
-                    else {
-                        OnRequestComplete(request.downloadHandler.text);
-                    }
+                    if (OnError != null) OnError(request.downloadHandler.text);
+                }
+                else {
+                    if (OnRequestComplete != null) OnRequestComplete(request.downloadHandler.text);
                 }
             }
         }

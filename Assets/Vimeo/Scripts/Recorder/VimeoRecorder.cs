@@ -95,22 +95,21 @@ namespace Vimeo.Recorder
 
         private void Dispose()
         {
+            if (isRecording) {
+                CancelRecording();
+            }
             Destroy(encoder);
             Destroy(publisher);
         }
 
         void OnDisable()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Dispose();
         }
 
         void OnDestroy()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Dispose();
         }
 
         void LateUpdate()

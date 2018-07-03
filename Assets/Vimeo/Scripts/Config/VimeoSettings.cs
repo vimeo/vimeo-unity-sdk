@@ -13,8 +13,10 @@ namespace Vimeo
         public VimeoFolder currentFolder;
         public List<VimeoFolder> vimeoFolders = new List<VimeoFolder>();
 
+        [Tooltip("The token is used to give your app access to your Vimeo account.")]
         public string vimeoToken;
-        public bool   saveVimeoToken = true;
+
+        public bool   buildMode = false;
         public bool   vimeoSignIn = false;
         public bool   signInError = false;
         private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
@@ -48,9 +50,15 @@ namespace Vimeo
             return VIMEO_TOKEN_PREFIX + this.GetType().Name + "-" + this.gameObject.scene.name;
         }
 
+        public bool Authenticated()
+        {
+            string token = GetVimeoToken();
+            return token != "" && token != null;
+        }
+
         public string GetVimeoToken()
         {
-            if (saveVimeoToken) {
+            if (buildMode) {
                 return vimeoToken;
             }
             else {
@@ -60,16 +68,8 @@ namespace Vimeo
 
         public void SetVimeoToken(string token)
         {
-            string token_name = GetTokenKey();
-
-            if (saveVimeoToken) {
-                SetKey(token_name, null);
-                vimeoToken = token;
-            }
-            else {
-                vimeoToken = null;
-                SetKey(token_name, token);
-            }
+            vimeoToken = null;
+            SetKey(GetTokenKey(), token);
         }
 
         public void SetKey(string key, string val)
@@ -83,13 +83,19 @@ namespace Vimeo
             PlayerPrefs.Save(); 
         }
 
+        public void EnableBuildMode()
+        {
+            vimeoToken = PlayerPrefs.GetString(GetTokenKey());
+            buildMode  = true;
+        }
+
         public void SignOut()
         {
-            vimeoVideos.Clear();
-            vimeoFolders.Clear();
             vimeoSignIn = false;
             signInError = false;
             SetVimeoToken(null);
+            vimeoVideos.Clear();
+            vimeoFolders.Clear();
         }
     }
 }

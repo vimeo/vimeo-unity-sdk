@@ -56,14 +56,12 @@ namespace Vimeo.Recorder
             var style = new GUIStyle();
             style.border = new RectOffset(0,0,0,0);
             GUILayout.Box("", style);
-            if (GUILayout.Button("Need help?", GUILayout.Width(75))) {
-                Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
-            }
+            GUIHelpButton();
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
     
             // Vimeo Settings
-            if (Authenticated(recorder.GetVimeoToken()) && recorder.vimeoSignIn) {
+            if (recorder.Authenticated() && recorder.vimeoSignIn) {
                 
                 if (!recorder.isRecording) {
                     DrawRecorderConfig(recorder);
@@ -245,7 +243,7 @@ namespace Vimeo.Recorder
             }
         }
 
-        public void DrawSlackAuth(string _token, VimeoRecorder recorder)
+        public void DrawSlackAuth(VimeoRecorder recorder)
         {
             GUIStyle customstyle = new GUIStyle();
             customstyle.margin = new RectOffset(40, 0, 0, 0);
@@ -253,7 +251,7 @@ namespace Vimeo.Recorder
             GUILayout.BeginHorizontal();
 
             var so = serializedObject;
-            if (!Authenticated(_token)) {
+            if (!recorder.SlackAuthenticated()) {
                 EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
                 if (recorder.slackToken == null || recorder.slackToken == "") {
                     if (GUILayout.Button("Get token", GUILayout.Width(75))) {
@@ -268,6 +266,7 @@ namespace Vimeo.Recorder
                     GUILayout.EndHorizontal();        
                     GUILayout.BeginHorizontal(customstyle);
                     GUI.backgroundColor = Color.green;
+
                     if (GUILayout.Button("Sign in")) {
                        recorder.SetSlackToken(recorder.slackToken);
                        recorder.slackToken = null;
@@ -286,20 +285,20 @@ namespace Vimeo.Recorder
 
             GUILayout.BeginHorizontal();
             slackFold = EditorGUILayout.Foldout(slackFold, "Slack");
-            if (Authenticated(recorder.GetSlackToken()) && GUILayout.Button("Sign out", GUILayout.Width(60))) {
+            if (recorder.SlackAuthenticated() && GUILayout.Button("Sign out", GUILayout.Width(60))) {
                 recorder.SetSlackToken(null);   
             }
             GUILayout.EndHorizontal();
 
             if (slackFold) {
                 EditorGUI.indentLevel++;
-                if (Authenticated(recorder.GetSlackToken())) {
+                if (recorder.SlackAuthenticated()) {
                     EditorGUILayout.PropertyField(so.FindProperty("slackChannel"));
                     EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"), new GUIContent("Share Link"));
                     EditorGUILayout.PropertyField(so.FindProperty("autoPostToChannel"), new GUIContent("Post to Channel"));
                 } 
 
-                DrawSlackAuth(recorder.GetSlackToken(), recorder);
+                DrawSlackAuth(recorder);
                 EditorGUI.indentLevel--;
             }
         }

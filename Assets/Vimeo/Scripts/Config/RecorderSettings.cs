@@ -119,6 +119,12 @@ namespace Vimeo.Recorder
         {
             SetKey(SLACK_TOKEN_NAME + this.gameObject.scene.name, token);
         }
+        
+        public bool SlackAuthenticated()
+        {
+            string token = GetSlackToken();
+            return token != "" && token != null;
+        }
 
         public string GetVideoName()
         {
