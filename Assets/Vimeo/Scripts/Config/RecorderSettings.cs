@@ -77,6 +77,8 @@ namespace Vimeo.Recorder
 #if VIMEO_AVPRO_CAPTURE_SUPPORT        
         public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
 #endif        
+        public EncoderManager encoder;
+
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
         public bool enableDownloads = true;
@@ -133,9 +135,9 @@ namespace Vimeo.Recorder
 
         public string ReplaceSpecialChars(string input)
         {
-            // if (input.Contains("%R")) {
-                // input = input.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
-            // }
+            if (input.Contains("%R") && encoder != null) {
+                input = input.Replace("%R", encoder.GetOutputWidth() + "x" + encoder.GetOutputHeight());
+            }
 
             if (input.Contains("%TS")) {
                 input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));

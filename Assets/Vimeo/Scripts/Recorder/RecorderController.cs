@@ -48,6 +48,16 @@ namespace Vimeo.Recorder
             BeginMediaEncoderRecording();
         }
 
+        public int GetOutputWidth()
+        {
+            return videoInput.outputWidth;
+        }
+
+        public int GetOutputHeight()
+        {
+            return videoInput.outputHeight;
+        }
+
         private void BeginMediaEncoderRecording()
         {
             InitInputs();

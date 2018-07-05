@@ -126,6 +126,24 @@ namespace Vimeo.Recorder
             return -1;
         }
 
+        public int GetOutputWidth()
+        {
+#if MEDIA_ENCODER_SUPPORT                
+            return _vimeoEncoder.GetOutputWidth();
+#else
+            return -1;
+#endif 
+        }
+
+        public int GetOutputHeight()
+        {
+#if MEDIA_ENCODER_SUPPORT                
+            return _vimeoEncoder.GetOutputHeight();
+#else
+            return -1;
+#endif
+        }
+
         public void DeleteVideoFile()
         {
 #if MEDIA_ENCODER_SUPPORT               

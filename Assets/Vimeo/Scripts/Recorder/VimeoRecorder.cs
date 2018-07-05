@@ -13,7 +13,6 @@ namespace Vimeo.Recorder
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
 
-        public EncoderManager encoder;
         public VimeoPublisher publisher;
 
         public bool isRecording = false;
