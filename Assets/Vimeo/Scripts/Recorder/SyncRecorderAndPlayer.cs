@@ -5,10 +5,10 @@ using System.Collections;
 
 namespace Vimeo.Recorder 
 {
-	public class SyncRecorderAndPlayer : MonoBehaviour {
-		private VimeoRecorder recorder;
-		public VimeoPlayer vimeoPlayer;
-		public bool syncDuration = false;
+    public class SyncRecorderAndPlayer : MonoBehaviour {
+        private VimeoRecorder recorder;
+        public VimeoPlayer vimeoPlayer;
+        public bool syncDuration = false;
 
         void Awake()
         {
@@ -16,59 +16,59 @@ namespace Vimeo.Recorder
             vimeoPlayer.OnVideoStart += VideoStart;
         }
 
-		void Start() 
-		{
-			recorder = gameObject.GetComponent<VimeoRecorder>();
-			recorder.defaultVideoInput = Vimeo.Recorder.VideoInputType.Screen;		
-			recorder.frameRate = 30;
-			recorder.realTime = false;
-			recorder.OnUploadComplete += UploadComplete;
-		}
+        void Start() 
+        {
+            recorder = gameObject.GetComponent<VimeoRecorder>();
+            recorder.defaultVideoInput = Vimeo.Recorder.VideoInputType.Screen;		
+            recorder.frameRate = 30;
+            recorder.realTime = false;
+            recorder.OnUploadComplete += UploadComplete;
+        }
 
-		void VideoLoad()
-		{
-			
-		}
+        void VideoLoad()
+        {
+            
+        }
 
-		void VideoStart()
-		{
-			recorder.videoName = vimeoPlayer.videoName + " (Tiny Planet)";
+        void VideoStart()
+        {
+            recorder.videoName = vimeoPlayer.videoName + " (Tiny Planet)";
 
-			vimeoPlayer.controller.SendFrameReadyEvents();
-			vimeoPlayer.controller.EnableFrameStepping();
-			vimeoPlayer.controller.OnFrameReady += FrameReady; 
+            vimeoPlayer.controller.SendFrameReadyEvents();
+            vimeoPlayer.controller.EnableFrameStepping();
+            vimeoPlayer.controller.OnFrameReady += FrameReady; 
 
-			recorder.frameRate = (int)vimeoPlayer.controller.videoPlayer.frameRate;
+            recorder.frameRate = (int)vimeoPlayer.controller.videoPlayer.frameRate;
 
-			if (syncDuration) {
-				recorder.recordMode     = Vimeo.Recorder.RecordMode.Duration;
-				recorder.recordDuration = vimeoPlayer.controller.GetDuration(); 
-			}
+            if (syncDuration) {
+                recorder.recordMode     = Vimeo.Recorder.RecordMode.Duration;
+                recorder.recordDuration = vimeoPlayer.controller.GetDuration(); 
+            }
 
-			recorder.BeginManualRecording(); 
-		}
+            recorder.BeginManualRecording(); 
+        }
 
-		void FrameReady(VideoController controller)
-		{
-			StartCoroutine(RecordFrame());
-		}
+        void FrameReady(VideoController controller)
+        {
+            StartCoroutine(RecordFrame());
+        }
 
-		IEnumerator RecordFrame()
-		{
- 			yield return new WaitForEndOfFrame();
-			recorder.encoder.AddFrame();	
-		}
-	
-		void UploadComplete() 
-		{
-			// Debug.Log("Uploaded to Vimeo!");
-		}
+        IEnumerator RecordFrame()
+        {
+            yield return new WaitForEndOfFrame();
+            recorder.encoder.AddFrame();	
+        }
+    
+        void UploadComplete() 
+        {
+            // Debug.Log("Uploaded to Vimeo!");
+        }
 
-		void OnDisable()
-		{
-			if (vimeoPlayer != null) {
-				vimeoPlayer.controller.OnFrameReady -= FrameReady; 
-			}
-		}
-	}
+        void OnDisable()
+        {
+            if (vimeoPlayer != null) {
+                vimeoPlayer.controller.OnFrameReady -= FrameReady; 
+            }
+        }
+    }
 }

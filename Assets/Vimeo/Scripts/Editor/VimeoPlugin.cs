@@ -7,23 +7,23 @@ using System.Collections.Generic;
 
 namespace Vimeo
 {
-	public enum PluginType {
-		AVProVideo = 2,
-		AVProCapture = 3,
+    public enum PluginType {
+        AVProVideo = 2,
+        AVProCapture = 3,
         DepthKit = 4
-	};
+    };
 
-	public enum AvailablePluginType {
+    public enum AvailablePluginType {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
-		AVProCapture = PluginType.AVProCapture,
+        AVProCapture = PluginType.AVProCapture,
 #endif
 #if VIMEO_AVPRO_VIDEO_SUPPORT
-		AVProVideo = PluginType.AVProVideo,
+        AVProVideo = PluginType.AVProVideo,
 #endif
 #if VIMEO_DEPTHKIT_SUPPORT
-		DepthKit = PluginType.DepthKit,
+        DepthKit = PluginType.DepthKit,
 #endif
-	}
+    }
 
     public class VimeoPlugin 
     {
@@ -32,11 +32,11 @@ namespace Vimeo
         public const string AVPRO_CAPTURE_DEFINE    = "VIMEO_AVPRO_CAPTURE_SUPPORT";
         public const string DEPTHKIT_DEFINE         = "VIMEO_DEPTHKIT_SUPPORT";
 
-		public static Dictionary<string, PluginType> DirectiveDict = new Dictionary<string, PluginType>(){
-			{AVPRO_VIDEO_DEFINE,   PluginType.AVProVideo},
-			{AVPRO_CAPTURE_DEFINE, PluginType.AVProCapture},
+        public static Dictionary<string, PluginType> DirectiveDict = new Dictionary<string, PluginType>(){
+            {AVPRO_VIDEO_DEFINE,   PluginType.AVProVideo},
+            {AVPRO_CAPTURE_DEFINE, PluginType.AVProCapture},
             {DEPTHKIT_DEFINE,      PluginType.DepthKit},
-		};
+        };
 
         // Which asset should be searched for to see if a player has been added
         // For example, if someone adds AVProVideo, they will have a file called MediaPlayer.cs now in their project

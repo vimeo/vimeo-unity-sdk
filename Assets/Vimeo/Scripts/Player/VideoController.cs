@@ -220,7 +220,7 @@ namespace Vimeo.Player
         private void VideoPlayerStarted(VideoPlayer source)
         {
             if (frameStepping) {
-                source.Play();
+                source.Pause();
             }
             else {
                 source.Play();
