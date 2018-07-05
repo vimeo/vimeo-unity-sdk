@@ -52,15 +52,6 @@ namespace Vimeo.Player
                 Debug.LogWarning("No video screen was specified.");
             }
 
-            if (audioSource && audioSource is AudioSource) {
-                if (audioSource != null) {
-                    controller.audioSource = audioSource;
-                }
-                else {
-                    videoScreen.gameObject.AddComponent<AudioSource>();
-                }
-            }
-
             if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                 // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
                 controller = gameObject.AddComponent<VideoController>();
@@ -71,6 +62,18 @@ namespace Vimeo.Player
                 controller.OnPlay       += VideoPlay;
                 controller.OnPause      += VideoPaused;
                 controller.OnFrameReady += VideoFrameReady;
+            }
+
+            if (audioSource && audioSource is AudioSource)
+            {
+                if (audioSource != null)
+                {
+                    controller.audioSource = audioSource;
+                }
+                else
+                {
+                    videoScreen.gameObject.AddComponent<AudioSource>();
+                }
             }
 
             LoadVimeoVideoByUrl(vimeoVideoId);
