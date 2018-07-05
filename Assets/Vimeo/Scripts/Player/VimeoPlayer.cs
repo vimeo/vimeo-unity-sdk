@@ -19,7 +19,7 @@ namespace Vimeo.Player
         public event VimeoEvent OnFrameReady;
 
         public GameObject videoScreen;
-        public GameObject audioSource;
+        public AudioSource audioSource;
 
         public string videoName;
         public string videoThumbnailUrl;
@@ -52,12 +52,12 @@ namespace Vimeo.Player
                 Debug.LogWarning("No video screen was specified.");
             }
 
-            if (audioSource && audioSource.GetType() == typeof(GameObject)) {
-                if (audioSource.GetComponent<AudioSource>() != null) {
-                    controller.audioSource = audioSource.GetComponent<AudioSource>();
+            if (audioSource && audioSource is AudioSource) {
+                if (audioSource != null) {
+                    controller.audioSource = audioSource;
                 }
                 else {
-                    Debug.LogWarning("No AudioSource component found on " + audioSource.name + " GameObject");
+                    videoScreen.gameObject.AddComponent<AudioSource>();
                 }
             }
 
