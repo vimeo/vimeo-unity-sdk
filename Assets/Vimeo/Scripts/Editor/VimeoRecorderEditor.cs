@@ -117,7 +117,7 @@ namespace Vimeo.Recorder
             EditorGUILayout.Space();
 
             EditorGUILayout.BeginHorizontal();
-            if (EditorApplication.isPlaying) {
+            if (EditorApplication.isPlaying && recorder.encoderType == EncoderType.MediaEncoder) {
                 if (recorder.isRecording) {
                     GUI.backgroundColor = Color.green;
 
@@ -157,28 +157,31 @@ namespace Vimeo.Recorder
             }
             GUILayout.EndHorizontal();
 
-            // Progress bar
-            if (EditorApplication.isPlaying && (recorder.isRecording || recorder.isUploading)) {
+            // Recording progress bar
+          if (EditorApplication.isPlaying && recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
                 EditorGUILayout.Space();
                 var rect = EditorGUILayout.BeginHorizontal();
                 rect.height = 20;
                 GUILayout.Box("", GUILayout.Height(20));
 
-                if (recorder.isUploading) {
-                    EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
-                }
+                int seconds = recorder.encoder.GetCurrentFrame() / recorder.frameRate;
+                float progress = recorder.encoder.GetCurrentFrame() / (float)(recorder.recordDuration * recorder.frameRate);
                 
-                if (recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
-                    int seconds = recorder.encoder.GetCurrentFrame() / recorder.frameRate;
-                    float progress = recorder.encoder.GetCurrentFrame() / (float)(recorder.recordDuration * recorder.frameRate);
-                    
-                    if (recorder.recordMode != RecordMode.Duration) {
-                        progress = 0;
-                    }
-
-                    EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.encoder.GetCurrentFrame().ToString() + " frames)");
+                if (recorder.recordMode != RecordMode.Duration) {
+                    progress = 0;
                 }
 
+                EditorGUI.ProgressBar(rect, progress, seconds + " seconds (" + recorder.encoder.GetCurrentFrame().ToString() + " frames)");
+
+                GUILayout.EndHorizontal();
+            }
+
+            if (EditorApplication.isPlaying && recorder.isUploading) {
+                EditorGUILayout.Space();
+                var rect = EditorGUILayout.BeginHorizontal();
+                rect.height = 20;
+                GUILayout.Box("", GUILayout.Height(20));
+                EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
                 GUILayout.EndHorizontal();
             }
         }
