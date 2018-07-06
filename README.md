@@ -109,7 +109,7 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
       <b>Player</b> - Demos simple video streaming inside of a 3D environment.
     </td>
     <td style="width:33%">
-      <img src="https://i.imgur.com/L98bkXf.gif" height="200" /><br>
+      <img src="https://i.imgur.com/GJsNC64.gif" height="200" /><br>
       <b>360Player</b> - Demos how to stream 360 videos from Vimeo (supports 3D / stereoscopic video).
     </td>
     <td style="width:33%">
