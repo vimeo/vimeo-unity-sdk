@@ -72,8 +72,10 @@ namespace Vimeo
 
         public void AddVideoToFolder(VimeoVideo video, VimeoFolder folder)
         {
-            IEnumerator coroutine = Put("/me/folders/" + folder.id + "/videos?uris=" + video.uri);
-            StartCoroutine(coroutine);            
+            if (folder.id > 0 && video.uri != null) {
+                IEnumerator coroutine = Put("/me/folders/" + folder.id + "/videos?uris=" + video.uri);
+                StartCoroutine(coroutine);            
+            }
         }
 
         public void GetRecentUserVideos()
@@ -294,6 +296,7 @@ namespace Vimeo
 
                 if (request.responseCode != 200) {
                     Debug.LogError(request.downloadHandler.text);
+                    if (OnError != null) OnError(request.downloadHandler.text);
                 }
                 else if (OnPatchComplete != null) {
                     OnPatchComplete(request.downloadHandler.text);
@@ -309,8 +312,9 @@ namespace Vimeo
                     PrepareHeaders(request);
                     yield return VimeoApi.SendRequest(request);
 
-                    if (request.responseCode != 200) {
+                    if (request.error != null) {
                         Debug.LogError(request.downloadHandler.text);
+                        if (OnError != null) OnError(request.downloadHandler.text);
                     } 
                     else {
                         // TODO create event hook

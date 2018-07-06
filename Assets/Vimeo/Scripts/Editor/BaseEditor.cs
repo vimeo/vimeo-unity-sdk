@@ -3,6 +3,7 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Player;
+using Vimeo.Recorder;
 using SimpleJSON;
 using System.Linq;
 
@@ -182,6 +183,10 @@ namespace Vimeo
                 settings.currentFolder = settings.vimeoFolders[new_index];
             }
 
+            if (GUILayout.Button("+", GUILayout.Width(25)) && settings is RecorderSettings) {
+                Application.OpenURL("https://vimeo.com/manage/folders");
+            }
+
             if (GUILayout.Button("↺", GUILayout.Width(25)) || (settings.vimeoFolders.Count == 0 && settings.GetComponent<VimeoApi>() == null)) { // Refresh folders
                 FetchFolders();
             }
@@ -209,9 +214,9 @@ namespace Vimeo
                     player.vimeoVideoId = player.currentVideo.id.ToString();
                 }
 
-                if (GUILayout.Button("↪", GUILayout.Width(25))) {
+                // if (GUILayout.Button("↪", GUILayout.Width(25))) {
                     
-                }
+                // }
 
                 if (GUILayout.Button("↺", GUILayout.Width(25)) || 
                     refreshVideos || 

@@ -29,6 +29,7 @@ namespace Vimeo.Recorder
                 vimeoApi.OnPatchComplete  += VideoUpdated;
                 vimeoApi.OnUploadComplete += UploadComplete;
                 vimeoApi.OnUploadProgress += UploadProgress;
+                vimeoApi.OnError          += ApiError;
 
                 vimeoApi.token = recorder.GetVimeoToken();
             }
@@ -79,8 +80,10 @@ namespace Vimeo.Recorder
 #endif
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
-            vimeoApi.SetVideoDownload(recorder.enableDownloads);
-            // vimeoApi.SetVideoComments(recorder.commentMode);
+            if (recorder.enableDownloads == false) {
+                vimeoApi.SetVideoDownload(recorder.enableDownloads);
+            }
+            vimeoApi.SetVideoComments(recorder.commentMode);
             // vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
 
@@ -108,6 +111,26 @@ namespace Vimeo.Recorder
                 vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
             }
 
+            UploadProgress("SaveInfoComplete", 1f);
+        }
+
+        private void ApiError(string response)
+        {
+            JSONNode json = JSON.Parse(response);
+
+            if (json["invalid_parameters"] != null) {
+                for (int i = 0; i < json["invalid_parameters"].Count; i++) {
+                    if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
+                        Debug.LogError("You must upgrade your Vimeo account in order to disable downloads on your video. https://vimeo.com/upgrade");
+                    }
+                    else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
+                        Debug.LogError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                    }
+                    else {
+                        Debug.LogError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
+                    }
+                }
+            }
             UploadProgress("SaveInfoComplete", 1f);
         }
 

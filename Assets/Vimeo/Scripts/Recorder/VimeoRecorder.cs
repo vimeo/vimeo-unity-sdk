@@ -59,8 +59,7 @@ namespace Vimeo.Recorder
             isRecording = false;
             isUploading = false;
             encoder.CancelRecording();
-
-            Dispose();
+            Destroy(publisher);
         }
 
         private void PublishVideo(string filePath)
