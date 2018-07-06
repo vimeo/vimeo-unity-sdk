@@ -171,28 +171,6 @@ namespace Vimeo
             StartCoroutine(GetTicket()); 
         } 
 
-        IEnumerator Patch(string url)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
-                PrepareHeaders(request);
-                request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
-
-                yield return VimeoApi.SendRequest(request);
-
-                // Reset the form
-                form = new WWWForm();
-
-                if (IsNetworkError(request)) {
-                    Debug.Log(request.error);
-                }
-                else {
-                    if (OnPatchComplete != null) {
-                        OnPatchComplete(request.downloadHandler.text);
-                    }
-                }
-            }
-        }
-
         IEnumerator GetTicket()
         {
             if (OnUploadProgress != null) {
@@ -304,6 +282,25 @@ namespace Vimeo
             }
         }
 
+        IEnumerator Patch(string url)
+        {
+            using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
+                PrepareHeaders(request);
+                request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
+                yield return VimeoApi.SendRequest(request);
+
+                // Reset the form
+                form = new WWWForm();
+
+                if (request.responseCode != 200) {
+                    Debug.LogError(request.downloadHandler.text);
+                }
+                else if (OnPatchComplete != null) {
+                    OnPatchComplete(request.downloadHandler.text);
+                }
+            }
+        }
+
         IEnumerator Put(string api_path)
         {
             if (token != null) {
@@ -312,10 +309,11 @@ namespace Vimeo
                     PrepareHeaders(request);
                     yield return VimeoApi.SendRequest(request);
 
-                    if (request.error != null) {
+                    if (request.responseCode != 200) {
                         Debug.LogError(request.downloadHandler.text);
                     } 
                     else {
+                        // TODO create event hook
                     }
                 }
             }
@@ -335,8 +333,8 @@ namespace Vimeo
                     }
                     if (OnError != null) OnError(request.downloadHandler.text);
                 }
-                else {
-                    if (OnRequestComplete != null) OnRequestComplete(request.downloadHandler.text);
+                else if (OnRequestComplete != null) {
+                    OnRequestComplete(request.downloadHandler.text);
                 }
             }
         }

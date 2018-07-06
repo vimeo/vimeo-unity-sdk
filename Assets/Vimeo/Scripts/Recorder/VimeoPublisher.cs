@@ -80,8 +80,8 @@ namespace Vimeo.Recorder
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
             vimeoApi.SetVideoDownload(recorder.enableDownloads);
-            vimeoApi.SetVideoComments(recorder.commentMode);
-            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
+            // vimeoApi.SetVideoComments(recorder.commentMode);
+            // vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
 
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
@@ -92,17 +92,15 @@ namespace Vimeo.Recorder
 
         private void VideoUpdated(string response)
         {
-            JSONNode json = JSON.Parse (response);
+            JSONNode json = JSON.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
 
             if (recorder.openInBrowser == true) {
-                recorder.openInBrowser = false;
                 OpenVideo();
             }
 
             if (recorder.autoPostToChannel == true) {
-                recorder.autoPostToChannel = false;
                 PostToSlack();
             }
 
