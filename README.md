@@ -12,6 +12,9 @@ This plugin has two major features:
   * [Requirements](#streaming-requirements)
   * [Quickstart](#setting-up)
 
+* **[Vimeo & AVPro](#vimeo-avpro)**
+  * [Streaming with AVPro Video and Vimeo](#streaming-with-avpro-video-and-vimeo)
+  * [Recording with AVPro Movie Capture and Vimeo](#recording-with-avpro-movie-capture-and-vimeo)
 
 # Installation
 Download the most recent `.unitypackage` from the [latest releases](https://github.com/vimeo/vimeo-unity-sdk/releases) and open it up.
@@ -106,7 +109,7 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
       <b>Player</b> - Demos simple video streaming inside of a 3D environment.
     </td>
     <td style="width:33%">
-      <img src="https://i.imgur.com/xAdsGvz.gif" height="200" /><br>
+      <img src="https://i.imgur.com/L98bkXf.gif" height="200" /><br>
       <b>360Player</b> - Demos how to stream 360 videos from Vimeo (supports 3D / stereoscopic video).
     </td>
     <td style="width:33%">
@@ -163,11 +166,28 @@ Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't 
  
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
-# Questions
+# Vimeo & AVPro
+If you're looking for an even more robust streaming and/or recording solution, we have integrated into AVPro's [Video](http://renderheads.com/product/avpro-video/) and [Movie Capture](http://renderheads.com/product/av-pro-movie-capture/) plugins. 
+
+After installing either of AVPro's tools, the Vimeo plugin will automatically detect AVPro and a new option will appear.
+
+### Streaming with AVPro Video and Vimeo
+The `Vimeo Player` component will now show a `Video Player` dropdown letting you to switch between Unity's native video player and `AVPro Video`. After selecting AVPro, you will need to assign their `Media Player` to the Vimeo Player component. Now when you run Unity, the Vimeo Player will automatically set the URL in the `Media Player`.
+
+<img src="https://i.imgur.com/hxnYP7L.png" />
+
+### Recording with AVPro Movie Capture and Vimeo
+The `Vimeo Recorder` component will now show a `Video Encoder` dropdown letting yo uswitch between Unity's native `Media Encoder` and `AVPro Capture`. Select AVPro Capture and assign the Capture component. Now when you record with AVPro's tools, Vimeo will automatically upload the video after it is finished recording.
+
+<img src="https://i.imgur.com/8L1KIYQ.png" />
+
+# Questions, help, and support
 For questions and support, [ask on StackOverflow](https://stackoverflow.com/questions/ask/?tags=vimeo). If you found a bug, please file a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
-# Help & Contributing
 Make pull requests, file bug reports, and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
+# Let's collaborate
+Working on a cool video project? [Let's talk!](mailto:labs@vimeo.com)
+
 # Thanks
-Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), and [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader) which this is built on top of.
+Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader), and [DepthKit](http://www.depthkit.tv/)
