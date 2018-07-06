@@ -12,7 +12,7 @@ This plugin has two major features:
   * [Requirements](#streaming-requirements)
   * [Quickstart](#setting-up)
 
-* **[Vimeo & AVPro](#vimeo-avpro)**
+* **[Vimeo & AVPro](#vimeo--avpro)**
   * [Streaming with AVPro Video and Vimeo](#streaming-with-avpro-video-and-vimeo)
   * [Recording with AVPro Movie Capture and Vimeo](#recording-with-avpro-movie-capture-and-vimeo)
 
