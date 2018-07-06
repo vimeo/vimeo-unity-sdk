@@ -1,12 +1,8 @@
-﻿#if UNITY_2018_1_OR_NEWER 
-#if UNITY_EDITOR
-
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using UnityEngine.Networking;
-using Vimeo.Services;
+using Vimeo;
 using SimpleJSON;
 
 namespace Vimeo.Recorder
@@ -20,7 +16,7 @@ namespace Vimeo.Recorder
 
         private VimeoApi vimeoApi;
         private SlackApi slackApi;
-        private string videoId;
+        private VimeoVideo video;
 
         private Coroutine saveCoroutine;
 
@@ -53,18 +49,18 @@ namespace Vimeo.Recorder
                 }
             } 
              
-            return "https://vimeo.com/" + videoId;
+            return "https://vimeo.com/" + video.id;
         }
 
         public void PublishVideo(string filename)
         {
+            Debug.Log("[VimeoRecorder] Uploading to Vimeo");            
             vimeoApi.UploadVideoFile(filename);
         }
 
 
         private void UploadProgress(string status, float progress)
         {
-            // Debug.Log("UploadProgress: " + status + " - "  + progress);
             if (OnUploadProgress != null) {
                 OnUploadProgress(status, progress);
             }
@@ -74,16 +70,20 @@ namespace Vimeo.Recorder
         {
             UploadProgress("SavingInfo", .999f);
 
-            string[] uri_pieces = video_uri.Split("/" [0]);
-            videoId = uri_pieces [2];
+            video = new VimeoVideo("", video_uri);
 
+#if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
                 vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
             }
+#endif
 
             vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
-            SetVideoName(recorder.recorder.GetVideoName());
-            
+            vimeoApi.SetVideoDownload(recorder.enableDownloads);
+            vimeoApi.SetVideoComments(recorder.commentMode);
+            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
+            SetVideoName(recorder.GetVideoName());
+
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
                 vimeoApi.SetVideoPassword(recorder.videoPassword);
             }
@@ -104,6 +104,10 @@ namespace Vimeo.Recorder
             if (recorder.autoPostToChannel == true) {
                 recorder.autoPostToChannel = false;
                 PostToSlack();
+            }
+
+            if (recorder.currentFolder.uri != null) {
+                vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
             }
 
             UploadProgress("SaveInfoComplete", 1f);
@@ -129,8 +133,8 @@ namespace Vimeo.Recorder
         {
             yield return new WaitForSeconds(1f);
 
-            if (videoId != null) {
-                vimeoApi.SaveVideo(videoId);
+            if (video != null) {
+                vimeoApi.SaveVideo(video);
             }
         }
 
@@ -141,7 +145,7 @@ namespace Vimeo.Recorder
 
         public void OpenSettings()
         {
-            Application.OpenURL("https://vimeo.com/" + videoId + "/settings");
+            Application.OpenURL("https://vimeo.com/" + video.id + "/settings");
         }
 
         public void PostToSlack()
@@ -149,12 +153,14 @@ namespace Vimeo.Recorder
             if (recorder.slackChannel != null) {
                 if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "" && recorder.slackChannel != "") {
                     slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
-                    slackApi.PostVideoToChannel(recorder.recorder.GetVideoName(), GetVimeoPermalink());
-                }
-                else {
-                    Debug.LogWarning("You are not signed into Slack.");
+                    slackApi.PostVideoToChannel(recorder.GetVideoName(), GetVimeoPermalink());
                 }
             }
+        }
+
+        void OnDestroy()
+        {
+            Dispose();            
         }
 
         public void Dispose()
@@ -164,6 +170,3 @@ namespace Vimeo.Recorder
         }
     }
 }
-
-#endif
-#endif

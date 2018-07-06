@@ -7,8 +7,9 @@ using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 
-namespace Vimeo.Services
+namespace Vimeo
 {
+    [ExecuteInEditMode] 
     public class VimeoApi : MonoBehaviour
     {   
         public enum PrivacyModeDisplay
@@ -29,10 +30,18 @@ namespace Vimeo.Services
             unlisted
         }
 
+        public enum CommentMode
+        {
+            Anyone,
+            NoOne,
+            PeopleIFollow
+        }
+
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
         public event RequestAction OnUploadComplete;
         public event RequestAction OnPatchComplete;
+        public event RequestAction OnError;
 
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
@@ -51,14 +60,36 @@ namespace Vimeo.Services
             form = new WWWForm();
         }
 
-        public void GetVideoFileUrlByVimeoId(int vimeo_id)
+        public void GetVideoFileUrlByVimeoId(int video_id)
         {
-            StartCoroutine("Request", "/videos/" + vimeo_id);
+            StartCoroutine("Request", "/videos/" + video_id);
+        }
+
+        public void GetUserFolders()
+        {
+            StartCoroutine("Request", "/me/folders"); 
+        }
+
+        public void AddVideoToFolder(VimeoVideo video, VimeoFolder folder)
+        {
+            IEnumerator coroutine = Put("/me/folders/" + folder.id + "/videos?uris=" + video.uri);
+            StartCoroutine(coroutine);            
+        }
+
+        public void GetRecentUserVideos()
+        {
+            StartCoroutine("Request", "/me/videos?per_page=100"); 
+        }
+
+        public void GetVideosInFolder(VimeoFolder folder)
+        {
+            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?per_page=100"); 
         }
 
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 
         {
             switch (mode) {
+
                 case PrivacyModeDisplay.Anyone:
                     form.AddField("privacy.view", VimeoApi.PrivacyMode.anybody.ToString());
                     break;
@@ -79,6 +110,33 @@ namespace Vimeo.Services
                     form.AddField("privacy.view", VimeoApi.PrivacyMode.password.ToString());
                     break;
             }
+        }
+
+        public void SetVideoComments(CommentMode mode) 
+        {
+            switch (mode) {
+                case CommentMode.Anyone:
+                    form.AddField("privacy.comments", "anybody");
+                    break;
+
+                case CommentMode.NoOne:
+                    form.AddField("privacy.comments", "nobody");
+                    break;
+
+                case CommentMode.PeopleIFollow:
+                    form.AddField("privacy.comments", "contacts");
+                    break;
+            }
+        }
+
+        public void SetVideoDownload(bool enabled) 
+        {
+            form.AddField("privacy.download", enabled ? "true" : "false");
+        }
+
+        public void SetVideoReviewPage(bool enabled) 
+        {
+            form.AddField("review_page.active", enabled ? "true" : "false");
         }
 
         public void SetVideoPassword(string password) 
@@ -102,9 +160,9 @@ namespace Vimeo.Services
             form.AddField("spatial.stereo_format", stereo_format);
         }
 
-        public void SaveVideo(string vimeo_id)
+        public void SaveVideo(VimeoVideo video)
         {
-            StartCoroutine(Patch(API_URL + "/videos/" + vimeo_id));
+            StartCoroutine(Patch(API_URL + "/videos/" + video.id));
         }
 
         public void UploadVideoFile(string file_path)
@@ -113,32 +171,12 @@ namespace Vimeo.Services
             StartCoroutine(GetTicket()); 
         } 
 
-        public static bool ValidateToken(string t)
-        {
-            using (UnityWebRequest request = UnityWebRequest.Get(VimeoApi.API_URL)) {
-				request.chunkedTransfer = false;
-                request.SetRequestHeader("Authorization", "Bearer " + t);
-                VimeoApi.SendRequest(request);
-
-                // Wait until request is finished
-                while (request.responseCode <=  0) { }
-
-                if (request.responseCode != 200) {
-                    Debug.LogError(request.responseCode + ": " + request.downloadHandler.text);
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-        }
-
         IEnumerator Patch(string url)
         {
-            using (UnityWebRequest request = UnityWebRequest.Post (url, form)) {
-				request.chunkedTransfer = false;
-                request.SetRequestHeader("Authorization", "Bearer " + token);
+            using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
+                PrepareHeaders(request);
                 request.SetRequestHeader("X-HTTP-Method-Override", "PATCH");
+
                 yield return VimeoApi.SendRequest(request);
 
                 // Reset the form
@@ -146,7 +184,7 @@ namespace Vimeo.Services
 
                 if (IsNetworkError(request)) {
                     Debug.Log(request.error);
-                } 
+                }
                 else {
                     if (OnPatchComplete != null) {
                         OnPatchComplete(request.downloadHandler.text);
@@ -161,16 +199,15 @@ namespace Vimeo.Services
                 OnUploadProgress("Authorizing", 0);
             }
 
-            WWWForm form = new WWWForm ();
+            WWWForm form = new WWWForm();
             form.AddField("type", "streaming");
 
             using (UnityWebRequest request = UnityWebRequest.Post(API_URL + "/me/videos", form)) {
-				request.chunkedTransfer = false;
-                request.SetRequestHeader("Authorization", "Bearer " + token);
+                PrepareHeaders(request , "3.2");
                 yield return VimeoApi.SendRequest(request);
 
                 if (IsNetworkError(request)) {
-                    Debug.LogError (request.error);
+                    Debug.LogError(request.error);
                 } 
                 else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON(request.downloadHandler.text);
@@ -179,7 +216,7 @@ namespace Vimeo.Services
                         StartCoroutine(UploadVideo(ticket));
                     } 
                     else {
-                        Debug.LogError(ticket.error);
+                        Debug.LogError(ticket.error + " " + ticket.developer_message);
                     }
                 }
             }
@@ -220,8 +257,8 @@ namespace Vimeo.Services
                 uploader = null;
 
                 if (IsNetworkError(request)) {
-                    Debug.Log (request.error);
-                    Debug.Log (request.responseCode);
+                    Debug.Log(request.error);
+                    Debug.Log(request.responseCode);
                 } 
                 else {
                     StartCoroutine(VerifyUpload(ticket));
@@ -246,7 +283,7 @@ namespace Vimeo.Services
                     StartCoroutine(CompleteUpload(ticket));
                 } 
                 else {
-                    Debug.Log (request.responseCode);
+                    Debug.Log(request.responseCode);
                 }
             }
         }
@@ -257,14 +294,29 @@ namespace Vimeo.Services
                 OnUploadProgress("Complete", 1f);
             }
 
-            // Debug.Log (API_URL + ticket.complete_uri);
             using (UnityWebRequest request = UnityWebRequest.Delete(API_URL + ticket.complete_uri)) {
-				request.chunkedTransfer = false;
-                request.SetRequestHeader ("Authorization", "Bearer " + token);
+                PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
 
                 if (OnUploadComplete != null) {
-                    OnUploadComplete (request.GetResponseHeader("Location"));
+                    OnUploadComplete(request.GetResponseHeader("Location"));
+                }
+            }
+        }
+
+        IEnumerator Put(string api_path)
+        {
+            if (token != null) {
+                byte[] data = new byte[] { 0x00 };
+                using(UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, data)) {
+                    PrepareHeaders(request);
+                    yield return VimeoApi.SendRequest(request);
+
+                    if (request.error != null) {
+                        Debug.LogError(request.downloadHandler.text);
+                    } 
+                    else {
+                    }
                 }
             }
         }
@@ -274,19 +326,26 @@ namespace Vimeo.Services
             if (token != null)
             {
                 UnityWebRequest request = UnityWebRequest.Get(API_URL + api_path);
-				request.chunkedTransfer = false;
-                request.SetRequestHeader("Authorization", "Bearer " + token);
+                PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
 
-                if (OnRequestComplete != null) {
-                    if (request.responseCode != 200) {
-                        Debug.LogError(request.downloadHandler.text);
+                if (request.responseCode != 200) {
+                    if (request.responseCode == 401) {
+                        Debug.LogError("[VimeoApi] Unauthorized request.");
                     }
-                    else {
-                        OnRequestComplete(request.downloadHandler.text);
-                    }
+                    if (OnError != null) OnError(request.downloadHandler.text);
+                }
+                else {
+                    if (OnRequestComplete != null) OnRequestComplete(request.downloadHandler.text);
                 }
             }
+        }
+
+        private void PrepareHeaders(UnityWebRequest r, string apiVersion = "3.4")
+        {
+            r.chunkedTransfer = false;
+            r.SetRequestHeader("Authorization", "Bearer " + token);
+            r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
         }
 
         public static bool IsNetworkError(UnityWebRequest req) {

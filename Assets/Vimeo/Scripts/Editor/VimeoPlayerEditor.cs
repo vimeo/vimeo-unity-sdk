@@ -1,12 +1,20 @@
 using UnityEngine;
 using UnityEditor;
 using Vimeo.Player;
+using System.Linq;
 
 namespace Vimeo
 {
     [CustomEditor(typeof(VimeoPlayer))]
     public class VimeoPlayerEditor : BaseEditor
     {
+        [MenuItem("GameObject/Video/Vimeo Player")]
+        private static void CreatePlayerPrefab() {
+            GameObject go = new GameObject();
+            go.name = "[VimeoPlayer]";
+            go.AddComponent<VimeoPlayer>();
+        }
+
         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
         private static void CreateCanvasPrefab() {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
@@ -42,25 +50,70 @@ namespace Vimeo
             style.border = new RectOffset(0,0,0,0);
             GUILayout.Box("", style);
 
-            if (Authenticated(player.GetVimeoToken()) && player.vimeoSignIn && GUILayout.Button("Sign out", GUILayout.Width(60))) {
-                player.vimeoSignIn = false;
-                player.SetVimeoToken(null);
-            }
-
-            if (GUILayout.Button("Need help?", GUILayout.Width(70))) {
-                Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
-            }
+            GUIManageVideosButton();
+            GUIHelpButton();
+            GUISignOutButton();
+            
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
+            EditorGUILayout.Space();
             
-            if (Authenticated(player.GetVimeoToken()) && player.vimeoSignIn) {
-                EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
-                EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
-                EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
+            if (player.Authenticated() && player.vimeoSignIn) {
+#if VIMEO_AVPRO_VIDEO_SUPPORT
+                if (!player.IsVideoMetadataLoaded()) {
+                    EditorGUILayout.PropertyField(so.FindProperty("videoPlayerType"), new GUIContent("Video Player"));
+                    if (player.videoPlayerType == VideoPlayerType.AVProVideo) {
+                        EditorGUILayout.PropertyField(so.FindProperty("mediaPlayer"), new GUIContent("AVPro Media Player"));
+                        if (player.mediaPlayer == null) {
+                            EditorGUILayout.HelpBox("You need to select a MediaPlayer object.", MessageType.Warning);
+                        }
+                    }
+                }
+#else
+                player.videoPlayerType = VideoPlayerType.UnityPlayer;
+#endif
+
+                bool updated = GUISelectFolder();
+                GUISelectVideo(updated);
+
                 EditorGUILayout.PropertyField(so.FindProperty("selectedResolution"), new GUIContent("Resolution"));
-                EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute audio?"));
+                
+                if (player.selectedResolution == StreamingResolution.Adaptive && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
+                    EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
+                }
+
+                if (player.videoPlayerType != VideoPlayerType.AVProVideo && !player.IsVideoMetadataLoaded()) {
+                    EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
+                    EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
+                    EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute Audio"));
+                    EditorGUILayout.PropertyField(so.FindProperty("autoPlay"));
+                    EditorGUILayout.PropertyField(so.FindProperty("startTime"));
+                }
 
                 EditorGUILayout.Space();
+
+                if (EditorApplication.isPlaying) {
+                    GUILayout.BeginHorizontal();
+                    if (GUILayout.Button("Load Video", GUILayout.Height(30), GUILayout.Width(100))) {
+                        player.autoPlay = true;
+                        player.LoadVimeoVideoByUrl(player.vimeoVideoId);   
+                    }
+
+                    if (player.videoPlayerType == VideoPlayerType.UnityPlayer && player.IsVideoMetadataLoaded()) {
+                        if (!player.IsPlaying()) {
+                            GUI.backgroundColor = Color.green;
+                            if (GUILayout.Button("Play Video", GUILayout.Height(30))) {
+                                player.Play();
+                            }
+                        }
+
+                        GUI.backgroundColor = Color.white;
+                        if (player.IsPlaying() && GUILayout.Button("Pause Video", GUILayout.Height(30))) {
+                            player.Pause();
+                        }
+                    }
+                    GUILayout.EndHorizontal();
+                }
             }
 
             DrawVimeoAuth(player);

@@ -1,12 +1,15 @@
-#if UNITY_2018_1_OR_NEWER 
-
 using UnityEngine;
 using System;
-using Vimeo;
-using Vimeo.Services;
+using System.Collections.Generic;
 
 namespace Vimeo.Recorder
 {
+    public enum EncoderType
+    {
+        AVProCapture,
+        MediaEncoder
+    }
+
     public enum LinkType
     {
         VideoPage,
@@ -17,7 +20,9 @@ namespace Vimeo.Recorder
     {
         Screen,
         Camera,
-        Camera360
+#if UNITY_2018_1_OR_NEWER
+        Camera360,
+#endif        
     }
 
     public enum CameraType
@@ -66,9 +71,18 @@ namespace Vimeo.Recorder
         x4_3
     }
 
-    public class RecorderSettings : VimeoAuth
+    public class RecorderSettings : VimeoSettings
     {
+        public EncoderType encoderType          = EncoderType.MediaEncoder;
+#if VIMEO_AVPRO_CAPTURE_SUPPORT        
+        public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
+#endif        
+        public EncoderManager encoder;
+
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
+        public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
+        public bool enableDownloads = true;
+        public bool enableReviewPage = true;
         public LinkType defaultShareLink        = LinkType.VideoPage;
 
         public VideoInputType defaultVideoInput = VideoInputType.Screen;
@@ -107,6 +121,30 @@ namespace Vimeo.Recorder
         {
             SetKey(SLACK_TOKEN_NAME + this.gameObject.scene.name, token);
         }
+        
+        public bool SlackAuthenticated()
+        {
+            string token = GetSlackToken();
+            return token != "" && token != null;
+        }
+
+        public string GetVideoName()
+        {
+            return ReplaceSpecialChars(videoName);
+        }
+
+        public string ReplaceSpecialChars(string input)
+        {
+            if (input.Contains("%R") && encoder != null) {
+                input = input.Replace("%R", encoder.GetOutputWidth() + "x" + encoder.GetOutputHeight());
+            }
+
+            if (input.Contains("%TS")) {
+                input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
+            }
+
+            return input;
+        }
     }
 
     public class AspectRatioHelper
@@ -131,5 +169,3 @@ namespace Vimeo.Recorder
         }
     }
 }
-
-#endif

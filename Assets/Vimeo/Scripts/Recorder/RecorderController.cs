@@ -1,27 +1,26 @@
-﻿#if UNITY_2018_1_OR_NEWER
+﻿#if UNITY_2017_2_OR_NEWER
 #if UNITY_EDITOR
 
 using UnityEditor.Media;
 using UnityEngine;
-using Unity.Collections;
 using UnityEngine.Rendering;
 using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Vimeo.Recorder {
-
+namespace Vimeo.Recorder 
+{
     public class RecorderController : MonoBehaviour
     {
         [HideInInspector] public string outputPath = Path.GetTempPath();
         [HideInInspector] public VimeoRecorder recorder;
         [HideInInspector] public string encodedFilePath;
         [HideInInspector] public bool isRecording = false;
+        [HideInInspector] public bool manualFrameCapture = false;
 
         [HideInInspector] public VideoTrackAttributes videoAttrs;
         [HideInInspector] public AudioTrackAttributes audioAttrs;
-        private int sampleFramesPerVideoFrame;
 
         [HideInInspector] public int currentFrame = 0;
 
@@ -30,17 +29,37 @@ namespace Vimeo.Recorder {
         private Mesh fullscreenQuad;
 
         private MediaEncoder encoder;
-        private NativeArray<float> audioBuffer;
         private RenderTexture renderBuffer;
         private CommandBuffer commandBuffer;
 
         private VideoInput videoInput;
+#if UNITY_2018_1_OR_NEWER
         private AudioInput audioInput;
+#endif
+
+        public void Init(VimeoRecorder r)
+        {
+            recorder = r;
+        }
 
         public void BeginRecording()
         {
             isRecording = true;
+            BeginMediaEncoderRecording();
+        }
 
+        public int GetOutputWidth()
+        {
+            return videoInput.outputWidth;
+        }
+
+        public int GetOutputHeight()
+        {
+            return videoInput.outputHeight;
+        }
+
+        private void BeginMediaEncoderRecording()
+        {
             InitInputs();
 
             if (recorder.realTime) {
@@ -75,40 +94,31 @@ namespace Vimeo.Recorder {
             };
 
             encodedFilePath = Path.Combine(outputPath, GetFileName());
-            Debug.Log("Recording: " + GetFileName());
+            Debug.Log("[VimeoRecorder] Recording to " + GetFileName());
+
+            if (!recorder.realTime) {
+                recorder.recordAudio = false;
+            }   
 
             if (recorder.recordAudio) {
+#if UNITY_2018_1_OR_NEWER 
                 audioInput.BeginRecording();
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
+#else
+                encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
+#endif
             }
             else {
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
             }
         }
 
-        public string GetVideoName()
-        {
-            return ReplaceSpecialChars(recorder.videoName);
-        }
-
         public string GetFileName()
         {
             string name = "Vimeo Unity Recording %R %TS";
-            return ReplaceSpecialChars(name) + ".mp4";
+            return recorder.ReplaceSpecialChars(name) + ".mp4";
         }
 
-        public string ReplaceSpecialChars(string input)
-        {
-            if (input.Contains("%R")) {
-                input = input.Replace("%R", videoInput.outputWidth + "x" + videoInput.outputHeight);
-            }
-
-            if (input.Contains("%TS")) {
-                input = input.Replace("%TS", String.Format("{0:yyyy.MM.dd H.mm.ss}", System.DateTime.Now));
-            }
-
-            return input;
-        }
 
         public void EndRecording()
         {
@@ -119,14 +129,16 @@ namespace Vimeo.Recorder {
 
             if (videoInput != null) {
                 videoInput.EndRecording();
-
-                if (recorder.recordAudio) {
-                    audioInput.EndRecording();
-                }
+                 Destroy(videoInput);
             }
 
-            Destroy(videoInput);
-
+#if UNITY_2018_1_OR_NEWER            
+            if (audioInput != null) {
+                if (recorder.recordAudio) audioInput.EndRecording();
+                Destroy(audioInput);
+            }
+#endif
+            
             Time.captureFramerate = 0;
 
             currentFrame = 0;
@@ -141,18 +153,26 @@ namespace Vimeo.Recorder {
         IEnumerator RecordFrame()
         {
             yield return new WaitForEndOfFrame();
-            if (encoder != null && isRecording) {
-                if (recorder.recordAudio) {
-                    audioInput.StartFrame();
-                }
+            if (!manualFrameCapture) {
+                AddFrame();
+            }
+        }
 
+        public void AddFrame()
+        {
+            if (encoder != null && isRecording) {
                 encoder.AddFrame(videoInput.GetFrame());
                 videoInput.EndFrame();
 
+#if UNITY_2018_1_OR_NEWER
                 if (recorder.recordAudio) {
+                    audioInput.StartFrame();
                     encoder.AddSamples(audioInput.GetBuffer());
                     audioInput.EndFrame();
                 }
+#endif
+
+                currentFrame++;
             }
         }
 
@@ -170,7 +190,6 @@ namespace Vimeo.Recorder {
                 else {
                     StartCoroutine(RecordFrame());
                 }
-                currentFrame++;
             }
         }
         
@@ -180,28 +199,32 @@ namespace Vimeo.Recorder {
                 Destroy(videoInput);
             }
 
+#if UNITY_2018_1_OR_NEWER
             if (audioInput != null) {
                 Destroy(audioInput);
             }
 
             audioInput = gameObject.AddComponent<AudioInput>();
+            audioInput.encoder = this;
+            audioInput.recorder = recorder;
+#endif 
 
             switch(recorder.defaultVideoInput) {
                 case VideoInputType.Screen:
                     videoInput = gameObject.AddComponent<ScreenInput>();
                     break;
-                
+#if UNITY_2018_1_OR_NEWER        
                 case VideoInputType.Camera360:
+#endif
                 case VideoInputType.Camera:
                     videoInput = gameObject.AddComponent<CameraInput>();
                     break;
             }
-
+            
             videoInput.recorder = recorder;
-            audioInput.recorder = recorder;
         }
 
-        public void OnDestroy()
+        void OnDestroy()
         {
             Destroy(videoInput);
         }

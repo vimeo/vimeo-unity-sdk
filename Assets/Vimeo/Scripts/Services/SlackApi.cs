@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Vimeo.Services 
+namespace Vimeo.Recorder 
 {
     public class SlackApi : MonoBehaviour {
 
@@ -33,8 +33,11 @@ namespace Vimeo.Services
         IEnumerator Post(string url, WWWForm form) 
         {
             using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
+#if UNITY_2017_3_OR_NEWER
                 yield return request.SendWebRequest();
-
+#else
+                yield return request.Send();
+#endif
                 // Debug.Log(request.downloadHandler.text);
                 if (request.isNetworkError) {
                     Debug.LogError(request.error);

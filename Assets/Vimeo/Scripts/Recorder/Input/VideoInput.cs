@@ -1,4 +1,4 @@
-#if UNITY_2018_1_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
 #if UNITY_EDITOR
 
 using UnityEngine;
@@ -9,6 +9,7 @@ namespace Vimeo.Recorder
     public class VideoInput : MonoBehaviour
     {
         [HideInInspector] public VimeoRecorder recorder;
+        [HideInInspector] public RecorderController encoder;
 
         bool m_ModifiedResolution;
 
@@ -51,14 +52,14 @@ namespace Vimeo.Recorder
 
             if (w != outputWidth || h != outputHeight)
             {
-                Debug.Log("Setting window size to: " + outputWidth + "x" + outputHeight);
+                Debug.Log("[VimeoRecorder] Setting window size to: " + outputWidth + "x" + outputHeight);
                 var size = GameViewSize.SetCustomSize(outputWidth, outputHeight) ?? GameViewSize.AddSize(outputWidth, outputHeight);
                 if (GameViewSize.m_ModifiedResolutionCount == 0) {
                     GameViewSize.BackupCurrentSize();
                 }
                 else {
                     if (size != GameViewSize.currentSize) {
-                        Debug.LogError("Requestion a resultion change while a recorder's input has already requested one! Undefined behaviour.");
+                        Debug.LogError("[VimeoRecorder] Requestion a resultion change while a recorder's input has already requested one! Undefined behaviour.");
                     }
                 }
 

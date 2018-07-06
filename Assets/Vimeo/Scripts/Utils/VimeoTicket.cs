@@ -7,9 +7,10 @@ public class VimeoTicket
 	public string upload_link_secure;
 	public string complete_uri;
     public string error;
+	public string developer_message;
 
 	public static VimeoTicket CreateFromJSON(string jsonString)
 	{
-		return JsonUtility.FromJson<VimeoTicket> (jsonString);
+		return JsonUtility.FromJson<VimeoTicket>(jsonString);
 	}
 }

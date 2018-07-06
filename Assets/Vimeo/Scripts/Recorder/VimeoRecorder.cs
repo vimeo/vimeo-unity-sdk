@@ -1,21 +1,18 @@
-﻿#if UNITY_2018_1_OR_NEWER 
-#if UNITY_EDITOR
-
-using UnityEngine;
-using UnityEditor;
+﻿using UnityEngine;
 using UnityEngine.Networking;
-using Vimeo.Services;
+using System.IO;
+using Vimeo;
 using SimpleJSON;
 
 namespace Vimeo.Recorder
 {
     [AddComponentMenu("Video/Vimeo Recorder")]
+    [HelpURL("https://github.com/vimeo/vimeo-unity-sdk")]
     public class VimeoRecorder : RecorderSettings 
     {
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
 
-        public RecorderController recorder;
         public VimeoPublisher publisher;
 
         public bool isRecording = false;
@@ -24,6 +21,11 @@ namespace Vimeo.Recorder
 
         void Start() 
         {
+            if (encoder == null) {
+                encoder = gameObject.AddComponent<EncoderManager>();
+                encoder.Init(this);
+            }
+            
             if (recordOnStart) {
                 BeginRecording();
             }
@@ -32,39 +34,40 @@ namespace Vimeo.Recorder
         public void BeginRecording()
         {
             if (!isRecording) {
-                if (recorder == null) {
-                    recorder = gameObject.AddComponent<RecorderController>();
-                    recorder.recorder = this;
-                }
-
-                recorder.BeginRecording();
+                encoder.BeginRecording();
                 isRecording = true;
             }
+        }
+
+        // Used if you want to script when you want to call AddFrame
+        public void BeginManualRecording()
+        {
+            BeginRecording();
+            encoder.ManualFrameCapture();
         }
 
         public void EndRecording()
         {
             isRecording = false;
-            recorder.EndRecording();
+            encoder.EndRecording();
 
-            isUploading = true;
-            uploadProgress = 0;
-           
-            PublishVideo();
+            PublishVideo(encoder.GetVideoFilePath());
         }
             
         public void CancelRecording()
         {
             isRecording = false;
             isUploading = false;
-            recorder.EndRecording();
-            DeleteVideoFile();
+            encoder.CancelRecording();
 
             Dispose();
         }
 
-        private void PublishVideo()
+        private void PublishVideo(string filePath)
         {
+            isUploading = true;
+            uploadProgress = 0;
+
             if (publisher == null) {
                 publisher = gameObject.AddComponent<VimeoPublisher>();
                 publisher.Init(this);
@@ -72,12 +75,7 @@ namespace Vimeo.Recorder
                 publisher.OnUploadProgress += UploadProgress;
             }
             
-            publisher.PublishVideo(recorder.encodedFilePath);
-        }
-
-        private void DeleteVideoFile()
-        {
-            recorder.DeleteVideoFile();
+            publisher.PublishVideo(filePath);
         }
 
         private void UploadProgress(string status, float progress)
@@ -86,7 +84,7 @@ namespace Vimeo.Recorder
 
             if (status == "SaveInfoComplete") {
                 isUploading = false;
-                DeleteVideoFile();
+                encoder.DeleteVideoFile();
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete();
@@ -96,35 +94,31 @@ namespace Vimeo.Recorder
 
         private void Dispose()
         {
-            Destroy(recorder);
+            if (isRecording) {
+                CancelRecording();
+            }
+            Destroy(encoder);
             Destroy(publisher);
         }
 
         void OnDisable()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Dispose();
         }
 
         void OnDestroy()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Dispose();
         }
 
         void LateUpdate()
         {
-            if (recorder != null) {
+            if (encoder != null) {
                 // Set recording state based upon VimeoRecorder state
-                if (!isRecording && recorder.isRecording) {
+                if (!isRecording && encoder.isRecording) {
                     isRecording = true;
                 }
             }
         }
     }
 }
-
-#endif
-#endif
