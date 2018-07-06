@@ -183,7 +183,7 @@ namespace Vimeo
                 settings.currentFolder = settings.vimeoFolders[new_index];
             }
 
-            if (GUILayout.Button("+", GUILayout.Width(25)) && settings is RecorderSettings) {
+            if (settings is RecorderSettings && GUILayout.Button("+", GUILayout.Width(25))) {
                 Application.OpenURL("https://vimeo.com/manage/folders");
             }
 

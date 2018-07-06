@@ -38,6 +38,7 @@ namespace Vimeo
                 string[] matches = Regex.Split(uri, "/([0-9]+)$"); 
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
+                    name = name + " (" + id + ")";
                 }
             }
         }
