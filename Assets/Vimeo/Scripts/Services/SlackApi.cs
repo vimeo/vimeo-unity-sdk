@@ -38,8 +38,7 @@ namespace Vimeo.Recorder
 #else
                 yield return request.Send();
 #endif
-                // Debug.Log(request.downloadHandler.text);
-                if (request.isNetworkError) {
+                if (VimeoApi.IsNetworkError(request)) {
                     Debug.LogError(request.error);
                 } 
             }
