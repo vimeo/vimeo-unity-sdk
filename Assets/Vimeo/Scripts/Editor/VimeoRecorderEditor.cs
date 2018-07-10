@@ -146,7 +146,7 @@ namespace Vimeo.Recorder
                 GUI.backgroundColor = Color.white;
             }
             else {
-                if (recorder.encoderType != EncoderType.AVProCapture) {
+                if (recorder.encoderType != EncoderType.AVProMovieCapture) {
                     GUI.backgroundColor = Color.green;
                     if (GUILayout.Button("Start Recording", GUILayout.Height(30))) {
                         recorder.recordOnStart = true;
