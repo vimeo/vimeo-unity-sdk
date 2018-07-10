@@ -200,7 +200,7 @@ namespace Vimeo.Recorder
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 EditorGUILayout.PropertyField(so.FindProperty("encoderType"), new GUIContent("Encoder"));    
 
-                if (recorder.encoderType == Vimeo.Recorder.EncoderType.AVProCapture) {
+                if (recorder.encoderType == Vimeo.Recorder.EncoderType.AVProMovieCapture) {
                     EditorGUILayout.PropertyField(so.FindProperty("avproEncoder"), new GUIContent("AVPro Object"));
                 }
                 else {

@@ -118,7 +118,7 @@ namespace Vimeo.Recorder
             }
             else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
-                Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProCapture");
+                Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProMovieCapture");
                 return -1;
 #endif            
             }
@@ -176,7 +176,7 @@ namespace Vimeo.Recorder
         {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
             // Hooking into AVPro by monitoring status changes
-            if (_recorder.encoderType == EncoderType.AVProCapture) {
+            if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
                 if (_avproEncoder.IsCapturing()) {
                     isRecording = true;
                 }
