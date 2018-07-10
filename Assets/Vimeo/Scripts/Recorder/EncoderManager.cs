@@ -36,7 +36,7 @@ namespace Vimeo.Recorder
                 _vimeoEncoder.Init(_recorder);
 #endif
             }
-            else if (_recorder.encoderType == EncoderType.AVProCapture) {
+            else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder = r.avproEncoder;
 #endif            
@@ -100,7 +100,7 @@ namespace Vimeo.Recorder
                 return _vimeoEncoder.encodedFilePath;
 #endif                
             }
-            else if (_recorder.encoderType == EncoderType.AVProCapture) {
+            else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 return _avproEncoder.LastFilePath;
 #endif                    
@@ -116,7 +116,7 @@ namespace Vimeo.Recorder
                 return _vimeoEncoder.currentFrame;
 #endif
             }
-            else if (_recorder.encoderType == EncoderType.AVProCapture) {
+            else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProCapture");
                 return -1;

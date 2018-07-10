@@ -177,7 +177,7 @@ The `Vimeo Player` component will now show a `Video Player` dropdown letting you
 <img src="https://i.imgur.com/hxnYP7L.png" />
 
 ### Recording with AVPro Movie Capture and Vimeo
-The `Vimeo Recorder` component will now show a `Video Encoder` dropdown letting yo uswitch between Unity's native `Media Encoder` and `AVPro Capture`. Select AVPro Capture and assign the Capture component. Now when you record with AVPro's tools, Vimeo will automatically upload the video after it is finished recording.
+The `Vimeo Recorder` component will now show a `Video Encoder` dropdown letting yo uswitch between Unity's native `Media Encoder` and `AVPro Movie Capture`. Select AVPro Movie Capture and assign the Capture component. Now when you record with AVPro's tools, Vimeo will automatically upload the video after it is finished recording.
 
 <img src="https://i.imgur.com/8L1KIYQ.png" />
 

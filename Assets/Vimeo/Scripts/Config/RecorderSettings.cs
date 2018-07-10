@@ -6,7 +6,7 @@ namespace Vimeo.Recorder
 {
     public enum EncoderType
     {
-        AVProCapture,
+        AVProMovieCapture,
         MediaEncoder
     }
 
