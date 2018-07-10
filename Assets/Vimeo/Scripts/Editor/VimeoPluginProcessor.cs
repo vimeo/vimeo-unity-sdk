@@ -1,3 +1,4 @@
+#if UNITY_2017_1_OR_NEWER
 // Used with permission from http://www.depthkit.tv/
 
 using UnityEngine;
@@ -134,4 +135,5 @@ namespace Vimeo
         }
     }
 }
+#endif 
 
