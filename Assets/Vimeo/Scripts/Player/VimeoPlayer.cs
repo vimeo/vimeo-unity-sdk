@@ -64,14 +64,11 @@ namespace Vimeo.Player
                 controller.OnFrameReady += VideoFrameReady;
             }
 
-            if (audioSource && audioSource is AudioSource)
-            {
-                if (audioSource != null)
-                {
+            if (audioSource && audioSource is AudioSource) {
+                if (audioSource != null) {
                     controller.audioSource = audioSource;
                 }
-                else
-                {
+                else {
                     videoScreen.gameObject.AddComponent<AudioSource>();
                 }
             }
@@ -99,7 +96,7 @@ namespace Vimeo.Player
 
         public void LoadVimeoVideoById(int vimeo_id)
         {
-             api.GetVideoFileUrlByVimeoId(vimeo_id);
+            api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
         public bool IsPlaying()
@@ -282,8 +279,12 @@ namespace Vimeo.Player
 
         private List<JSONNode> GetVideoFiles(JSONNode json)
         {
-            if (json["play"] == null && json["files"] == null) {
-                Debug.LogError("VimeoPlayer: You do not have access to this video's files. You must be a Vimeo Pro or Business customer and use videos from your own account.");
+            if (json["user"]["account"].Value == "basic") {
+                Debug.LogError("[VimeoPlayer] You do not have permission to stream videos. You must be a Vimeo Pro or Business customer. https://vimeo.com/upgrade");
+                return null;
+            }
+            if ((json["play"] == null || json["play"]["progressive"] == null) && json["files"] == null) {
+                Debug.LogError("[VimeoPlayer] You do not have permission to access to this video. You must be a Vimeo Pro or Business customer and use videos from your own account. https://vimeo.com/upgrade");
                 return null;
             }
 

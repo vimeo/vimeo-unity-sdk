@@ -120,6 +120,7 @@ namespace Vimeo.Recorder
 
             if (json["invalid_parameters"] != null) {
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
+                    // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
                         Debug.LogError("You must upgrade your Vimeo account in order to disable downloads on your video. https://vimeo.com/upgrade");
                     }
