@@ -333,7 +333,11 @@ namespace Vimeo
 
                 if (request.responseCode != 200) {
                     if (request.responseCode == 401) {
-                        Debug.LogError("[VimeoApi] Unauthorized request.");
+                        Debug.LogError("[VimeoApi] 401 Unauthorized request.");
+                    }
+                    else {
+                        JSONNode json = JSON.Parse(request.downloadHandler.text);
+                        Debug.LogError("[VimeoApi] " + request.responseCode + " " + json["error"]);
                     }
                     if (OnError != null) OnError(request.downloadHandler.text);
                 }
