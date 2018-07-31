@@ -49,6 +49,7 @@ namespace Vimeo.Player
 
                 videoPlayer.playOnAwake = false;
                 videoPlayer.source = VideoSource.Url;
+                videoPlayer.skipOnDrop = true;
 
                 videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
                 videoPlayer.SetTargetAudioSource(0, audioSource);
@@ -247,7 +248,7 @@ namespace Vimeo.Player
 
         IEnumerator WaitForRenderTexture() 
         {
-            yield return new WaitUntil (() => videoPlayer.texture != null);
+            yield return new WaitUntil (() => videoPlayer.isPrepared);
 
             var rend = videoScreenObject.GetComponent<MeshRenderer>();
 
