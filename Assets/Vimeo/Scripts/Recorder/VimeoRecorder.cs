@@ -72,6 +72,7 @@ namespace Vimeo.Recorder
                 publisher.Init(this);
 
                 publisher.OnUploadProgress += UploadProgress;
+                publisher.OnUploadFail += UploadFail;
             }
             
             publisher.PublishVideo(filePath);
@@ -89,6 +90,10 @@ namespace Vimeo.Recorder
                     OnUploadComplete();
                 }
             }
+        }
+
+        private void UploadFail(string status){
+            Debug.LogError(status);
         }
 
         private void Dispose()

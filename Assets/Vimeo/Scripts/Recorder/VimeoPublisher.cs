@@ -12,6 +12,9 @@ namespace Vimeo.Recorder
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
+        public delegate void RequestAction(string response);
+        public event RequestAction OnUploadFail;
+
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
         private VimeoApi vimeoApi;
@@ -117,7 +120,9 @@ namespace Vimeo.Recorder
 
         private void NetworkError(string response)
         {
-            Debug.LogError("It seems like you are not connected to the internet, or having connection problems which disables the uploading of the video.");
+            if (OnUploadFail != null) {
+                OnUploadFail("It seems like you are not connected to the internet, or having connection problems which disables the uploading of the video.");
+            }
         }
 
         private void ApiError(string response)
@@ -125,18 +130,26 @@ namespace Vimeo.Recorder
             JSONNode json = JSON.Parse(response);
 
             if (json["invalid_parameters"] != null) {
+
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
                     // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
-                        Debug.LogError("You must upgrade your Vimeo account in order to disable downloads on your video. https://vimeo.com/upgrade");
+                        if (OnUploadFail != null) {
+                            OnUploadFail("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        }
                     }
                     else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
-                        Debug.LogError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        if (OnUploadFail != null) {
+                            OnUploadFail("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        }
                     }
                     else {
-                        Debug.LogError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
+                        if (OnUploadFail != null) {
+                            OnUploadFail(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
+                        }
                     }
                 }
+                
             }
             UploadProgress("SaveInfoComplete", 1f);
         }
