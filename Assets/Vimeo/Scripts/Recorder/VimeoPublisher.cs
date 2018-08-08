@@ -12,7 +12,7 @@ namespace Vimeo.Recorder
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
 
-        public delegate void RequestAction(string response);
+        public delegate void RequestAction(string error_message);
         public event RequestAction OnUploadFail;
 
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
@@ -118,10 +118,10 @@ namespace Vimeo.Recorder
             UploadProgress("SaveInfoComplete", 1f);
         }
 
-        private void NetworkError(string response)
+        private void NetworkError(string error_message)
         {
             if (OnUploadFail != null) {
-                OnUploadFail("It seems like you are not connected to the internet, or having connection problems which disables the uploading of the video.");
+                OnUploadFail("It seems like you are not connected to the internet or are having connection problems.");
             }
         }
 

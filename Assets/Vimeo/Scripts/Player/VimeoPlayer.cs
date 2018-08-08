@@ -73,6 +73,11 @@ namespace Vimeo.Player
                 }
             }
 
+            if (api != null){
+                api.OnError += ApiError;
+                api.OnNetworkError += NetworkError;
+            }
+
             LoadVimeoVideoByUrl(vimeoVideoId);
 
             if (OnLoad != null) OnLoad();
@@ -364,6 +369,16 @@ namespace Vimeo.Player
         private static int SortByQuality(JSONNode q1, JSONNode q2)
         {
             return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
+        }
+
+        private void ApiError(string response)
+        {
+            Debug.LogError(response);
+        }
+
+        private void NetworkError(string error_message)
+        {
+            Debug.LogError("It seems like you are not connected to the internet or are having connection problems.");
         }
     }
 }
