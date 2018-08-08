@@ -42,6 +42,7 @@ namespace Vimeo
         public event RequestAction OnUploadComplete;
         public event RequestAction OnPatchComplete;
         public event RequestAction OnError;
+        public event RequestAction OnNetworkError;
 
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
@@ -187,7 +188,9 @@ namespace Vimeo
                 yield return VimeoApi.SendRequest(request);
 
                 if (IsNetworkError(request)) {
-                    Debug.LogError(request.error);
+                    if(OnNetworkError != null){
+                        OnNetworkError(request.error);
+                    }
                 } 
                 else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON(request.downloadHandler.text);
@@ -237,8 +240,9 @@ namespace Vimeo
                 uploader = null;
 
                 if (IsNetworkError(request)) {
-                    Debug.Log(request.error);
-                    Debug.Log(request.responseCode);
+                    if (OnNetworkError != null) {
+                        OnNetworkError(request.error);
+                    }
                 } 
                 else {
                     StartCoroutine(VerifyUpload(ticket));
