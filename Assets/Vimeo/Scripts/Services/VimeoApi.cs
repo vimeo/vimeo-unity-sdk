@@ -188,7 +188,7 @@ namespace Vimeo
                 yield return VimeoApi.SendRequest(request);
 
                 if (IsNetworkError(request)) {
-                    if(OnNetworkError != null){
+                    if (OnNetworkError != null) {
                         OnNetworkError(request.error);
                     }
                 } 

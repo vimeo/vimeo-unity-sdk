@@ -115,7 +115,8 @@ namespace Vimeo.Recorder
             UploadProgress("SaveInfoComplete", 1f);
         }
 
-        private void NetworkError(string response){
+        private void NetworkError(string response)
+        {
             Debug.LogError("It seems like you are not connected to the internet, or having connection problems which disables the uploading of the video.");
         }
 
