@@ -6,6 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Vimeo/Scenes/360Player.unity
-    guid: 5a9caef1732ca1947907944bd4c31361
-  m_configObjects: {}
+    path: Assets/Vimeo/Scenes/CanvasPlayer.unity
+    guid: 4e1e93fb44cbe4604b6d97d8761a8abb
