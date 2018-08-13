@@ -42,6 +42,7 @@ namespace Vimeo
         public event RequestAction OnUploadComplete;
         public event RequestAction OnPatchComplete;
         public event RequestAction OnError;
+        public event RequestAction OnNetworkError;
 
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
@@ -187,7 +188,9 @@ namespace Vimeo
                 yield return VimeoApi.SendRequest(request);
 
                 if (IsNetworkError(request)) {
-                    Debug.LogError(request.error);
+                    if (OnNetworkError != null) {
+                        OnNetworkError(request.error);
+                    }
                 } 
                 else {
                     VimeoTicket ticket = VimeoTicket.CreateFromJSON(request.downloadHandler.text);
@@ -237,8 +240,9 @@ namespace Vimeo
                 uploader = null;
 
                 if (IsNetworkError(request)) {
-                    Debug.Log(request.error);
-                    Debug.Log(request.responseCode);
+                    if (OnNetworkError != null) {
+                        OnNetworkError(request.error);
+                    }
                 } 
                 else {
                     StartCoroutine(VerifyUpload(ticket));
@@ -335,11 +339,14 @@ namespace Vimeo
                     if (request.responseCode == 401) {
                         Debug.LogError("[VimeoApi] 401 Unauthorized request.");
                     }
-                    else {
-                        JSONNode json = JSON.Parse(request.downloadHandler.text);
-                        Debug.LogError("[VimeoApi] " + request.responseCode + " " + json["error"]);
+
+                    if (OnNetworkError != null && IsNetworkError(request)) {
+                        OnNetworkError(request.error);
                     }
-                    if (OnError != null) OnError(request.downloadHandler.text);
+
+                    if (OnError != null && !IsNetworkError(request)) {
+                        OnError(request.downloadHandler.text);
+                    }
                 }
                 else if (OnRequestComplete != null) {
                     OnRequestComplete(request.downloadHandler.text);
