@@ -72,7 +72,7 @@ namespace Vimeo.Recorder
                 publisher.Init(this);
 
                 publisher.OnUploadProgress += UploadProgress;
-                publisher.OnUploadFail += UploadFail;
+                publisher.OnNetworkError += NetworkError;
             }
             
             publisher.PublishVideo(filePath);
@@ -92,7 +92,7 @@ namespace Vimeo.Recorder
             }
         }
 
-        private void UploadFail(string status){
+        private void NetworkError(string status){
             Debug.LogError(status);
         }
 

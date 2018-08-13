@@ -13,7 +13,7 @@ namespace Vimeo.Recorder
         public event UploadAction OnUploadProgress;
 
         public delegate void RequestAction(string error_message);
-        public event RequestAction OnUploadFail;
+        public event RequestAction OnNetworkError;
 
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
@@ -120,8 +120,8 @@ namespace Vimeo.Recorder
 
         private void NetworkError(string error_message)
         {
-            if (OnUploadFail != null) {
-                OnUploadFail("It seems like you are not connected to the internet or are having connection problems.");
+            if (OnNetworkError != null) {
+                OnNetworkError("It seems like you are not connected to the internet or are having connection problems.");
             }
         }
 
@@ -134,18 +134,18 @@ namespace Vimeo.Recorder
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
                     // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
-                        if (OnUploadFail != null) {
-                            OnUploadFail("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        if (OnNetworkError != null) {
+                            OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
                     }
                     else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
-                        if (OnUploadFail != null) {
-                            OnUploadFail("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        if (OnNetworkError != null) {
+                            OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
                     }
                     else {
-                        if (OnUploadFail != null) {
-                            OnUploadFail(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
+                        if (OnNetworkError != null) {
+                            OnNetworkError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
                         }
                     }
                 }
