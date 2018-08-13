@@ -34,6 +34,8 @@ namespace Vimeo.Player
 
         private void Start()
         {
+            Application.runInBackground = true; 
+            
             if (!vimeoSignIn) {
                 Debug.LogWarning("You have not signed into the Vimeo Player.");
                 return;
