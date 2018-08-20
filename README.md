@@ -136,7 +136,7 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
 ## Streaming Requirements
 * Unity `5.6.0` or higher.
 * Streaming Vimeo videos requires video file access via the Vimeo API. Accessing video files is limited to [Vimeo Pro and Business](https://vimeo.com/upgrade) customers. 
-* You can only stream videos from your own Vimeo account. Access to all videos is limited to partnership-level integrations. If you are interested in a partnership, reach out to casey@vimeo.com
+* You can only stream videos from your own Vimeo account. Access to all videos is limited to partnership-level integrations. If you are interested in a partnership, reach out to labs@vimeo.com
 
 ## Setting up
 ### 1. Choose your playback method
@@ -155,14 +155,14 @@ If you are setting up your own scene and want to specify your video "screen" and
 ### 2. Sign into your Vimeo account
 Sign into your [Vimeo](https://vimeo.com) account (or create one if you haven't already) and make sure you have some videos uploaded. 
 
-<img src="https://i.imgur.com/P8F3A6y.gif"  />
+<img src="https://i.imgur.com/9aLNQJQ.gif"  />
 
 * Click the "Get Token" button which will ask you to authorize with your Vimeo account. 
 * After authorizing, copy the token and paste it into the `Vimeo Token` field in Unity. 
 * [Find your video](https://vimeo.com/manage/videos) and then copy the full URL or the video ID and paste it into the `Vimeo Video URL` field.
 * If you are not using one of the existing prefabs, then you will need to assign a GameObject to the `Video Screen` field. Currently, we only support Mesh and RawImage GameObjects.
 * `Audio Output` is optional. If left empty, a new audio object will be attached to the video screen. 
-* For security reasons, the Vimeo token is not saved into the scene. But, if you plan on building this app so others can watch video, then be sure to check `Save token with scene`
+* For security reasons, the Vimeo token is not saved into the scene. But when you build it, the token will be included in the build itself automatically.
  
  You're all set! Press play and you should now see your Vimeo video streaming in your app.
 
