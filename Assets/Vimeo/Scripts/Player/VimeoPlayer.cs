@@ -30,7 +30,7 @@ namespace Vimeo.Player
 
         private VimeoApi api;
         public VideoController controller;
-        private List<JSONNode> videoFiles;
+        private VimeoVideo vimeoVideo;
 
         private void Start()
         {
@@ -88,7 +88,7 @@ namespace Vimeo.Player
         public void LoadVimeoVideoByUrl(string vimeo_url)
         {
             if (vimeo_url != null && vimeo_url != "") {
-                videoFiles = null;
+                vimeoVideo = null;
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
                 if (matches[3] != null) {
                     vimeoVideoId = matches[3];
@@ -118,7 +118,7 @@ namespace Vimeo.Player
 
         public bool IsVideoMetadataLoaded()
         {
-            return videoFiles != null;
+            return vimeoVideo != null && vimeoVideo.uri != null && vimeoVideo.uri != "";
         }
 
         public bool IsPlayerLoaded()
@@ -238,17 +238,17 @@ namespace Vimeo.Player
             api.OnRequestComplete -= OnLoadVimeoVideoComplete;
             
             if (json["error"] == null) {
-                videoFiles = GetVideoFiles(json);
+                vimeoVideo = new VimeoVideo(json);
 
 #if VIMEO_AVPRO_VIDEO_SUPPORT                
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     string file_url = null;
 
                     if (this.selectedResolution == StreamingResolution.Adaptive) {
-                        file_url = GetAdaptiveVideoFileURL(json);
+                        file_url = vimeoVideo.GetAdaptiveVideoFileURL();
                     }
                     else {
-                        file_url = videoFiles[0]["link"];
+                        file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
                     }
                     
                     mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
@@ -268,109 +268,8 @@ namespace Vimeo.Player
         public void LoadVideo()
         {
             if (IsVideoMetadataLoaded()) {
-                controller.PlayVideos(videoFiles, is3D, videoStereoFormat, autoPlay);
+                controller.PlayVideo(vimeoVideo, selectedResolution, autoPlay);
             }
-        }
-
-        private string GetAdaptiveVideoFileURL(JSONNode json) 
-        {
-            JSONNode progressiveFiles = json["files"];
-            for (int i = 0; i < progressiveFiles.Count; i++) {
-                if (progressiveFiles[i]["quality"].Value == "hls") {
-                    Debug.Log(progressiveFiles[i]["link"]);
-                    return progressiveFiles[i]["link"];
-                }
-            }
-            return null;
-        }
-
-        private List<JSONNode> GetVideoFiles(JSONNode json)
-        {
-            if (json["user"]["account"].Value == "basic") {
-                Debug.LogError("[VimeoPlayer] You do not have permission to stream videos. You must be a Vimeo Pro or Business customer. https://vimeo.com/upgrade");
-                return null;
-            }
-            if ((json["play"] == null || json["play"]["progressive"] == null) && json["files"] == null) {
-                Debug.LogError("[VimeoPlayer] You do not have permission to access to this video. You must be a Vimeo Pro or Business customer and use videos from your own account. https://vimeo.com/upgrade");
-                return null;
-            }
-
-            // Set the metadata
-            // TODO separate this from fetching video files
-            videoName = json["name"];
-            videoThumbnailUrl = json["pictures"]["sizes"][4]["link"];
-
-            if (json["user"]["pictures"] != null && !json["user"]["pictures"].IsNull) {
-               authorThumbnailUrl = json["user"]["pictures"]["sizes"][2]["link"];
-            }
-
-            is3D = false;
-            videoStereoFormat = "mono";
-
-            if (json["spatial"] != null && !json["spatial"].IsNull) {
-                is3D = true;
-                videoProjection   = json["spatial"]["projection"];
-                videoStereoFormat = json["spatial"]["stereo_format"];
-            }
-
-            List<JSONNode> qualities = new List<JSONNode>();
-
-            // New Vimeo file response format
-            if (json["play"] != null) {
-                JSONNode progressiveFiles = json["play"]["progressive"];
-
-                // Sort the quality
-                for (int i = 0; i < progressiveFiles.Count; i++) {
-                    qualities.Add(progressiveFiles[i]);
-                }   
-                qualities.Sort(SortByQuality);
-            }
-
-            // Current Vimeo file API response format
-            if (json["files"] != null) {
-                JSONNode progressiveFiles = json["files"];
-
-                // Get all progressive video files 
-                for (int i = 0; i < progressiveFiles.Count; i++) {
-                    if (progressiveFiles[i]["height"] != null && progressiveFiles[i]["type"].Value == "video/mp4") {
-                        qualities.Add(progressiveFiles[i]);
-                    }
-                }
-                qualities.Sort(SortByQuality);
-            }
-
-            return GetPreferredQualities(qualities, selectedResolution);
-        }
-
-        private List<JSONNode> GetPreferredQualities(List<JSONNode> qualities, StreamingResolution resolution)
-        {
-            if (resolution == StreamingResolution.Adaptive) {
-                return null;
-            }
-
-            bool resolution_found = false;
-
-            List<JSONNode> preferred_qualities = new List<JSONNode>();
-            for (int i = 0; i < qualities.Count; i++) {
-                if (int.Parse(qualities[i]["height"]) <= (int)resolution) {
-                    preferred_qualities.Add(qualities[i]);
-
-                    if (int.Parse(qualities[i]["height"]) == (int)resolution) {
-                        resolution_found = true;
-                    }
-                }
-            }
-
-            if (!resolution_found) {
-                Debug.Log("[VimeoPlayer] This video does not have a " + resolution + " resolution. Defaulting to " + preferred_qualities[0]["height"] + "p.");
-            }
-
-            return preferred_qualities;
-        }
-
-        private static int SortByQuality(JSONNode q1, JSONNode q2)
-        {
-            return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
         }
 
         private void ApiError(string response)
