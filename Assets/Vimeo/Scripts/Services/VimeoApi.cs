@@ -68,7 +68,7 @@ namespace Vimeo
 
         public void GetUserFolders()
         {
-            StartCoroutine("Request", "/me/folders"); 
+            StartCoroutine("Request", "/me/folders?fields=name,uri"); 
         }
 
         public void AddVideoToFolder(VimeoVideo video, VimeoFolder folder)
