@@ -27,7 +27,7 @@ namespace Vimeo
 
     public class VimeoPlugin 
     {
-        public const string Version = "0.9.2";
+        public const string Version = "0.9.3";
         public const string AVPRO_VIDEO_DEFINE      = "VIMEO_AVPRO_VIDEO_SUPPORT";
         public const string AVPRO_CAPTURE_DEFINE    = "VIMEO_AVPRO_CAPTURE_SUPPORT";
         public const string DEPTHKIT_DEFINE         = "VIMEO_DEPTHKIT_SUPPORT";

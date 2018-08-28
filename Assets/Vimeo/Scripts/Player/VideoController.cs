@@ -29,8 +29,7 @@ namespace Vimeo.Player
         private string stereoFormat;
         private MaterialPropertyBlock block;
 
-        private List<JSONNode> video_files;
-        private int cur_file_index = 0;
+        private VimeoVideo vimeoVideo; 
 
         public bool isSeeking = false;
         public long seekFrame = 0;
@@ -103,17 +102,12 @@ namespace Vimeo.Player
             }
         }
 
-        public void PlayVideos(List<JSONNode> files, bool is3D, string stereoFormat, bool autoPlay = true) 
+        public void PlayVideo(VimeoVideo _vimeoVideo, StreamingResolution resolution, bool autoPlay = true) 
         {
-            video_files = files;
+            vimeoVideo = _vimeoVideo;
 
             if (autoPlay) {
-                if (video_files[cur_file_index]["link_secure"] == null) {
-                    PlayVideoByUrl(video_files[cur_file_index]["link"], is3D, stereoFormat);
-                }
-                else{
-                    PlayVideoByUrl(video_files[cur_file_index]["link_secure"], is3D, stereoFormat);
-                }
+                PlayVideoByUrl(vimeoVideo.GetVideoFileUrlByResolution(resolution), vimeoVideo.is3D, vimeoVideo.stereoFormat);
             }
         }
 
