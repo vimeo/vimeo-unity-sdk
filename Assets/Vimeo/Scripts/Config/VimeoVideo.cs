@@ -14,6 +14,7 @@ namespace Vimeo
         public string name;
         public string uri;
         public int id;
+        public string description;
         public int duration;
         public int width;
         public int height;
@@ -48,6 +49,10 @@ namespace Vimeo
 
             name = video["name"].Value;
             uri = video["uri"].Value;
+            
+            if (video["description"] != null) {
+                description = video["description"].Value;
+            }
             
             if (video["duration"] != null) {
                 duration = int.Parse(video["duration"].Value);

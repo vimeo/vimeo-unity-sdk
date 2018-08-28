@@ -241,22 +241,30 @@ namespace Vimeo.Player
                 vimeoVideo = new VimeoVideo(json);
 
 #if VIMEO_AVPRO_VIDEO_SUPPORT                
-                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
-                    string file_url = null;
+                string file_url = null;
 
-                    if (this.selectedResolution == StreamingResolution.Adaptive) {
-                        file_url = vimeoVideo.GetAdaptiveVideoFileURL();
-                    }
-                    else {
-                        file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
-                    }
-                    
+                if (this.selectedResolution == StreamingResolution.Adaptive) {
+                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
+                }
+                else {
+                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                }
+                
+                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
                 }
+#if VIMEO_DEPTHKIT_SUPPORT
+                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
+                    depthKitClip._moviePath = file_url;
+                    depthKitClip._metaDataText = vimeoVideo.description;
+                    depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    depthKitClip.RefreshRenderer();
+                }
+#endif  
                 else {
                     LoadVideo();
                 }   
-#else  
+#else 
                 LoadVideo();
 #endif
             } 
