@@ -39,14 +39,6 @@ namespace Vimeo
 
         public VimeoVideo(JSONNode video)
         {
-            // if (video["user"]["account"].Value == "basic") {
-            //     Debug.LogError("[VimeoPlayer] You do not have permission to stream videos. You must be a Vimeo Pro or Business customer. https://vimeo.com/upgrade");
-            // }
-
-            // if ((video["play"] == null || video["play"]["progressive"] == null) && video["files"] == null) {
-            //     Debug.LogError("[VimeoPlayer] You do not have permission to access to this video. You must be a Vimeo Pro or Business customer and use videos from your own account. https://vimeo.com/upgrade");
-            // }
-
             name = video["name"].Value;
             uri = video["uri"].Value;
             
@@ -57,9 +49,11 @@ namespace Vimeo
             if (video["duration"] != null) {
                 duration = int.Parse(video["duration"].Value);
             }
+
             if (video["width"] != null) {
                 width = int.Parse(video["width"].Value);
             }
+
             if (video["height"] != null) {
                 height = int.Parse(video["height"].Value);
             }
@@ -166,6 +160,5 @@ namespace Vimeo
         {
             return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
         }
-    
     } 
 }
