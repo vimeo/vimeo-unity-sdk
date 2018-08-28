@@ -255,10 +255,10 @@ namespace Vimeo.Player
                 }
 #if VIMEO_DEPTHKIT_SUPPORT
                 else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
-                    depthKitClip._moviePath = file_url;
-                    depthKitClip._metaDataText = vimeoVideo.description;
-                    depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    depthKitClip.RefreshRenderer();
+                    // depthKitClip._moviePath = file_url;
+                    // depthKitClip._metaDataText = vimeoVideo.description;
+                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    // depthKitClip.RefreshRenderer();
                 }
 #endif  
                 else {
