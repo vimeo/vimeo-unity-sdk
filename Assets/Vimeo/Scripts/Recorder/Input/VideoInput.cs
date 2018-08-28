@@ -16,7 +16,7 @@ namespace Vimeo.Recorder
         public int outputWidth { get; protected set; }
         public int outputHeight { get; protected set; }
         
-        public virtual Texture2D GetFrame() { return new Texture2D(1, 1); }
+        public virtual Texture GetFrame() { return new Texture2D(1, 1); }
         public virtual void StartFrame() { }
         public virtual void EndFrame() { }
 

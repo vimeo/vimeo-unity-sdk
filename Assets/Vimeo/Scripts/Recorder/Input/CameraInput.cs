@@ -65,7 +65,7 @@ namespace Vimeo.Recorder
             }
         }
 
-        public override Texture2D GetFrame()
+        public override Texture GetFrame()
         {
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {

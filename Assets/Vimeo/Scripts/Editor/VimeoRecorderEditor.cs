@@ -226,6 +226,10 @@ namespace Vimeo.Recorder
                     }
                 }
 
+                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.RenderTexture) {
+                    EditorGUILayout.PropertyField(so.FindProperty("renderTextureTarget"), new GUIContent("Target"));    
+                }
+
                 EditorGUILayout.PropertyField(so.FindProperty("frameRate"));
                 EditorGUILayout.PropertyField(so.FindProperty("realTime"));
 
