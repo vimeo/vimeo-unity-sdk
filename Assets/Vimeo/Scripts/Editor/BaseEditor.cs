@@ -214,10 +214,6 @@ namespace Vimeo
                     player.vimeoVideoId = player.currentVideo.id.ToString();
                 }
 
-                // if (GUILayout.Button("↪", GUILayout.Width(25))) {
-                    
-                // }
-
                 if (GUILayout.Button("↺", GUILayout.Width(25)) || 
                     refreshVideos || 
                     (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoApi>() == null)) {
