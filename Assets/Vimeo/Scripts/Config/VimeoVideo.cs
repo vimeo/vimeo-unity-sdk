@@ -107,7 +107,6 @@ namespace Vimeo
         {
             switch (Application.platform)
             {
-                case RuntimePlatform.OSXDashboardPlayer:
                 case RuntimePlatform.OSXPlayer:
                 case RuntimePlatform.OSXEditor:
                 case RuntimePlatform.IPhonePlayer:
