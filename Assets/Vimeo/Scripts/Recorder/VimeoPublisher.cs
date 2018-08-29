@@ -83,7 +83,7 @@ namespace Vimeo.Recorder
                 vimeoApi.SetVideoDownload(recorder.enableDownloads);
             }
             vimeoApi.SetVideoComments(recorder.commentMode);
-            // vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
+            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
 
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
