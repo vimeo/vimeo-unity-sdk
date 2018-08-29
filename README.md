@@ -32,7 +32,6 @@ The Vimeo Recorder is built on top of Unity's native `MediaEncoder` to make it s
 * Adjustable capture frame rate
 * Record in real-time or render offline
 * Control recording length manually, by duration, or via a custom script
-* Automatically post your video to a Slack channel of your choice after it's done recording to get feedback from your team.
 * _\***NEW**\*_ The Vimeo Recorder is now compatiable with [AVPro Movie Capture](http://renderheads.com/product/av-pro-movie-capture/). You should go check out their full feature list, but here are some of the most notable improvements:
   * Extremely robust & higher quality video recording 
   * Works in the editor and also in standalone builds
