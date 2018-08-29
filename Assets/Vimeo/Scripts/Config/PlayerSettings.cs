@@ -16,7 +16,10 @@ namespace Vimeo.Player
     public enum VideoPlayerType
     {
         UnityPlayer,
-        AVProVideo
+        AVProVideo,
+#if VIMEO_DEPTHKIT_SUPPORT
+        DepthKit
+#endif 
     }
     
     public class PlayerSettings : VimeoSettings
@@ -24,6 +27,9 @@ namespace Vimeo.Player
         public VideoPlayerType videoPlayerType = VideoPlayerType.UnityPlayer;
 #if VIMEO_AVPRO_VIDEO_SUPPORT
         public RenderHeads.Media.AVProVideo.MediaPlayer mediaPlayer;
+#endif         
+#if VIMEO_DEPTHKIT_SUPPORT
+        public DepthKit.Clip depthKitClip;
 #endif         
         public StreamingResolution selectedResolution = StreamingResolution.x2160p_4K; 
         public string vimeoVideoId;

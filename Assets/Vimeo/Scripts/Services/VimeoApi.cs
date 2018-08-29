@@ -61,14 +61,14 @@ namespace Vimeo
             form = new WWWForm();
         }
 
-        public void GetVideoFileUrlByVimeoId(int video_id)
+        public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,description")
         {
-            StartCoroutine("Request", "/videos/" + video_id);
+            StartCoroutine("Request", "/videos/" + video_id + "?fields=" + fields);
         }
 
         public void GetUserFolders()
         {
-            StartCoroutine("Request", "/me/folders"); 
+            StartCoroutine("Request", "/me/folders?fields=name,uri"); 
         }
 
         public void AddVideoToFolder(VimeoVideo video, VimeoFolder folder)
@@ -79,14 +79,14 @@ namespace Vimeo
             }
         }
 
-        public void GetRecentUserVideos()
+        public void GetRecentUserVideos(string fields = "name,uri")
         {
-            StartCoroutine("Request", "/me/videos?per_page=100"); 
+            StartCoroutine("Request", "/me/videos?fields=" + fields + "&per_page=100"); 
         }
 
-        public void GetVideosInFolder(VimeoFolder folder)
+        public void GetVideosInFolder(VimeoFolder folder, string fields = "name,uri")
         {
-            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?per_page=100"); 
+            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?fields=" + fields + "&per_page=100"); 
         }
 
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode) 

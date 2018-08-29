@@ -68,6 +68,12 @@ namespace Vimeo
                             EditorGUILayout.HelpBox("You need to select a MediaPlayer object.", MessageType.Warning);
                         }
                     }
+
+#if VIMEO_DEPTHKIT_SUPPORT
+                    if (player.videoPlayerType == VideoPlayerType.DepthKit) {
+                        EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("DepthKit Clip"));
+                    }
+#endif
                 }
 #else
                 player.videoPlayerType = VideoPlayerType.UnityPlayer;
@@ -82,7 +88,12 @@ namespace Vimeo
                     EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
                 }
 
-                if (player.videoPlayerType != VideoPlayerType.AVProVideo && !player.IsVideoMetadataLoaded()) {
+                if (player.videoPlayerType != VideoPlayerType.AVProVideo 
+                    && !player.IsVideoMetadataLoaded()
+#if VIMEO_DEPTHKIT_SUPPORT
+                    && player.videoPlayerType != VideoPlayerType.DepthKit
+#endif
+                    ) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                     EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
                     EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute Audio"));
