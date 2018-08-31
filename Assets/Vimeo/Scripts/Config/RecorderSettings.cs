@@ -22,7 +22,8 @@ namespace Vimeo.Recorder
         Camera,
 #if UNITY_2018_1_OR_NEWER
         Camera360,
-#endif        
+#endif    
+        RenderTexture    
     }
 
     public enum CameraType
@@ -78,6 +79,8 @@ namespace Vimeo.Recorder
         public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
 #endif        
         public EncoderManager encoder;
+
+        public RenderTexture renderTextureTarget;
 
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;

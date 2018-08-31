@@ -160,7 +160,7 @@ namespace Vimeo.Recorder
         public void AddFrame()
         {
             if (encoder != null && isRecording) {
-                encoder.AddFrame(videoInput.GetFrame());
+                encoder.AddFrame(videoInput.GetFrame() as Texture2D);
                 videoInput.EndFrame();
 
 #if UNITY_2018_1_OR_NEWER
@@ -218,6 +218,9 @@ namespace Vimeo.Recorder
                 case VideoInputType.Camera:
                     videoInput = gameObject.AddComponent<CameraInput>();
                     break;
+                case VideoInputType.RenderTexture:
+                     videoInput = gameObject.AddComponent<RenderTextureInput>();
+                     break;
             }
             
             videoInput.recorder = recorder;
