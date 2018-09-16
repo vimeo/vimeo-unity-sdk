@@ -89,6 +89,12 @@ namespace Vimeo
             buildMode  = true;
         }
 
+        public void SignIn(string _token)
+        {
+            SetVimeoToken(_token);
+            vimeoSignIn = true;
+        }
+
         public void SignOut()
         {
             vimeoSignIn = false;

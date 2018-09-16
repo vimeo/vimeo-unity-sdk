@@ -38,41 +38,43 @@ namespace Vimeo.Player
 
         private void Setup()
         {  
-            if (videoPlayer == null) {
-                videoPlayer = videoScreenObject.AddComponent<VideoPlayer>();
+            if (videoScreenObject != null) {
+                if (videoPlayer == null) {
+                    videoPlayer = videoScreenObject.AddComponent<VideoPlayer>();
 
-                if (audioSource == null) {
-                    audioSource = videoScreenObject.AddComponent<AudioSource>();
-                    audioSource.volume = playerSettings.muteAudio ? 0 : 1;
-                }
+                    if (audioSource == null) {
+                        audioSource = videoScreenObject.AddComponent<AudioSource>();
+                        audioSource.volume = playerSettings.muteAudio ? 0 : 1;
+                    }
 
-                videoPlayer.playOnAwake = false;
-                videoPlayer.source = VideoSource.Url;
-                videoPlayer.skipOnDrop = true;
+                    videoPlayer.playOnAwake = false;
+                    videoPlayer.source = VideoSource.Url;
+                    videoPlayer.skipOnDrop = true;
 
-                videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
-                videoPlayer.SetTargetAudioSource(0, audioSource);
-                videoPlayer.controlledAudioTrackCount = 1;
+                    videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+                    videoPlayer.SetTargetAudioSource(0, audioSource);
+                    videoPlayer.controlledAudioTrackCount = 1;
 
-                if (videoScreenObject.GetComponent<RawImage>() != null) {
-                    SetupRenderTexture();
+                    if (videoScreenObject.GetComponent<RawImage>() != null) {
+                        SetupRenderTexture();
+                    }
+                    else {
+                        SetupMaterialOverride();
+                    }
+                                    
+                    videoPlayer.errorReceived    += VideoPlayerError;
+                    videoPlayer.prepareCompleted += VideoPlayerStarted;
+                    videoPlayer.seekCompleted    += VideoSeekCompleted;
+                    videoPlayer.frameReady       += VideoFrameReady;
+
+                    videoPlayer.isLooping = true;
+
+                    block = new MaterialPropertyBlock();
                 }
                 else {
-                    SetupMaterialOverride();
+                    Pause();
+                    videoPlayer.Stop();
                 }
-                                
-                videoPlayer.errorReceived    += VideoPlayerError;
-                videoPlayer.prepareCompleted += VideoPlayerStarted;
-                videoPlayer.seekCompleted    += VideoSeekCompleted;
-                videoPlayer.frameReady       += VideoFrameReady;
-
-                videoPlayer.isLooping = true;
-
-                block = new MaterialPropertyBlock();
-            }
-            else {
-                Pause();
-                videoPlayer.Stop();
             }
         }
 

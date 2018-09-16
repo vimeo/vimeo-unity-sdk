@@ -50,14 +50,9 @@ namespace Vimeo.Player
                 api.token = GetVimeoToken();
             }
 
-            if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
-                Debug.LogWarning("No video screen was specified.");
-            }
-
             if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                 // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
                 controller = gameObject.AddComponent<VideoController>();
-                controller.videoScreenObject = videoScreen;
                 controller.playerSettings = this;
 
                 controller.OnVideoStart += VideoStarted;
@@ -103,6 +98,12 @@ namespace Vimeo.Player
 
         public void LoadVimeoVideoById(int vimeo_id)
         {
+            controller.videoScreenObject = videoScreen;
+
+            if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
+                Debug.LogWarning("No video screen was specified.");
+            }
+
             api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
