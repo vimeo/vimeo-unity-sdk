@@ -23,11 +23,23 @@ namespace Vimeo
         public void OnProcessScene(Scene scene) 
 #endif
         {
-            GameObject[] objects = scene.GetRootGameObjects();
+            EnableBuildMode(scene.GetRootGameObjects());
+        }
+
+        public void EnableBuildMode(GameObject[] objects)
+        {
             for (int i = 0; i < objects.Length; i++) {
                 if (objects[i].GetComponent<VimeoSettings>() != null) {
                     objects[i].GetComponent<VimeoSettings>().EnableBuildMode();
                 }
+                EnableBuildMode(objects[i].GetComponentsInChildren<VimeoSettings>());
+            }
+        }
+
+        public void EnableBuildMode(VimeoSettings[] settings) 
+        {
+            for (int i = 0; i < settings.Length; i++) {
+                settings[i].EnableBuildMode();
             }
         }
     }
