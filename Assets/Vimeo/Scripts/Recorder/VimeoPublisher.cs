@@ -18,7 +18,6 @@ namespace Vimeo.Recorder
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
         private VimeoApi vimeoApi;
-        private SlackApi slackApi;
         private VimeoVideo video;
 
         private Coroutine saveCoroutine;
@@ -36,10 +35,6 @@ namespace Vimeo.Recorder
                 vimeoApi.OnNetworkError   += NetworkError;
 
                 vimeoApi.token = recorder.GetVimeoToken();
-            }
-
-            if (slackApi == null) {
-                slackApi = gameObject.AddComponent<SlackApi>();
             }
         }
 
@@ -88,7 +83,7 @@ namespace Vimeo.Recorder
                 vimeoApi.SetVideoDownload(recorder.enableDownloads);
             }
             vimeoApi.SetVideoComments(recorder.commentMode);
-            // vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
+            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
 
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
@@ -105,10 +100,6 @@ namespace Vimeo.Recorder
 
             if (recorder.openInBrowser == true) {
                 OpenVideo();
-            }
-
-            if (recorder.autoPostToChannel == true) {
-                PostToSlack();
             }
 
             if (recorder.currentFolder.uri != null) {
@@ -189,16 +180,6 @@ namespace Vimeo.Recorder
             Application.OpenURL("https://vimeo.com/" + video.id + "/settings");
         }
 
-        public void PostToSlack()
-        {
-            if (recorder.slackChannel != null) {
-                if (recorder.GetSlackToken() != null && recorder.GetSlackToken() != "" && recorder.slackChannel != "") {
-                    slackApi.Init(recorder.GetSlackToken(), recorder.slackChannel);
-                    slackApi.PostVideoToChannel(recorder.GetVideoName(), GetVimeoPermalink());
-                }
-            }
-        }
-
         void OnDestroy()
         {
             Dispose();            
@@ -207,7 +188,6 @@ namespace Vimeo.Recorder
         public void Dispose()
         {
             Destroy(vimeoApi);
-            Destroy(slackApi);
         }
     }
 }

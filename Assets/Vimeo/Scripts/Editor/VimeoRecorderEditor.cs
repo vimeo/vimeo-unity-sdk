@@ -13,7 +13,6 @@ namespace Vimeo.Recorder
         static bool recordingFold;
         static bool publishFold;
         static bool vimeoFold;
-        static bool slackFold;
 
         [MenuItem("GameObject/Video/Vimeo Recorder")]
         private static void CreateRecorderPrefab() {
@@ -26,7 +25,6 @@ namespace Vimeo.Recorder
             EditorPrefs.SetBool("recordingFold", recordingFold);
             EditorPrefs.SetBool("publishFold", publishFold);
             EditorPrefs.SetBool("vimeoFold", vimeoFold);
-            EditorPrefs.SetBool("slackFold", slackFold);
 
             var recorder = target as VimeoRecorder;
             recorder.recordOnStart = false;
@@ -37,7 +35,6 @@ namespace Vimeo.Recorder
             recordingFold = EditorPrefs.GetBool("recordingFold");
             publishFold = EditorPrefs.GetBool("publishFold");
             vimeoFold = EditorPrefs.GetBool("vimeoFold");
-            slackFold = EditorPrefs.GetBool("slackFold");
         }
 
         public override void OnInspectorGUI()
@@ -71,35 +68,26 @@ namespace Vimeo.Recorder
                     DrawRecorderConfig(recorder);
                 }
 
-                publishFold = EditorGUILayout.Foldout(publishFold, "Publish to");
+                publishFold = EditorGUILayout.Foldout(publishFold, "Upload to Vimeo");
                 
                 if (publishFold) {
                     EditorGUI.indentLevel++;
 
-                    GUILayout.BeginHorizontal();
-                    vimeoFold = EditorGUILayout.Foldout(vimeoFold, "Vimeo");
-                    GUILayout.EndHorizontal();
+                    EditorGUILayout.PropertyField(so.FindProperty("videoName"));
+                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
 
-                    if (vimeoFold) {
-                        EditorGUI.indentLevel++;
-                        EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                        EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+                    GUISelectFolder();
 
-                        GUISelectFolder();
+                    EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));
+                    EditorGUILayout.PropertyField(so.FindProperty("enableDownloads"));
+                    EditorGUILayout.PropertyField(so.FindProperty("enableReviewPage"));
 
-                        EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));
-                        EditorGUILayout.PropertyField(so.FindProperty("enableDownloads"));
-                        // EditorGUILayout.PropertyField(so.FindProperty("enableReviewPage"));
-
-                        if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
-                            EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
-                        }
-
-                        EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
-                        EditorGUI.indentLevel--;
+                    if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
+                        EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
                     }
 
-                    DrawSlackConfig(recorder);
+                    EditorGUILayout.PropertyField(so.FindProperty("openInBrowser"));
+
                     EditorGUI.indentLevel--;
                 }
 
@@ -249,66 +237,6 @@ namespace Vimeo.Recorder
                 }
 #endif
 
-                EditorGUI.indentLevel--;
-            }
-        }
-
-        public void DrawSlackAuth(VimeoRecorder recorder)
-        {
-            GUIStyle customstyle = new GUIStyle();
-            customstyle.margin = new RectOffset(40, 0, 0, 0);
-            
-            GUILayout.BeginHorizontal();
-
-            var so = serializedObject;
-            if (!recorder.SlackAuthenticated()) {
-                EditorGUILayout.PropertyField(so.FindProperty("slackToken"));
-                if (recorder.slackToken == null || recorder.slackToken == "") {
-                    if (GUILayout.Button("Get token", GUILayout.Width(75))) {
-                        Application.OpenURL("https://authy.vimeo.com/auth/slack");
-                    }
-                }
-                else {                
-                    if (GUILayout.Button("Get token", GUILayout.Width(75))) {
-                        Application.OpenURL("https://authy.vimeo.com/auth/slack");
-                    }
-
-                    GUILayout.EndHorizontal();        
-                    GUILayout.BeginHorizontal(customstyle);
-                    GUI.backgroundColor = Color.green;
-
-                    if (GUILayout.Button("Sign in")) {
-                       recorder.SetSlackToken(recorder.slackToken);
-                       recorder.slackToken = null;
-                       GUI.FocusControl(null);
-                    }
-                    GUI.backgroundColor = Color.white;
-                }
-            } 
-
-            GUILayout.EndHorizontal();
-        }
-
-        public void DrawSlackConfig(VimeoRecorder recorder)
-        {
-            var so = serializedObject;
-
-            GUILayout.BeginHorizontal();
-            slackFold = EditorGUILayout.Foldout(slackFold, "Slack");
-            if (recorder.SlackAuthenticated() && GUILayout.Button("Sign out", GUILayout.Width(60))) {
-                recorder.SetSlackToken(null);   
-            }
-            GUILayout.EndHorizontal();
-
-            if (slackFold) {
-                EditorGUI.indentLevel++;
-                if (recorder.SlackAuthenticated()) {
-                    EditorGUILayout.PropertyField(so.FindProperty("slackChannel"));
-                    EditorGUILayout.PropertyField(so.FindProperty("defaultShareLink"), new GUIContent("Share Link"));
-                    EditorGUILayout.PropertyField(so.FindProperty("autoPostToChannel"), new GUIContent("Post to Channel"));
-                } 
-
-                DrawSlackAuth(recorder);
                 EditorGUI.indentLevel--;
             }
         }

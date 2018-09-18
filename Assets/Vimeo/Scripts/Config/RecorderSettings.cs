@@ -103,33 +103,10 @@ namespace Vimeo.Recorder
         public bool recordOnStart = false;
         public bool openInBrowser = true;
 
-        //public bool shareToSlack = false;
-        public bool autoPostToChannel = true;
-        public string slackToken;
-        public string slackChannel;
-
         public string videoName;
         public string videoPermalink;
         public string videoPassword;
         public string videoReviewPermalink;
-
-        private const string SLACK_TOKEN_NAME = "slack-token-";
-
-        public string GetSlackToken()
-        {
-            return PlayerPrefs.GetString(SLACK_TOKEN_NAME + this.gameObject.scene.name);
-        }
-
-        public void SetSlackToken(string token)
-        {
-            SetKey(SLACK_TOKEN_NAME + this.gameObject.scene.name, token);
-        }
-        
-        public bool SlackAuthenticated()
-        {
-            string token = GetSlackToken();
-            return token != "" && token != null;
-        }
 
         public string GetVideoName()
         {
