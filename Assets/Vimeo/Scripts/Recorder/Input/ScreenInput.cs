@@ -10,7 +10,7 @@ namespace Vimeo.Recorder
     {
         private Texture2D image;
 
-        public override Texture2D GetFrame()
+        public override Texture GetFrame()
         {
             image = ScreenCapture.CaptureScreenshotAsTexture(); 
             return image;

@@ -1,14 +1,20 @@
 {
   "dependencies": {
-    "com.unity.analytics": "exclude",
     "com.unity.ads": "exclude",
-    "com.unity.standardevents": "exclude",
-    "com.unity.purchasing": "exclude",
+    "com.unity.analytics": "exclude",
     "com.unity.package-manager-ui": "1.9.11",
+    "com.unity.purchasing": "exclude",
+    "com.unity.standardevents": "exclude",
     "com.unity.textmeshpro": "exclude",
-    "com.unity.modules.unityanalytics": "exclude",
     "com.unity.modules.ai": "exclude",
+    "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.imgui": "1.0.0",
+    "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.screencapture": "1.0.0",
     "com.unity.modules.terrain": "exclude",
-    "com.unity.modules.terrainphysics": "exclude"
+    "com.unity.modules.terrainphysics": "exclude",
+    "com.unity.modules.unityanalytics": "exclude",
+    "com.unity.modules.unitywebrequest": "1.0.0",
+    "com.unity.modules.video": "1.0.0"
   }
 }

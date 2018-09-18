@@ -29,6 +29,7 @@ The Vimeo Recorder is built on top of Unity's native `MediaEncoder` to make it s
 * Record up to 4K video
 * Record 360 and stereo 360 video and publish to Vimeo's 360 platform
 * Record from the Unity Editor on Windows and Mac. 
+* Capture from Screen, Camera, or Render Texture
 * Adjustable capture frame rate
 * Record in real-time or render offline
 * Control recording length manually, by duration, or via a custom script
