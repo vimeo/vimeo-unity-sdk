@@ -26,6 +26,7 @@ ExportedObj/
 # Unity3D generated files
 *.pidb.meta
 UnityPackageManager/manifest.json
+Assets/*TestScene*.unity*
 
 # Unity3D Generated File On Crash Reports
 sysinfo.txt

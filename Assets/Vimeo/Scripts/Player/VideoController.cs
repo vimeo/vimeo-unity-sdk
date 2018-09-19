@@ -36,12 +36,12 @@ namespace Vimeo.Player
         private long prevFrameIndex = 0;
         private bool frameStepping = false;
 
-        private void Setup()
+        public void Setup()
         {  
             if (videoScreenObject != null) {
                 if (videoPlayer == null) {
                     videoPlayer = videoScreenObject.AddComponent<VideoPlayer>();
-
+                    
                     if (audioSource == null) {
                         audioSource = videoScreenObject.AddComponent<AudioSource>();
                         audioSource.volume = playerSettings.muteAudio ? 0 : 1;

@@ -15,10 +15,11 @@ public class VimeoSettingsTest {
     {
         playerObj = new GameObject();
         player = playerObj.AddComponent<VimeoPlayer>();
+        player.Start();
     }
 
     [Test]
-    public void Doesnt_Save_Token_In_Scene()
+    public void SignIn_Doesnt_Save_Token_In_Scene()
     {
         player.SignIn("xxxxxxLOLxxxxxx");
         Assert.AreEqual(player.vimeoToken, null);
@@ -27,9 +28,12 @@ public class VimeoSettingsTest {
     }
 
     [Test]
-    public void Cant_Play_Video_With_Invalid_Token() {
-        
-        // Assert.AreEqual(0, 0);
+    public void SignIn_Fails_With_Invalid_String()
+    {
+        player.SignIn(null);
+        Assert.AreEqual(player.vimeoToken, null);
+        Assert.AreEqual(player.GetVimeoToken(), null);
+        Assert.AreEqual(player.vimeoSignIn, false);
     }
 
     [TearDown]

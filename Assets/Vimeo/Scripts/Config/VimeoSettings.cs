@@ -14,7 +14,11 @@ namespace Vimeo
         public List<VimeoFolder> vimeoFolders = new List<VimeoFolder>();
 
         [Tooltip("The token is used to give your app access to your Vimeo account.")]
-        public string vimeoToken;
+        private string m_vimeoToken;
+        public string vimeoToken  {
+            get { return m_vimeoToken == "" ? null : m_vimeoToken; }
+            set { m_vimeoToken = value; }
+        }
 
         public bool   buildMode = false;
         public bool   vimeoSignIn = false;
@@ -62,7 +66,8 @@ namespace Vimeo
                 return vimeoToken;
             }
             else {
-                return PlayerPrefs.GetString(GetTokenKey());
+                string _t = PlayerPrefs.GetString(GetTokenKey());
+                return _t == "" ? null : _t;
             }
         }
 
@@ -89,10 +94,13 @@ namespace Vimeo
             buildMode  = true;
         }
 
-        public void SignIn(string _token)
+        public virtual void SignIn(string _token)
         {
             SetVimeoToken(_token);
-            vimeoSignIn = true;
+
+            if (GetVimeoToken() != null) {
+                vimeoSignIn = true;
+            }
         }
 
         public void SignOut()
