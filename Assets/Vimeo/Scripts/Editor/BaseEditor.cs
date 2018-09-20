@@ -271,8 +271,7 @@ namespace Vimeo
 
                     GUI.backgroundColor = Color.green;
                     if (GUILayout.Button("Sign into Vimeo", GUILayout.Height(30))) {
-                        auth.SetVimeoToken(auth.vimeoToken);
-                        auth.vimeoSignIn = true;
+                        auth.SignIn(auth.vimeoToken);
                         GUI.FocusControl(null);
                     }
                 }

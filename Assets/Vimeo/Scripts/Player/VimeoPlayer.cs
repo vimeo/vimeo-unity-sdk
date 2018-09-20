@@ -17,6 +17,7 @@ namespace Vimeo.Player
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
         public event VimeoEvent OnFrameReady;
+        public event VimeoEvent OnLoadError;
 
         public GameObject videoScreen;
         public AudioSource audioSource;
@@ -32,32 +33,20 @@ namespace Vimeo.Player
         public VideoController controller;
         private VimeoVideo vimeoVideo;
 
-        private void Start()
+        public void Start()
         {
-            Application.runInBackground = true; 
-            
-            if (!vimeoSignIn) {
-                Debug.LogWarning("You have not signed into the Vimeo Player.");
-                return;
-            }
-
-            if (vimeoVideoId == null || vimeoVideoId == "") {
+            if (vimeoSignIn && (vimeoVideoId == null || vimeoVideoId == "")) {
                 Debug.LogWarning("No Vimeo video URL was specified");
             }
 
-            if (GetVimeoToken() != null) {
-                api = gameObject.AddComponent<VimeoApi>();
-                api.token = GetVimeoToken();
-            }
+            Application.runInBackground = true; 
 
-            if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
-                Debug.LogWarning("No video screen was specified.");
-            }
+            api = gameObject.AddComponent<VimeoApi>();
+            api.token = GetVimeoToken();
 
             if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                 // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
                 controller = gameObject.AddComponent<VideoController>();
-                controller.videoScreenObject = videoScreen;
                 controller.playerSettings = this;
 
                 controller.OnVideoStart += VideoStarted;
@@ -82,7 +71,15 @@ namespace Vimeo.Player
 
             LoadVimeoVideoByUrl(vimeoVideoId);
 
-            if (OnLoad != null) OnLoad();
+            if (OnLoad != null) {
+                OnLoad();
+            }
+        }
+
+        public override void SignIn(string _token) 
+        {
+            base.SignIn(_token);
+            api.token = GetVimeoToken();
         }
 
         public void LoadVimeoVideoByUrl(string vimeo_url)
@@ -92,7 +89,6 @@ namespace Vimeo.Player
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
                 if (matches[3] != null) {
                     vimeoVideoId = matches[3];
-                    api.OnRequestComplete += OnLoadVimeoVideoComplete;
                     LoadVimeoVideoById(int.Parse(vimeoVideoId));
                 }
                 else {
@@ -103,6 +99,18 @@ namespace Vimeo.Player
 
         public void LoadVimeoVideoById(int vimeo_id)
         {
+            if (!vimeoSignIn) {
+                Debug.LogWarning("You have not signed into the Vimeo Player.");
+            }
+
+            controller.videoScreenObject = videoScreen;
+            controller.Setup();
+
+            if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
+                Debug.LogWarning("No video screen was specified.");
+            }
+
+            api.OnRequestComplete += OnLoadVimeoVideoComplete;
             api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
@@ -291,6 +299,10 @@ namespace Vimeo.Player
         private void ApiError(string response)
         {
             Debug.LogError(response);
+
+            if (OnLoadError != null) {
+                OnLoadError();
+            }
         }
 
         private void NetworkError(string error_message)

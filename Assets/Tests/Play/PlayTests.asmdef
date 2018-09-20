@@ -1,0 +1,12 @@
+{
+    "name": "PlayTests",
+    "references": [
+        "ScriptsAssembly"
+    ],
+    "optionalUnityReferences": [
+        "TestAssemblies"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false
+}

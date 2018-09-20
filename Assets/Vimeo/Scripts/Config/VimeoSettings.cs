@@ -7,11 +7,15 @@ namespace Vimeo
 {  
     public class VimeoSettings : MonoBehaviour
     {
+        public string uid;
+
         public VimeoVideo currentVideo;
         public List<VimeoVideo> vimeoVideos = new List<VimeoVideo>();
 
         public VimeoFolder currentFolder;
         public List<VimeoFolder> vimeoFolders = new List<VimeoFolder>();
+
+        private string m_vimeoToken;
 
         [Tooltip("The token is used to give your app access to your Vimeo account.")]
         public string vimeoToken;
@@ -47,7 +51,11 @@ namespace Vimeo
 
         private string GetTokenKey()
         {
-            return VIMEO_TOKEN_PREFIX + this.GetType().Name + "-" + this.gameObject.scene.name;
+            if (uid == null || uid == "") {
+                uid = System.Guid.NewGuid().ToString();
+            }
+            
+            return VIMEO_TOKEN_PREFIX + this.GetType().Name + "-" + uid;
         }
 
         public bool Authenticated()
@@ -62,7 +70,8 @@ namespace Vimeo
                 return vimeoToken;
             }
             else {
-                return PlayerPrefs.GetString(GetTokenKey());
+                string _t = PlayerPrefs.GetString(GetTokenKey());
+                return _t == "" ? null : _t;
             }
         }
 
@@ -89,15 +98,25 @@ namespace Vimeo
             buildMode  = true;
         }
 
+        public virtual void SignIn(string _token)
+        {
+            SetVimeoToken(_token);
+
+            if (GetVimeoToken() != null) {
+                vimeoSignIn = true;
+            }
+        }
+
         public void SignOut()
         {
-            vimeoSignIn = false;
-            signInError = false;
             SetVimeoToken(null);
             vimeoVideos.Clear();
-            currentVideo = null;
             vimeoFolders.Clear();
+
+            currentVideo = null;
             currentFolder = null;
+            vimeoSignIn = false;
+            signInError = false;
         }
     }
 }

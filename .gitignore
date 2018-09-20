@@ -52,3 +52,8 @@ Assets/StreamingAssets*
 Assets/Plugins*
 Assets/AVPro*
 Depthkit*
+
+# Test Suite
+Assets/Vimeo/Scripts/TestConfig.cs*
+Assets/*TestScene*.unity*
+TestResults*.xml
