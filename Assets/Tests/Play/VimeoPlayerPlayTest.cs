@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo.Player;
 
-public class VimeoPlayerPlayTest 
+public class VimeoPlayerPlayTest : TestConfig
 {
     GameObject camObj;
     GameObject playerObj;
@@ -45,7 +45,7 @@ public class VimeoPlayerPlayTest
     [UnityTest]
     public IEnumerator Can_Stream_Video_With_Valid_Token() 
     {    
-        player.SignIn("");
+        player.SignIn(VALID_STREAMING_TOKEN);
         player.LoadVimeoVideoById(276918964);
 
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
