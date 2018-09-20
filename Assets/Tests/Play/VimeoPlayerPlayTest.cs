@@ -15,7 +15,7 @@ public class VimeoPlayerPlayTest : TestConfig
     bool loaded;
     bool error;
 
-    float timeout = 5;
+    float timeout = 10;
     float elapsed = 0;
     
     [SetUp]
