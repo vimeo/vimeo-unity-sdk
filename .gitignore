@@ -53,3 +53,6 @@ Assets/StreamingAssets*
 Assets/Plugins*
 Assets/AVPro*
 Depthkit*
+
+# Test Suite
+TestConfig.cs
