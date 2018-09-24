@@ -102,7 +102,7 @@ namespace Vimeo.Recorder
                 OpenVideo();
             }
 
-            if (recorder.currentFolder.uri != null) {
+            if (recorder.currentFolder != null && recorder.currentFolder.uri != null) {
                 vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
             }
 

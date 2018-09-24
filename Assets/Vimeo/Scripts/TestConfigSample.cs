@@ -8,4 +8,5 @@ using System.Collections;
 public class TestConfigSample
 {
     public const string VALID_STREAMING_TOKEN = "xxx";
+    public const string VALID_RECORDING_TOKEN = "xxx";
 }
