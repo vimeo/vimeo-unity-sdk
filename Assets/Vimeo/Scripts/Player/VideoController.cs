@@ -96,7 +96,7 @@ namespace Vimeo.Player
         private void SetupMaterialOverride()
         {
             videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
-            if (videoScreenObject.GetComponent<Renderer>().material.name.StartsWith("360VideoScreen")) {
+            if (videoScreenObject.GetComponent<Renderer>().sharedMaterial.name.StartsWith("360VideoScreen")) {
                 videoPlayer.targetMaterialProperty = "_Tex";
             } 
             else {

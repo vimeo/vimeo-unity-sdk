@@ -13,6 +13,7 @@
     "com.unity.modules.screencapture": "1.0.0",
     "com.unity.modules.terrain": "exclude",
     "com.unity.modules.terrainphysics": "exclude",
+    "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.unityanalytics": "exclude",
     "com.unity.modules.unitywebrequest": "1.0.0",
     "com.unity.modules.video": "1.0.0"

@@ -69,7 +69,9 @@ namespace Vimeo.Player
                 api.OnNetworkError += NetworkError;
             }
 
-            LoadVimeoVideoByUrl(vimeoVideoId);
+            if (autoPlay == true && vimeoVideoId != null) {
+                Play();
+            }
 
             if (OnLoad != null) {
                 OnLoad();
@@ -79,7 +81,10 @@ namespace Vimeo.Player
         public override void SignIn(string _token) 
         {
             base.SignIn(_token);
-            api.token = GetVimeoToken();
+
+            if (api != null) {
+                api.token = GetVimeoToken();
+            }
         }
 
         public void LoadVimeoVideoByUrl(string vimeo_url)
@@ -134,9 +139,22 @@ namespace Vimeo.Player
             return controller != null && controller.videoPlayer != null;
         }
 
+        public void LoadVideo()
+        {
+            if (IsVideoMetadataLoaded()) {
+                controller.PlayVideo(vimeoVideo, selectedResolution, autoPlay);
+            }
+            else if (vimeoVideoId != null) {
+                LoadVimeoVideoByUrl(vimeoVideoId);
+            }
+            else {
+                Debug.LogWarning("No Vimeo video was specificed");
+            }
+        }
+
         public void Play()
         {
-            if (!IsPlayerLoaded()) {
+            if (!IsVideoMetadataLoaded()) {
                 autoPlay = true;
                 LoadVideo();
             }
@@ -288,14 +306,7 @@ namespace Vimeo.Player
                 Debug.LogError("Video could not be found");
             }
         }
-
-        public void LoadVideo()
-        {
-            if (IsVideoMetadataLoaded()) {
-                controller.PlayVideo(vimeoVideo, selectedResolution, autoPlay);
-            }
-        }
-
+        
         private void ApiError(string response)
         {
             Debug.LogError(response);
