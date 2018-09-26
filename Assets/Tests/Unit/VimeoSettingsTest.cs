@@ -15,6 +15,7 @@ public class VimeoSettingsTest : TestConfig {
     {
         playerObj = new GameObject();
         player = playerObj.AddComponent<VimeoPlayer>();
+        player.autoPlay = false;
         player.Start();
     }
 

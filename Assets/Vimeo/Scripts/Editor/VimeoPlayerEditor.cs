@@ -107,7 +107,7 @@ namespace Vimeo
                     GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Load Video", GUILayout.Height(30), GUILayout.Width(100))) {
                         player.autoPlay = true;
-                        player.LoadVimeoVideoByUrl(player.vimeoVideoId);   
+                        player.LoadVideo(player.vimeoVideoId);   
                     }
 
                     if (player.videoPlayerType == VideoPlayerType.UnityPlayer && player.IsVideoMetadataLoaded()) {

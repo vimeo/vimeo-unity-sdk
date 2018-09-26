@@ -12,10 +12,9 @@ public class VimeoPlayerPlayTest : TestConfig
     GameObject screenObj;
     VimeoPlayer player;
 
-    bool loaded;
-    bool error;
+    bool triggered;
 
-    float timeout = 10;
+    float timeout = 5;
     float elapsed = 0;
     
     [SetUp]
@@ -30,27 +29,28 @@ public class VimeoPlayerPlayTest : TestConfig
         playerObj = new GameObject();
         player = playerObj.AddComponent<VimeoPlayer>();
         player.selectedResolution = StreamingResolution.x360p;
+        player.autoPlay = false;
         
         // Screen setup
         screenObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player.videoScreen = screenObj;
-        player.OnVideoStart += VideoStarted;
         camObj.transform.LookAt(playerObj.transform);
 
-        loaded = false;
-        error = false;
+        triggered = false;
         elapsed = 0;
     }
 
     [UnityTest]
     public IEnumerator Can_Stream_Video_With_Valid_Token() 
     {    
+        player.OnVideoStart += EventTriggered;
+
         player.SignIn(VALID_STREAMING_TOKEN);
-        player.LoadVimeoVideoById(276918964);
+        player.PlayVideo(276918964);
 
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
-        while (!loaded) {
+        while (!triggered) {
             yield return new WaitForSeconds(.25f);
             elapsed += .25f;
 
@@ -63,14 +63,14 @@ public class VimeoPlayerPlayTest : TestConfig
     [UnityTest]
     public IEnumerator Cant_Stream_Video_With_Invalid_Token() 
     {    
-        player.OnLoadError += VideoLoadError;
+        player.OnLoadError += EventTriggered;
         player.SignIn("xxxxxxxxxxxxxxx");
-        player.LoadVimeoVideoById(286281950);
+        player.PlayVideo(286281950);
         
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("401"));
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Something strange occurred"));
         
-        while (!error) {
+        while (!triggered) {
             yield return new WaitForSeconds(.25f);
             elapsed += .25f;
 
@@ -80,20 +80,35 @@ public class VimeoPlayerPlayTest : TestConfig
         }
     }
 
-    public void VideoStarted()
+    [UnityTest]
+    public IEnumerator OnVideoMetadataLoad_Event_Triggered()
     {
-        loaded = true;
+        player.OnVideoMetadataLoad += EventTriggered;
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(286281950);
+        
+        Assert.IsNull(player.vimeoVideo);
+
+        while (!triggered) {
+            yield return new WaitForSeconds(.25f);
+            elapsed += .25f;
+
+            if (elapsed >= timeout) {
+                Assert.Fail("Failed to receive metadata event");
+            }
+        }
+
+        Assert.IsNotNull(player.vimeoVideo);
     }
 
-    public void VideoLoadError()
+    public void EventTriggered()
     {
-        error = true;
+        triggered = true;
     }
 
     [TearDown]
     public void _After()
     {
-        loaded = false;
         player = null;
         UnityEngine.GameObject.DestroyImmediate(camObj);
         UnityEngine.GameObject.DestroyImmediate(screenObj);
