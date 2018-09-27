@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
@@ -99,7 +100,7 @@ namespace Vimeo.Player
                     LoadVideo(int.Parse(vimeoVideoId));
                 }
                 else {
-                    Debug.LogWarning("Invalid Vimeo URL");
+                    Debug.LogError("[Vimeo] Invalid Vimeo URL");
                 }
             }
         }
@@ -118,10 +119,24 @@ namespace Vimeo.Player
             api.OnRequestComplete += VideoMetadataLoad;
             api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
+        
+        public void LoadVideo()
+        {
+            if (!vimeoSignIn) {
+                Debug.LogError("[Vimeo] You are not signed in.");
+            }
+            else if (String.IsNullOrEmpty(vimeoVideoId)) {
+                Debug.LogError("[Vimeo] Can't load video. No video was specificed.");
+            }
+            else {
+                LoadVideo(vimeoVideoId);
+            }
+        }
+
 
         public bool IsPlaying()
         {
-            if (IsPlayerLoaded()) { 
+            if (IsPlayerSetup()) { 
                 return controller.videoPlayer.isPlaying;
             }
             else {
@@ -134,22 +149,9 @@ namespace Vimeo.Player
             return vimeoVideo != null && vimeoVideo.uri != null && vimeoVideo.uri != "";
         }
 
-        public bool IsPlayerLoaded()
+        public bool IsPlayerSetup()
         {
             return controller != null && controller.videoPlayer != null;
-        }
-
-        public void LoadVideo()
-        {
-            if (!vimeoSignIn) {
-                Debug.LogError("[Vimeo] You are not signed in.");
-            }
-            else if (vimeoVideoId != null) {
-                LoadVideo(vimeoVideoId);
-            }
-            else {
-                Debug.LogWarning("[Vimeo] Can't load video. No video was specificed.");
-            }
         }
 
         public void LoadAndPlayVideo()
@@ -323,13 +325,13 @@ namespace Vimeo.Player
                 }
     #endif  
 #endif
-                if (OnVideoMetadataLoad != null) {
-                    OnVideoMetadataLoad();
-                }
-
                 if (autoPlay || playVideoAfterLoad) {
                     playVideoAfterLoad = false;
                     Play();
+                }
+
+                if (OnVideoMetadataLoad != null) {
+                    OnVideoMetadataLoad();
                 }
             } 
             else {

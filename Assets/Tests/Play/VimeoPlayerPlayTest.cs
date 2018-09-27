@@ -46,17 +46,13 @@ public class VimeoPlayerPlayTest : TestConfig
         player.OnVideoStart += EventTriggered;
 
         player.SignIn(VALID_STREAMING_TOKEN);
-        player.PlayVideo(276918964);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
 
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
         while (!triggered) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                Assert.Fail("Failed to play video");
-            }
+            TimeoutCheck();
         }
     }
 
@@ -65,18 +61,14 @@ public class VimeoPlayerPlayTest : TestConfig
     {    
         player.OnLoadError += EventTriggered;
         player.SignIn("xxxxxxxxxxxxxxx");
-        player.PlayVideo(286281950);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
         
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("401"));
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Something strange occurred"));
         
         while (!triggered) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                Assert.Fail("Failed to receive error event");
-            }
+            TimeoutCheck();
         }
     }
 
@@ -85,25 +77,48 @@ public class VimeoPlayerPlayTest : TestConfig
     {
         player.OnVideoMetadataLoad += EventTriggered;
         player.SignIn(VALID_STREAMING_TOKEN);
-        player.PlayVideo(286281950);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
         
         Assert.IsNull(player.vimeoVideo);
 
         while (!triggered) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                Assert.Fail("Failed to receive metadata event");
-            }
+            TimeoutCheck();
         }
 
         Assert.IsNotNull(player.vimeoVideo);
+        Assert.IsNotEmpty(player.controller.videoPlayer.url);
     }
 
-    public void EventTriggered()
+    [UnityTest]
+    public IEnumerator LoadVideo_Doesnt_Play_Video()
+    {
+        player.OnVideoMetadataLoad += EventTriggered;
+        player.autoPlay = false;
+
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.LoadVideo(VALID_VIMEO_VIDEO_ID);
+
+        while (!triggered) {
+            yield return new WaitForSeconds(.25f);
+            TimeoutCheck();
+        }
+
+        Assert.IsNotNull(player.vimeoVideo);
+        Assert.IsEmpty(player.controller.videoPlayer.url);
+    }
+
+    private void EventTriggered()
     {
         triggered = true;
+    }
+
+    private void TimeoutCheck(string msg = "Test timed out")
+    {
+        elapsed += .25f;
+        if (elapsed >= timeout) {
+            Assert.Fail(msg);
+        }
     }
 
     [TearDown]
