@@ -79,6 +79,19 @@ public class AVProVideoPlayTest : TestConfig
         }
     }
 
+    [UnityTest]
+    public IEnumerator Logs_Warning_If_No_MediaPlayer_Set() 
+    {    
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, new Regex("MediaPlayer has not been assigned"));
+
+        player.OnVideoStart += EventTriggered;
+        player.mediaPlayer = null;
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
+
+        yield return null;
+    }
+
     private void EventTriggered()
     {
         triggered = true;

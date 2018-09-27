@@ -129,6 +129,9 @@ namespace Vimeo.Player
                     controller.Setup();
                 }
             }
+            else if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer == null) {
+                Debug.LogWarning("[Vimeo] AVPro MediaPlayer has not been assigned.");
+            }
         }
         
         public void LoadVideo()
