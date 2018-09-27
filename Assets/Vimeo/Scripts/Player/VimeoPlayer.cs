@@ -46,26 +46,7 @@ namespace Vimeo.Player
             api = gameObject.AddComponent<VimeoApi>();
             api.token = GetVimeoToken();
 
-            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
-                // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
-                controller = gameObject.AddComponent<VideoController>();
-                controller.playerSettings = this;
-                controller.videoScreenObject = videoScreen;
-
-                controller.OnVideoStart += VideoStarted;
-                controller.OnPlay       += VideoPlay;
-                controller.OnPause      += VideoPaused;
-                controller.OnFrameReady += VideoFrameReady;
-            }
-
-            if (audioSource && audioSource is AudioSource) {
-                if (audioSource != null) {
-                    controller.audioSource = audioSource;
-                }
-                else {
-                    videoScreen.gameObject.AddComponent<AudioSource>();
-                }
-            }
+            SetupVideoController();
 
             if (api != null){
                 api.OnError += ApiError;
@@ -109,8 +90,8 @@ namespace Vimeo.Player
         {
             loadingVideoMetadata = true;
             videoControllerReady = false;
-            controller.videoScreenObject = videoScreen;
-            controller.Setup();
+
+            SetupVideoController();
 
             if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
                 Debug.LogWarning("[Vimeo] No video screen was specified.");
@@ -118,6 +99,36 @@ namespace Vimeo.Player
 
             api.OnRequestComplete += VideoMetadataLoad;
             api.GetVideoFileUrlByVimeoId(vimeo_id);
+        }
+
+        private void SetupVideoController()
+        {
+            // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
+            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                if (controller == null) {
+                    controller = gameObject.AddComponent<VideoController>();
+                    controller.playerSettings = this;
+                    controller.videoScreenObject = videoScreen;
+
+                    controller.OnVideoStart += VideoStarted;
+                    controller.OnPlay       += VideoPlay;
+                    controller.OnPause      += VideoPaused;
+                    controller.OnFrameReady += VideoFrameReady;
+                            
+                    if (audioSource && audioSource is AudioSource) {
+                        if (audioSource != null) {
+                            controller.audioSource = audioSource;
+                        }
+                        else {
+                            videoScreen.gameObject.AddComponent<AudioSource>();
+                        }
+                    }
+                }
+                else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                    controller.videoScreenObject = videoScreen;
+                    controller.Setup();
+                }
+            }
         }
         
         public void LoadVideo()
@@ -181,11 +192,44 @@ namespace Vimeo.Player
                 LoadAndPlayVideo();
             }
             else if (!videoControllerReady) {
-                videoControllerReady = true;
-                controller.PlayVideo(vimeoVideo, selectedResolution);
+                VideoControllerPlayVideo();
             }
             else {
                 controller.Play();
+            }
+        }
+
+        private void VideoControllerPlayVideo()
+        {
+            videoControllerReady = true;
+
+            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                controller.PlayVideo(vimeoVideo, selectedResolution);
+            }
+            else {
+#if VIMEO_AVPRO_VIDEO_SUPPORT                
+                string file_url = null;
+
+                if (this.selectedResolution == StreamingResolution.Adaptive) {
+                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
+                }
+                else {
+                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                }
+                
+                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
+                }
+#if VIMEO_DEPTHKIT_SUPPORT
+                // TODO
+                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
+                    // depthKitClip._moviePath = file_url;
+                    // depthKitClip._metaDataText = vimeoVideo.description;
+                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    // depthKitClip.RefreshRenderer();
+                }
+    #endif  
+#endif
             }
         }
 
@@ -302,32 +346,9 @@ namespace Vimeo.Player
                 
                 vimeoVideo = new VimeoVideo(json);
 
-#if VIMEO_AVPRO_VIDEO_SUPPORT                
-                string file_url = null;
-
-                if (this.selectedResolution == StreamingResolution.Adaptive) {
-                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
-                }
-                else {
-                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
-                }
-                
-                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
-                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                }
-    #if VIMEO_DEPTHKIT_SUPPORT
-                // TODO
-                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
-                    // depthKitClip._moviePath = file_url;
-                    // depthKitClip._metaDataText = vimeoVideo.description;
-                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    // depthKitClip.RefreshRenderer();
-                }
-    #endif  
-#endif
                 if (autoPlay || playVideoAfterLoad) {
-                    playVideoAfterLoad = false;
                     Play();
+                    playVideoAfterLoad = false;
                 }
 
                 if (OnVideoMetadataLoad != null) {
