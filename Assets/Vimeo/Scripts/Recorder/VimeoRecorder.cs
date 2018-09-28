@@ -69,7 +69,6 @@ namespace Vimeo.Recorder
         //Used if you want to publish the latest recorded video
         public void PublishVideo()
         {
-            string filePath = encoder.GetVideoFilePath();
             isUploading = true;
             uploadProgress = 0;
 
@@ -81,7 +80,7 @@ namespace Vimeo.Recorder
                 publisher.OnNetworkError += NetworkError;
             }
             
-            publisher.PublishVideo(filePath);
+            publisher.PublishVideo(encoder.GetVideoFilePath());
         }
 
         private void UploadProgress(string status, float progress)
