@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR && UNITY_2017_2_OR_NEWER
+﻿#if UNITY_EDITOR && UNITY_2017_3_OR_NEWER
 
 using UnityEditor.Media;
 using UnityEngine;

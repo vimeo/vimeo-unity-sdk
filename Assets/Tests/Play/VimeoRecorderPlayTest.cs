@@ -8,7 +8,7 @@ using Vimeo.Recorder;
 
 public class VimeoRecorderPlayTest : TestConfig
 {
-#if UNITY_2017_2_OR_NEWER 
+#if UNITY_2017_3_OR_NEWER 
     GameObject cube;
     GameObject light;
     GameObject camObj;
