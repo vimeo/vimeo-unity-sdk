@@ -107,17 +107,11 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.SignIn(VALID_RECORDING_TOKEN);
         recorder.autoUpload = false;
         recorder.BeginRecording();
-        recorder.OnUploadComplete += UploadComplete;
-    
-        while (!uploaded) {
-            yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
 
-            if (elapsed >= timeout) {
-                recorder.CancelRecording();
-                Assert.Pass("Recorded a video, but did not publish it");
-            }
-        }
+        recorder.OnUploadComplete += UploadComplete;
+        yield return new WaitUntil(()=> !recorder.isRecording);
+        yield return new WaitForSeconds(.25f);
+        Assert.IsFalse(recorder.isUploading, "Recorded a video but did not upload it to Vimeo");
     }
 
     private void UploadComplete()
