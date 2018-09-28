@@ -102,6 +102,7 @@ namespace Vimeo.Recorder
         public int frameRate = 30;
         public bool recordOnStart = false;
         public bool openInBrowser = true;
+        public bool autoUpload = true;
 
         public string videoName;
         public string videoPermalink;

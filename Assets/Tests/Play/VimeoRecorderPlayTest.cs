@@ -99,6 +99,18 @@ public class VimeoRecorderPlayTest : TestConfig
         }
     }
 
+    [UnityTest]
+    public IEnumerator Can_Record_Video_Without_Uploading()
+    {
+        recorder.videoName = "Screen Test " + recorder.videoName;
+        recorder.defaultVideoInput = VideoInputType.Screen;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.autoUpload = false;
+        recorder.BeginRecording();
+
+        yield return new WaitForSeconds(.25f);
+    }
+
     private void UploadComplete()
     {
         uploaded = true;
