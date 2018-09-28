@@ -90,7 +90,7 @@ public class VimeoRecorderTest : TestConfig
         recorder.EndRecording();
         Assert.IsFalse(recorder.isUploading, "Recording state set to true while recording");
         Assert.IsTrue(recorder.encoder.GetVideoFilePath() != "", "A video file path exists");
-        recorder.autoUpload = true;
+
     }
 
     [Test]
@@ -103,7 +103,6 @@ public class VimeoRecorderTest : TestConfig
         Assert.IsTrue(recorder.isRecording, "Recording state set to true while recording");
         recorder.EndRecording();
         Assert.IsFalse(recorder.isRecording, "Recording state set to false after recording");
-        recorder.autoUpload = true;
     }
 
     [TearDown]

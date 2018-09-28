@@ -128,13 +128,13 @@ namespace Vimeo.Recorder
 
             if (videoInput != null) {
                 videoInput.EndRecording();
-                 DestroyImmediate(videoInput);
+                 Release(videoInput);
             }
 
 #if UNITY_2018_1_OR_NEWER            
             if (audioInput != null) {
                 if (recorder.recordAudio) audioInput.EndRecording();
-                DestroyImmediate(audioInput);
+                Release(audioInput);
             }
 #endif
             
@@ -143,7 +143,6 @@ namespace Vimeo.Recorder
             currentFrame = 0;
             isRecording = false;
         }
-
         public void DeleteVideoFile()
         {
             File.Delete(encodedFilePath);
@@ -195,12 +194,12 @@ namespace Vimeo.Recorder
         private void InitInputs()
         {
             if (videoInput != null) {
-                Destroy(videoInput);
+                Release(videoInput);
             }
 
 #if UNITY_2018_1_OR_NEWER
             if (audioInput != null) {
-                Destroy(audioInput);
+                Release(audioInput);
             }
 
             audioInput = gameObject.AddComponent<AudioInput>();
@@ -228,7 +227,16 @@ namespace Vimeo.Recorder
 
         void OnDestroy()
         {
-            Destroy(videoInput);
+            Release(videoInput);
+        }
+
+        public void Release(MonoBehaviour obj)
+        {
+#if UNITY_EDITOR
+            DestroyImmediate(obj);
+#else
+            Destroy(obj);
+#endif
         }
     }
 }
