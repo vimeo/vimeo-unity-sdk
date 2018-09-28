@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using SimpleJSON;
@@ -12,7 +13,8 @@ namespace Vimeo.Player
     public class VimeoPlayer : PlayerSettings 
     {
         public delegate void VimeoEvent();
-        public event VimeoEvent OnLoad;
+        public event VimeoEvent OnStart;
+        public event VimeoEvent OnVideoMetadataLoad;
         public event VimeoEvent OnVideoStart;
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
@@ -31,50 +33,31 @@ namespace Vimeo.Player
 
         private VimeoApi api;
         public VideoController controller;
-        private VimeoVideo vimeoVideo;
+        public VimeoVideo vimeoVideo;
+
+        public bool loadingVideoMetadata = false;
+        private bool playVideoAfterLoad = false;
+        private bool videoControllerReady = false;
 
         public void Start()
         {
-            if (vimeoSignIn && (vimeoVideoId == null || vimeoVideoId == "")) {
-                Debug.LogWarning("No Vimeo video URL was specified");
-            }
-
             Application.runInBackground = true; 
 
-            api = gameObject.AddComponent<VimeoApi>();
-            api.token = GetVimeoToken();
-
-            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
-                // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
-                controller = gameObject.AddComponent<VideoController>();
-                controller.playerSettings = this;
-
-                controller.OnVideoStart += VideoStarted;
-                controller.OnPlay       += VideoPlay;
-                controller.OnPause      += VideoPaused;
-                controller.OnFrameReady += VideoFrameReady;
-            }
-
-            if (audioSource && audioSource is AudioSource) {
-                if (audioSource != null) {
-                    controller.audioSource = audioSource;
-                }
-                else {
-                    videoScreen.gameObject.AddComponent<AudioSource>();
-                }
-            }
-
-            if (api != null){
-                api.OnError += ApiError;
+            if (api == null) {
+                api = gameObject.AddComponent<VimeoApi>();
+                api.token = GetVimeoToken();
+                api.OnError  += ApiError;
                 api.OnNetworkError += NetworkError;
             }
 
-            if (autoPlay == true && vimeoVideoId != null) {
-                Play();
+            SetupVideoController();
+
+            if (autoPlay == true) {
+                LoadAndPlayVideo();
             }
 
-            if (OnLoad != null) {
-                OnLoad();
+            if (OnStart != null) {
+                OnStart();
             }
         }
 
@@ -87,41 +70,88 @@ namespace Vimeo.Player
             }
         }
 
-        public void LoadVimeoVideoByUrl(string vimeo_url)
+        public void LoadVideo(string vimeo_url)
         {
             if (vimeo_url != null && vimeo_url != "") {
                 vimeoVideo = null;
                 string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
                 if (matches[3] != null) {
                     vimeoVideoId = matches[3];
-                    LoadVimeoVideoById(int.Parse(vimeoVideoId));
+                    LoadVideo(int.Parse(vimeoVideoId));
                 }
                 else {
-                    Debug.LogWarning("Invalid Vimeo URL");
+                    Debug.LogError("[Vimeo] Invalid Vimeo URL");
                 }
             }
         }
 
-        public void LoadVimeoVideoById(int vimeo_id)
+        public void LoadVideo(int vimeo_id)
         {
-            if (!vimeoSignIn) {
-                Debug.LogWarning("You have not signed into the Vimeo Player.");
-            }
+            loadingVideoMetadata = true;
+            videoControllerReady = false;
 
-            controller.videoScreenObject = videoScreen;
-            controller.Setup();
+            SetupVideoController();
 
             if (videoScreen == null && videoPlayerType == VideoPlayerType.UnityPlayer) {
-                Debug.LogWarning("No video screen was specified.");
+                Debug.LogWarning("[Vimeo] No video screen was specified.");
             }
 
-            api.OnRequestComplete += OnLoadVimeoVideoComplete;
+            api.OnRequestComplete += VideoMetadataLoad;
             api.GetVideoFileUrlByVimeoId(vimeo_id);
         }
 
+        private void SetupVideoController()
+        {
+            // TODO abstract this out into a VideoPlayerManager (like EncoderManager.cs)
+            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                if (controller == null) {
+                    controller = gameObject.AddComponent<VideoController>();
+                    controller.playerSettings = this;
+                    controller.videoScreenObject = videoScreen;
+
+                    controller.OnVideoStart += VideoStarted;
+                    controller.OnPlay       += VideoPlay;
+                    controller.OnPause      += VideoPaused;
+                    controller.OnFrameReady += VideoFrameReady;
+                            
+                    if (audioSource && audioSource is AudioSource) {
+                        if (audioSource != null) {
+                            controller.audioSource = audioSource;
+                        }
+                        else {
+                            videoScreen.gameObject.AddComponent<AudioSource>();
+                        }
+                    }
+                }
+                else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                    controller.videoScreenObject = videoScreen;
+                    controller.Setup();
+                }
+            }
+#if VIMEO_AVPRO_VIDEO_SUPPORT  
+            else if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer == null) {
+                Debug.LogWarning("[Vimeo] AVPro MediaPlayer has not been assigned.");
+            }
+#endif
+        }
+        
+        public void LoadVideo()
+        {
+            if (!vimeoSignIn) {
+                Debug.LogError("[Vimeo] You are not signed in.");
+            }
+            else if (String.IsNullOrEmpty(vimeoVideoId)) {
+                Debug.LogError("[Vimeo] Can't load video. No video was specificed.");
+            }
+            else {
+                LoadVideo(vimeoVideoId);
+            }
+        }
+
+
         public bool IsPlaying()
         {
-            if (IsPlayerLoaded()) { 
+            if (IsPlayerSetup()) { 
                 return controller.videoPlayer.isPlaying;
             }
             else {
@@ -134,32 +164,76 @@ namespace Vimeo.Player
             return vimeoVideo != null && vimeoVideo.uri != null && vimeoVideo.uri != "";
         }
 
-        public bool IsPlayerLoaded()
+        public bool IsPlayerSetup()
         {
             return controller != null && controller.videoPlayer != null;
         }
 
-        public void LoadVideo()
+        public void LoadAndPlayVideo()
         {
-            if (IsVideoMetadataLoaded()) {
-                controller.PlayVideo(vimeoVideo, selectedResolution, autoPlay);
+            playVideoAfterLoad = true;
+
+            if (!IsVideoMetadataLoaded()) {
+                LoadVideo();
             }
-            else if (vimeoVideoId != null) {
-                LoadVimeoVideoByUrl(vimeoVideoId);
-            }
-            else {
-                Debug.LogWarning("No Vimeo video was specificed");
-            }
+        }
+
+        public void PlayVideo(string _vimeoUrl) 
+        {
+            vimeoVideoId = _vimeoUrl;
+            LoadAndPlayVideo();
+        }
+
+        public void PlayVideo(int _vimeoId)
+        {
+            vimeoVideoId = _vimeoId.ToString();
+            LoadAndPlayVideo();
         }
 
         public void Play()
         {
             if (!IsVideoMetadataLoaded()) {
-                autoPlay = true;
-                LoadVideo();
+                LoadAndPlayVideo();
+            }
+            else if (!videoControllerReady) {
+                VideoControllerPlayVideo();
             }
             else {
                 controller.Play();
+            }
+        }
+
+        private void VideoControllerPlayVideo()
+        {
+            videoControllerReady = true;
+
+            if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                controller.PlayVideo(vimeoVideo, selectedResolution);
+            }
+            else {
+#if VIMEO_AVPRO_VIDEO_SUPPORT                
+                string file_url = null;
+
+                if (this.selectedResolution == StreamingResolution.Adaptive) {
+                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
+                }
+                else {
+                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                }
+                
+                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
+                }
+#if VIMEO_DEPTHKIT_SUPPORT
+                // TODO
+                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
+                    // depthKitClip._moviePath = file_url;
+                    // depthKitClip._metaDataText = vimeoVideo.description;
+                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    // depthKitClip.RefreshRenderer();
+                }
+    #endif  
+#endif
             }
         }
 
@@ -258,10 +332,12 @@ namespace Vimeo.Player
             }
         }
 
-        private void OnLoadVimeoVideoComplete(string response)
+        private void VideoMetadataLoad(string response)
         {
+            loadingVideoMetadata = false;
+            
             JSONNode json = JSON.Parse(response);
-            api.OnRequestComplete -= OnLoadVimeoVideoComplete;
+            api.OnRequestComplete -= VideoMetadataLoad;
             
             if (json["error"] == null) {
                 if (json["user"]["account"].Value == "basic") {
@@ -274,33 +350,14 @@ namespace Vimeo.Player
                 
                 vimeoVideo = new VimeoVideo(json);
 
-#if VIMEO_AVPRO_VIDEO_SUPPORT                
-                string file_url = null;
+                if (autoPlay || playVideoAfterLoad) {
+                    Play();
+                    playVideoAfterLoad = false;
+                }
 
-                if (this.selectedResolution == StreamingResolution.Adaptive) {
-                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
+                if (OnVideoMetadataLoad != null) {
+                    OnVideoMetadataLoad();
                 }
-                else {
-                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
-                }
-                
-                if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
-                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                }
-#if VIMEO_DEPTHKIT_SUPPORT
-                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
-                    // depthKitClip._moviePath = file_url;
-                    // depthKitClip._metaDataText = vimeoVideo.description;
-                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    // depthKitClip.RefreshRenderer();
-                }
-#endif  
-                else {
-                    LoadVideo();
-                }   
-#else 
-                LoadVideo();
-#endif
             } 
             else {
                 Debug.LogError("Video could not be found");

@@ -104,13 +104,10 @@ namespace Vimeo.Player
             }
         }
 
-        public void PlayVideo(VimeoVideo _vimeoVideo, StreamingResolution resolution, bool autoPlay = true) 
+        public void PlayVideo(VimeoVideo _vimeoVideo, StreamingResolution resolution) 
         {
             vimeoVideo = _vimeoVideo;
-
-            if (autoPlay) {
-                PlayVideoByUrl(vimeoVideo.GetVideoFileUrlByResolution(resolution), vimeoVideo.is3D, vimeoVideo.stereoFormat);
-            }
+            PlayVideoByUrl(vimeoVideo.GetVideoFileUrlByResolution(resolution), vimeoVideo.is3D, vimeoVideo.stereoFormat);
         }
 
         public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat) 

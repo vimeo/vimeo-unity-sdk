@@ -370,7 +370,7 @@ namespace Vimeo
         }
 
         public static AsyncOperation SendRequest(UnityWebRequest req) {
-#if UNITY_2017_3_OR_NEWER
+#if UNITY_2017_2_OR_NEWER
             return req.SendWebRequest();
 #else
             return req.Send();
