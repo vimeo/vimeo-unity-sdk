@@ -54,7 +54,7 @@ namespace Vimeo.Recorder
             if (autoUpload) {
                 PublishVideo();
             } else {
-                Debug.Log("[Vimeo] You set autoUpload to false, you can easily use the vimeoPlayer.PublishVideo() to easily trigger the upload process");
+                Debug.Log("[VimeoRecorder] You set autoUpload to false, you can easily use the vimeoPlayer.PublishVideo() to easily trigger the upload process");
             }
         }
             
