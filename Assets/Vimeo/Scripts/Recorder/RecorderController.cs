@@ -232,11 +232,11 @@ namespace Vimeo.Recorder
 
         public void Release(MonoBehaviour obj)
         {
-#if UNITY_EDITOR
-            DestroyImmediate(obj);
-#else
-            Destroy(obj);
-#endif
+            if (Application.isEditor) {
+                DestroyImmediate(obj);
+            } else {
+                Destroy(obj);
+            }
         }
     }
 }
