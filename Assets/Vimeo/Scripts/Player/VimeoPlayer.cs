@@ -43,15 +43,14 @@ namespace Vimeo.Player
         {
             Application.runInBackground = true; 
 
-            api = gameObject.AddComponent<VimeoApi>();
-            api.token = GetVimeoToken();
-
-            SetupVideoController();
-
-            if (api != null){
-                api.OnError += ApiError;
+            if (api == null) {
+                api = gameObject.AddComponent<VimeoApi>();
+                api.token = GetVimeoToken();
+                api.OnError  += ApiError;
                 api.OnNetworkError += NetworkError;
             }
+
+            SetupVideoController();
 
             if (autoPlay == true) {
                 LoadAndPlayVideo();
@@ -129,9 +128,11 @@ namespace Vimeo.Player
                     controller.Setup();
                 }
             }
+#if VIMEO_AVPRO_VIDEO_SUPPORT  
             else if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer == null) {
                 Debug.LogWarning("[Vimeo] AVPro MediaPlayer has not been assigned.");
             }
+#endif
         }
         
         public void LoadVideo()

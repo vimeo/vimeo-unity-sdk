@@ -34,6 +34,8 @@ namespace Vimeo.Recorder
 #if MEDIA_ENCODER_SUPPORT                
                 _vimeoEncoder = gameObject.AddComponent<RecorderController>();
                 _vimeoEncoder.Init(_recorder);
+#else
+                Debug.LogError("[Vimeo] Recording is only avaialabe in 2017.2 or higher.");
 #endif
             }
             else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {

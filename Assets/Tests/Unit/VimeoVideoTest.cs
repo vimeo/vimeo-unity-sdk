@@ -26,14 +26,14 @@ public class VimeoVideoTest : TestConfig
     public void GetVideoFileByResolution_Uses_Lowest_Resolution_If_Not_Found()
     {
         UnityEngine.TestTools.LogAssert.Expect(LogType.Log, new Regex("Defaulting to 400p"));
-        string url = video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x360p);
+        video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x360p);
     }
 
     [Test]
     public void GetVideoFileByResolution_Uses_Selected_Resolution()
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-        string url = video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x1080p_FHD);
+        video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x1080p_FHD);
     }
 
     [TearDown]

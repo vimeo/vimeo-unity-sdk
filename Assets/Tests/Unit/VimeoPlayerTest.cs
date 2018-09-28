@@ -45,12 +45,13 @@ public class VimeoPlayerTest : TestConfig {
     public void Play_Automatically_Loads_Video()
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        Assert.AreEqual(player.IsPlayerSetup(), false);
+
         player.autoPlay = false;
         player.Start();
         player.SignIn("xxx");
         
         Assert.AreEqual(player.autoPlay, false);
-        Assert.AreEqual(player.IsPlayerSetup(), false);
         Assert.AreEqual(player.IsVideoMetadataLoaded(), false);
         Assert.AreEqual(player.loadingVideoMetadata, false);
 
