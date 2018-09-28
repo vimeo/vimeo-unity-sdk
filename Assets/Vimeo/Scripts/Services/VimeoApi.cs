@@ -6,6 +6,7 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
+using TusClient;
 
 namespace Vimeo
 {
@@ -248,6 +249,22 @@ namespace Vimeo
                     StartCoroutine(VerifyUpload(ticket));
                 }
             }
+        }
+
+        public void UploadVideoTus(VimeoTicket ticket)
+        {
+            
+            FileInfo video_file = new FileInfo(video_file_path);
+
+            //Instance a new Tus client
+            TusClient.TusClient tc = new TusClient.TusClient();
+
+            //Prep the Tus file request
+            string fileURL = tc.Create(ticket.upload_link_secure, video_file); 
+
+            // Start uploading
+            tc.Upload(fileURL, video_file);
+
         }
 
         IEnumerator VerifyUpload(VimeoTicket ticket)
