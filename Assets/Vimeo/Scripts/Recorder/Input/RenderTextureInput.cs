@@ -1,4 +1,4 @@
-#if UNITY_2017_2_OR_NEWER && UNITY_EDITOR
+#if UNITY_EDITOR && UNITY_2017_3_OR_NEWER
 
 using UnityEngine;
 using UnityEngine.Rendering;

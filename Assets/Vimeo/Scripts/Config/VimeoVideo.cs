@@ -149,7 +149,13 @@ namespace Vimeo
             }
 
             if (!resolution_found) {
-                Debug.Log("[VimeoVideo] This video does not have a " + resolution + " resolution. Defaulting to " + _preferred_qualities[0]["height"] + "p.");
+                if (_preferred_qualities.Count == 0) {
+                    Debug.Log("[Vimeo] This video does not have a " + resolution + " resolution. Defaulting to " + progressiveFiles[progressiveFiles.Count - 1]["height"] + "p.");
+                    return progressiveFiles[progressiveFiles.Count - 1];
+                }
+                else {
+                    Debug.Log("[Vimeo] This video does not have a " + resolution + " resolution. Defaulting to " + _preferred_qualities[0]["height"] + "p.");
+                }
             }
 
             return _preferred_qualities[0];

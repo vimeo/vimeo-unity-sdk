@@ -1,4 +1,4 @@
-#if UNITY_2017_2_OR_NEWER && UNITY_EDITOR
+#if UNITY_2017_3_OR_NEWER && UNITY_EDITOR
     #define MEDIA_ENCODER_SUPPORT
 #endif
 
@@ -34,6 +34,8 @@ namespace Vimeo.Recorder
 #if MEDIA_ENCODER_SUPPORT                
                 _vimeoEncoder = gameObject.AddComponent<RecorderController>();
                 _vimeoEncoder.Init(_recorder);
+#else
+                Debug.LogError("[Vimeo] Recording is only avaialabe in 2017.2 or higher.");
 #endif
             }
             else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {

@@ -19,7 +19,7 @@ namespace Vimeo.Recorder
         public bool isUploading = false;
         public float uploadProgress = 0;
 
-        void Start() 
+        public void Start() 
         {
             if (encoder == null) {
                 encoder = gameObject.AddComponent<EncoderManager>();

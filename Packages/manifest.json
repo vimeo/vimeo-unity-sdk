@@ -8,14 +8,19 @@
     "com.unity.textmeshpro": "exclude",
     "com.unity.modules.ai": "exclude",
     "com.unity.modules.audio": "1.0.0",
+    "com.unity.modules.imageconversion": "1.0.0",
     "com.unity.modules.imgui": "1.0.0",
     "com.unity.modules.jsonserialize": "1.0.0",
+    "com.unity.modules.physics": "1.0.0",
     "com.unity.modules.screencapture": "1.0.0",
     "com.unity.modules.terrain": "exclude",
     "com.unity.modules.terrainphysics": "exclude",
     "com.unity.modules.ui": "1.0.0",
     "com.unity.modules.unityanalytics": "exclude",
     "com.unity.modules.unitywebrequest": "1.0.0",
-    "com.unity.modules.video": "1.0.0"
+    "com.unity.modules.unitywebrequestwww": "1.0.0",
+    "com.unity.modules.video": "1.0.0",
+    "com.unity.modules.vr": "1.0.0",
+    "com.unity.modules.xr": "1.0.0"
   }
 }

@@ -1,40 +1,62 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo.Player;
 
-public class VimeoPlayerPlayTest : TestConfig
+public class AVProVideoPlayTest : TestConfig
 {
+#if VIMEO_AVPRO_VIDEO_SUPPORT
     GameObject camObj;
+    GameObject light;
     GameObject playerObj;
     GameObject screenObj;
     VimeoPlayer player;
 
     bool triggered;
 
-    float timeout = 5;
+    float timeout = 10;
     float elapsed = 0;
+
+    RenderHeads.Media.AVProVideo.MediaPlayer mediaPlayer;
     
     [SetUp]
     public void _Before()
     {
         // Camera setup
-        camObj = new GameObject();
+        camObj = new GameObject("Camera");
         camObj.AddComponent<Camera>();
-        camObj.transform.Translate(0, 0, 3);
+        camObj.transform.Translate(0, 0, -3);
+
+        // Light setup
+        light = new GameObject("Light");
+        Light l = light.AddComponent<Light>();
+        l.type = LightType.Directional;
         
         // Player Setup
-        playerObj = new GameObject();
+        playerObj = new GameObject("Video Player");
         player = playerObj.AddComponent<VimeoPlayer>();
         player.selectedResolution = StreamingResolution.x360p;
         player.autoPlay = false;
-        
+
+        // AVPro setup
+        mediaPlayer = playerObj.AddComponent<RenderHeads.Media.AVProVideo.MediaPlayer>();
+        mediaPlayer.m_AutoStart = false;
+        mediaPlayer.m_AutoOpen = false;
+        player.videoPlayerType = VideoPlayerType.AVProVideo;
+        player.mediaPlayer = mediaPlayer;
+
         // Screen setup
         screenObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player.videoScreen = screenObj;
         camObj.transform.LookAt(playerObj.transform);
+
+        // Attach avpro to screen
+        RenderHeads.Media.AVProVideo.ApplyToMesh applyToMesh = playerObj.AddComponent<RenderHeads.Media.AVProVideo.ApplyToMesh>();
+        applyToMesh.Player = mediaPlayer;
+        applyToMesh.MeshRenderer = screenObj.GetComponent<MeshRenderer>();
 
         triggered = false;
         elapsed = 0;
@@ -48,64 +70,26 @@ public class VimeoPlayerPlayTest : TestConfig
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
 
-        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-
         while (!triggered) {
+            if (!String.IsNullOrEmpty(mediaPlayer.m_VideoPath)) {
+                triggered = true;
+            }
             yield return new WaitForSeconds(.25f);
             TimeoutCheck();
         }
     }
 
     [UnityTest]
-    public IEnumerator Cant_Stream_Video_With_Invalid_Token() 
+    public IEnumerator Logs_Warning_If_No_MediaPlayer_Set() 
     {    
-        player.OnLoadError += EventTriggered;
-        player.SignIn("xxxxxxxxxxxxxxx");
-        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
-        
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("401"));
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Something strange occurred"));
-        
-        while (!triggered) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
-    }
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, new Regex("MediaPlayer has not been assigned"));
 
-    [UnityTest]
-    public IEnumerator OnVideoMetadataLoad_Event_Triggered()
-    {
-        player.OnVideoMetadataLoad += EventTriggered;
+        player.OnVideoStart += EventTriggered;
+        player.mediaPlayer = null;
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
-        
-        Assert.IsNull(player.vimeoVideo);
 
-        while (!triggered) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
-
-        Assert.IsNotNull(player.vimeoVideo);
-        Assert.IsNotEmpty(player.controller.videoPlayer.url);
-    }
-
-    [UnityTest]
-    public IEnumerator LoadVideo_Doesnt_Play_Video()
-    {
-        player.OnVideoMetadataLoad += EventTriggered;
-        player.autoPlay = false;
-
-        player.SignIn(VALID_STREAMING_TOKEN);
-        player.LoadVideo(VALID_VIMEO_VIDEO_ID);
-
-        while (!triggered) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
-
-        Assert.IsNotNull(player.vimeoVideo);
-        Assert.IsEmpty(player.controller.videoPlayer.url);
+        yield return null;
     }
 
     private void EventTriggered()
@@ -126,7 +110,9 @@ public class VimeoPlayerPlayTest : TestConfig
     {
         player = null;
         UnityEngine.GameObject.DestroyImmediate(camObj);
+        UnityEngine.GameObject.DestroyImmediate(light);
         UnityEngine.GameObject.DestroyImmediate(screenObj);
         UnityEngine.GameObject.DestroyImmediate(playerObj);
     }
+#endif 
 }

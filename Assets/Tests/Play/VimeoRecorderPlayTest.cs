@@ -3,11 +3,12 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 using System.Text.RegularExpressions;
-using Vimeo.Recorder;
 using Vimeo;
+using Vimeo.Recorder;
 
 public class VimeoRecorderPlayTest : TestConfig
 {
+#if UNITY_2017_3_OR_NEWER 
     GameObject cube;
     GameObject light;
     GameObject camObj;
@@ -20,7 +21,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
     float timeout = 30;
     float elapsed = 0;
-    
+
     [SetUp]
     public void _Before()
     {
@@ -29,19 +30,19 @@ public class VimeoRecorderPlayTest : TestConfig
         cube.AddComponent<ObjectRotation>();
 
         // Camera setup
-        camObj = new GameObject();
+        camObj = new GameObject("Camera");
         camObj.AddComponent<Camera>();
         camObj.tag = "MainCamera";
         camObj.transform.Translate(0, 0, -3);
         camObj.transform.LookAt(cube.transform);
 
         // Light setup
-        light = new GameObject();
+        light = new GameObject("Light");
         Light l = light.AddComponent<Light>();
         l.type = LightType.Directional;
 
         // Recorder setup
-        recorderObj = new GameObject();
+        recorderObj = new GameObject("Recorder");
         recorder = recorderObj.AddComponent<VimeoRecorder>();
         recorder.encoderType       = EncoderType.MediaEncoder;
         recorder.defaultResolution = Vimeo.Recorder.Resolution.x540p;
@@ -52,7 +53,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.openInBrowser     = false;
 
         System.DateTime dt = System.DateTime.Now;
-        recorder.videoName         = "(Unity " + Application.unityVersion + " v" + VimeoPlugin.Version + ")";
+        recorder.videoName = "(Unity " + Application.unityVersion + ")";
 
         uploaded = false;
     }
@@ -128,4 +129,5 @@ public class VimeoRecorderPlayTest : TestConfig
         UnityEngine.GameObject.DestroyImmediate(cube);
         UnityEngine.GameObject.DestroyImmediate(recorderObj);
     }
+#endif     
 }
