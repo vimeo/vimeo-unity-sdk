@@ -70,12 +70,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
         while (!uploaded) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                recorder.CancelRecording();
-                Assert.Fail("Failed to upload video");
-            }
+            TimeoutCheck();
         }
     }
 
@@ -91,28 +86,17 @@ public class VimeoRecorderPlayTest : TestConfig
 
         while (!uploaded) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                recorder.CancelRecording();
-                Assert.Fail("Failed to upload video");
-            }
+            TimeoutCheck();
         }
-    }
+    }    
 
-    [UnityTest]
-    public IEnumerator Can_Record_Video_Without_Uploading()
+    private void TimeoutCheck(string msg = "Test timed out")
     {
-        recorder.videoName = "Screen Test " + recorder.videoName;
-        recorder.defaultVideoInput = VideoInputType.Screen;
-        recorder.SignIn(VALID_RECORDING_TOKEN);
-        recorder.autoUpload = false;
-        recorder.BeginRecording();
-
-        recorder.OnUploadComplete += UploadComplete;
-        yield return new WaitUntil(()=> !recorder.isRecording);
-        yield return new WaitForSeconds(.25f);
-        Assert.IsFalse(recorder.isUploading, "Recorded a video but did not upload it to Vimeo");
+        elapsed += .25f;
+        if (elapsed >= timeout) {
+            recorder.CancelRecording();
+            Assert.Fail(msg);
+        }
     }
 
     private void UploadComplete()

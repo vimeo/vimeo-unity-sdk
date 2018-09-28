@@ -128,13 +128,13 @@ namespace Vimeo.Recorder
 
             if (videoInput != null) {
                 videoInput.EndRecording();
-                 Destroy(videoInput);
+                 DestroyImmediate(videoInput);
             }
 
 #if UNITY_2018_1_OR_NEWER            
             if (audioInput != null) {
                 if (recorder.recordAudio) audioInput.EndRecording();
-                Destroy(audioInput);
+                DestroyImmediate(audioInput);
             }
 #endif
             
