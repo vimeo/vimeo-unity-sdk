@@ -108,9 +108,15 @@ namespace Vimeo.Recorder
             if (EditorApplication.isPlaying && recorder.encoderType == EncoderType.MediaEncoder) {
                 if (recorder.isRecording) {
                     GUI.backgroundColor = Color.green;
-
-                    if (GUILayout.Button("Finish & Upload", GUILayout.Height(30))) {
-                        recorder.EndRecording();
+                    
+                    if (recorder.autoUpload) {
+                        if (GUILayout.Button("Finish & Upload", GUILayout.Height(30))) {
+                            recorder.EndRecording();
+                        }
+                    } else {
+                        if (GUILayout.Button("Finish", GUILayout.Height(30))) {
+                            recorder.EndRecording();
+                        }
                     }
 
                     GUI.backgroundColor = Color.red;

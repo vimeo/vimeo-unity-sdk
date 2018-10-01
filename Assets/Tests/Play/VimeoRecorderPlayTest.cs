@@ -70,12 +70,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
         while (!uploaded) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
-
-            if (elapsed >= timeout) {
-                recorder.CancelRecording();
-                Assert.Fail("Failed to upload video");
-            }
+            TimeoutCheck();
         }
     }
 
@@ -91,12 +86,16 @@ public class VimeoRecorderPlayTest : TestConfig
 
         while (!uploaded) {
             yield return new WaitForSeconds(.25f);
-            elapsed += .25f;
+            TimeoutCheck();
+        }
+    }    
 
-            if (elapsed >= timeout) {
-                recorder.CancelRecording();
-                Assert.Fail("Failed to upload video");
-            }
+    private void TimeoutCheck(string msg = "Test timed out")
+    {
+        elapsed += .25f;
+        if (elapsed >= timeout) {
+            recorder.CancelRecording();
+            Assert.Fail(msg);
         }
     }
 

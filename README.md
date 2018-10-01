@@ -76,6 +76,7 @@ public class CustomRecorder : MonoBehaviour {
     recorder.frameRate = 60;
     recorder.recordMode = Vimeo.Recorder.RecordMode.Duration;
     recorder.recordDuration = 5; // in seconds
+    recorder.autoUpload = true;
 
     recorder.videoName = "My Custom Video";
     recorder.privacyMode = Vimeo.Services.VimeoApi.PrivacyModeDisplay.HideThisFromVimeo;
