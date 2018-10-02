@@ -51,7 +51,11 @@ namespace Vimeo.Recorder
             isRecording = false;
             encoder.EndRecording();
 
-            PublishVideo(encoder.GetVideoFilePath());
+            if (autoUpload) {
+                PublishVideo();
+            } else {
+                Debug.Log("[Vimeo] Video did not automatically upload. VimeoPlayer.autoUpload is set to false.");
+            }
         }
             
         public void CancelRecording()
@@ -62,7 +66,8 @@ namespace Vimeo.Recorder
             Destroy(publisher);
         }
 
-        private void PublishVideo(string filePath)
+        //Used if you want to publish the latest recorded video
+        public void PublishVideo()
         {
             isUploading = true;
             uploadProgress = 0;
@@ -75,7 +80,7 @@ namespace Vimeo.Recorder
                 publisher.OnNetworkError += NetworkError;
             }
             
-            publisher.PublishVideo(filePath);
+            publisher.PublishVideo(encoder.GetVideoFilePath());
         }
 
         private void UploadProgress(string status, float progress)
