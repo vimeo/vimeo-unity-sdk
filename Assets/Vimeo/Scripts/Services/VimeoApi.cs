@@ -231,6 +231,47 @@ namespace Vimeo
 
             FileInfo video_file = new FileInfo(video_file_path);
 
+            //Tus upload to the Vimeo server
+            // string tusResourceRequestBody = "{ \"upload\": { \"approach\": \"tus\", \"size\": \"" + video_file.Length.ToString() + "\" } }";
+
+            // using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/me/videos", tusResourceRequestBody)) {
+            //     //Prep headers
+            //     request.chunkedTransfer = false;
+            //     request.method = "POST";
+            //     request.SetRequestHeader("Authorization", "bearer " + token);
+            //     request.SetRequestHeader("Content-Type", "application/json");
+            //     request.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
+
+            //     yield return VimeoApi.SendRequest(request);
+
+            //     if(request.isNetworkError || request.isHttpError) {
+            //         Debug.Log("[Error] " + request.error + " error code is: " + request.responseCode);
+            //     } else {
+            //         Debug.Log("[Vimeo] Tus ticket request complete with response code " + request.responseCode);
+            //         JSONNode rawJSON = JSON.Parse(request.downloadHandler.text);
+            //         string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
+            //         Debug.Log("[Vimeo] Secure tus upload link is: " + tusUploadLink);
+
+            //         using (UnityWebRequest uploadRequest = UnityWebRequest.Put(tusUploadLink, data)) {
+            //             uploadRequest.chunkedTransfer = false;
+            //             uploadRequest.method = "PATCH";
+            //             uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
+            //             uploadRequest.SetRequestHeader("Upload-Offset", "0");
+            //             uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
+
+            //             yield return VimeoApi.SendRequest(uploadRequest);
+
+            //             if(uploadRequest.isNetworkError || uploadRequest.isHttpError) {
+            //                 Debug.Log("[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
+            //             } else {
+            //                 Debug.Log("[Vimeo] Tus ticket request complete with response code " + uploadRequest.responseCode);
+            //                 Debug.Log(uploadRequest.downloadHandler.text);
+            //             }
+
+            //         }
+            //     }
+            // }
+            
             // Upload to the Vimeo server
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 uploader = request;
@@ -249,22 +290,6 @@ namespace Vimeo
                     StartCoroutine(VerifyUpload(ticket));
                 }
             }
-        }
-
-        public void UploadVideoTus(VimeoTicket ticket)
-        {
-            
-            FileInfo video_file = new FileInfo(video_file_path);
-
-            //Instance a new Tus client
-            TusClient.TusClient tc = new TusClient.TusClient();
-
-            //Prep the Tus file request
-            string fileURL = tc.Create(ticket.upload_link_secure, video_file); 
-
-            // Start uploading
-            tc.Upload(fileURL, video_file);
-
         }
 
         IEnumerator VerifyUpload(VimeoTicket ticket)
