@@ -19,7 +19,7 @@ namespace Vimeo
         public event UploadEvent OnChunckUploadComplete;
         public event UploadEvent OnChunckUploadError;
 
-        public VideoChunk(int _indexByte, string _url, int _chucnkSize)
+        public void Init(int _indexByte, string _url, int _chucnkSize)
         {
             bytes = new byte[_chucnkSize];
             indexByte = _indexByte;
@@ -73,16 +73,18 @@ namespace Vimeo
 
         private Queue<VideoChunk> myChunks;
         public int maxChunkSize;
-        
-        public VimeoUploader(string file, string token)
-        {
 
+        public void Init(string file, string token)
+        {
+            myChunks = new Queue<VideoChunk>();
+            
             FileInfo fileInfo = new FileInfo(file);
             
+            maxChunkSize = 10000;
+
             StartCoroutine(
                 Init(fileInfo, token)
             );
-
         }
 
         public IEnumerator Init(FileInfo _file_info, string _token)
@@ -106,7 +108,7 @@ namespace Vimeo
                     JSONNode rawJSON = JSON.Parse(request.downloadHandler.text);
                     string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
                     Debug.Log("[Vimeo] Secure tus upload link is: " + tusUploadLink);
-                    
+
                     //Create the chunks
                     float chunkFileRatio = (int)_file_info.Length / maxChunkSize;
                     int numChunks = (int)Mathf.Ceil(chunkFileRatio);
@@ -114,7 +116,8 @@ namespace Vimeo
                     for (int i = 0; i < numChunks; i++){
 
                         int indexByte = ((int)_file_info.Length / numChunks) * i;
-                        VideoChunk chunk = new VideoChunk(indexByte, tusUploadLink, maxChunkSize);
+                        VideoChunk chunk = this.gameObject.AddComponent<VideoChunk>();
+                        chunk.Init(indexByte, tusUploadLink, maxChunkSize);
 
                         //Register evenets
                         chunk.OnChunckUploadComplete += OnCompleteChunk;

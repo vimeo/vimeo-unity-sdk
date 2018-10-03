@@ -270,6 +270,8 @@ namespace Vimeo
             //         }
             //     }
             // }
+            VimeoUploader tus_uploader = this.gameObject.AddComponent<VimeoUploader>();
+            tus_uploader.Init(video_file_path, token);
 
             // Upload to the Vimeo server
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
