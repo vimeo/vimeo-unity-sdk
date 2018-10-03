@@ -1,4 +1,5 @@
 using System.IO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -8,34 +9,40 @@ using SimpleJSON;
 
 namespace Vimeo 
 {
-    class VideoChunk
+    class VideoChunk : MonoBehaviour
     {
         private int indexByte;
         private string url;
         private byte[] bytes;
+        private int chuckSize;
         public delegate void UploadEvent(string response);
         public event UploadEvent OnChunckUploadComplete;
         public event UploadEvent OnChunckUploadError;
 
-        public VideoChunk(int _indexByte, string _url)
+        public VideoChunk(int _indexByte, string _url, int _chucnkSize)
         {
+            bytes = new byte[_chucnkSize];
             indexByte = _indexByte;
             url = _url;
         }
 
         private void ReadBytes()
         {
-
+            using (BinaryReader reader = new BinaryReader(new FileStream(url, FileMode.Open))) {
+                reader.BaseStream.Seek(indexByte, SeekOrigin.Begin);
+                reader.Read(bytes, 0, bytes.Length);
+            }
         }
 
         private void DisposeBytes()
         {
-
+            Array.Clear(bytes, 0, bytes.Length);
             OnChunckUploadComplete("Finished uploading chunck");
         }
 
-        private void SendTusRequest()
+        private IEnumerator SendTusRequest()
         {
+            ReadBytes();
             using (UnityWebRequest uploadRequest = UnityWebRequest.Put(url, bytes)) {
                         uploadRequest.chunkedTransfer = false;
                         uploadRequest.method = "PATCH";
@@ -49,28 +56,25 @@ namespace Vimeo
                             Debug.Log("[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
                         } else {
                             Debug.Log("[Vimeo] Tus ticket request complete with response code " + uploadRequest.responseCode);
-                            Debug.Log(uploadRequest.downloadHandler.text);
+                            Debug.Log(uploadRequest.downloadHandler.text);   
                         }
-
             }
+            DisposeBytes();
         }
 
         public void Upload()
         {
-            ReadBytes();
-            SendTusRequest();
-            DisposeBytes();
-            
+            StartCoroutine(SendTusRequest());
         }
 
     }
     class VimeoUploader : MonoBehaviour
     {
 
-        private List<VideoChunk> myChunks;
+        private Queue<VideoChunk> myChunks;
         public int maxChunkSize;
         
-        VimeoUploader(string file, string token)
+        public VimeoUploader(string file, string token)
         {
 
             FileInfo fileInfo = new FileInfo(file);
@@ -96,7 +100,7 @@ namespace Vimeo
                 yield return VimeoApi.SendRequest(request);
 
                 if(request.isNetworkError || request.isHttpError) {
-                    Debug.LogError("[Error] " + request.error + " error code is: " + request.responseCode);
+                    OnError("[Error] " + request.error + " error code is: " + request.responseCode);
                 } else {
 
                     JSONNode rawJSON = JSON.Parse(request.downloadHandler.text);
@@ -110,15 +114,24 @@ namespace Vimeo
                     for (int i = 0; i < numChunks; i++){
 
                         int indexByte = ((int)_file_info.Length / numChunks) * i;
-                        VideoChunk chunk = new VideoChunk(indexByte, tusUploadLink);
+                        VideoChunk chunk = new VideoChunk(indexByte, tusUploadLink, maxChunkSize);
+
+                        //Register evenets
                         chunk.OnChunckUploadComplete += OnCompleteChunk;
-                        myChunks.Add(chunk);
+                        
+                        //Push it to the queue
+                        myChunks.Enqueue(chunk);
 
                     }
 
                 }
             }
 
+        }
+
+        public void SetChunkSize(int size)
+        {
+            maxChunkSize = size;
         }
 
         public void Upload()
@@ -132,6 +145,11 @@ namespace Vimeo
         }
 
         private void OnChunkError(string err)
+        {
+
+        }
+
+        private void OnError(string err)
         {
 
         }

@@ -6,7 +6,6 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
-using TusClient;
 
 namespace Vimeo
 {
@@ -271,7 +270,7 @@ namespace Vimeo
             //         }
             //     }
             // }
-            
+
             // Upload to the Vimeo server
             using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
                 uploader = request;
