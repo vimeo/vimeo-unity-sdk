@@ -211,65 +211,25 @@ namespace Vimeo
                 OnUploadProgress("Uploading", 0);
             }
 
-            byte[] data = new byte[0];
-            bool success = false;
+            // byte[] data = new byte[0];
+            // bool success = false;
 
 
             // Using try/catch to wait for video to finish being
-            while (success == false) {
-                try {
-                    // Get local video file and store it in a byte array for uploading
-                    data = File.ReadAllBytes(video_file_path);
-                    success = true;
-                } 
-                catch (IOException e) { 
-                    // TODO: fix this ugly code!
-                    Debug.Log("File is being accessed by another process. " + e.Message);
-                }
-            }
-
-            FileInfo video_file = new FileInfo(video_file_path);
-
-            //Tus upload to the Vimeo server
-            // string tusResourceRequestBody = "{ \"upload\": { \"approach\": \"tus\", \"size\": \"" + video_file.Length.ToString() + "\" } }";
-
-            // using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/me/videos", tusResourceRequestBody)) {
-            //     //Prep headers
-            //     request.chunkedTransfer = false;
-            //     request.method = "POST";
-            //     request.SetRequestHeader("Authorization", "bearer " + token);
-            //     request.SetRequestHeader("Content-Type", "application/json");
-            //     request.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
-
-            //     yield return VimeoApi.SendRequest(request);
-
-            //     if(request.isNetworkError || request.isHttpError) {
-            //         Debug.Log("[Error] " + request.error + " error code is: " + request.responseCode);
-            //     } else {
-            //         Debug.Log("[Vimeo] Tus ticket request complete with response code " + request.responseCode);
-            //         JSONNode rawJSON = JSON.Parse(request.downloadHandler.text);
-            //         string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
-            //         Debug.Log("[Vimeo] Secure tus upload link is: " + tusUploadLink);
-
-            //         using (UnityWebRequest uploadRequest = UnityWebRequest.Put(tusUploadLink, data)) {
-            //             uploadRequest.chunkedTransfer = false;
-            //             uploadRequest.method = "PATCH";
-            //             uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
-            //             uploadRequest.SetRequestHeader("Upload-Offset", "0");
-            //             uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
-
-            //             yield return VimeoApi.SendRequest(uploadRequest);
-
-            //             if(uploadRequest.isNetworkError || uploadRequest.isHttpError) {
-            //                 Debug.Log("[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
-            //             } else {
-            //                 Debug.Log("[Vimeo] Tus ticket request complete with response code " + uploadRequest.responseCode);
-            //                 Debug.Log(uploadRequest.downloadHandler.text);
-            //             }
-
-            //         }
+            // while (success == false) {
+            //     try {
+            //         // Get local video file and store it in a byte array for uploading
+            //         data = File.ReadAllBytes(video_file_path);
+            //         success = true;
+            //     } 
+            //     catch (IOException e) { 
+            //         // TODO: fix this ugly code!
+            //         Debug.Log("File is being accessed by another process. " + e.Message);
             //     }
             // }
+
+            // FileInfo video_file = new FileInfo(video_file_path);
+
             VimeoUploader tus_uploader = this.gameObject.AddComponent<VimeoUploader>();
             yield return tus_uploader.Init(video_file_path, token);
             tus_uploader.Upload();
