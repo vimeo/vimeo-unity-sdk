@@ -271,26 +271,27 @@ namespace Vimeo
             //     }
             // }
             VimeoUploader tus_uploader = this.gameObject.AddComponent<VimeoUploader>();
-            tus_uploader.Init(video_file_path, token);
+            yield return tus_uploader.Init(video_file_path, token);
+            tus_uploader.Upload();
 
             // Upload to the Vimeo server
-            using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
-                uploader = request;
-				request.chunkedTransfer = false;
-                request.SetRequestHeader("Content-Type", "video/" + video_file.Extension);
-                yield return VimeoApi.SendRequest(request);
+            // using (UnityWebRequest request = UnityWebRequest.Put(ticket.upload_link_secure, data)) {
+            //     uploader = request;
+			// 	request.chunkedTransfer = false;
+            //     request.SetRequestHeader("Content-Type", "video/" + video_file.Extension);
+            //     yield return VimeoApi.SendRequest(request);
 
-                uploader = null;
+            //     uploader = null;
 
-                if (IsNetworkError(request)) {
-                    if (OnNetworkError != null) {
-                        OnNetworkError(request.error);
-                    }
-                } 
-                else {
-                    StartCoroutine(VerifyUpload(ticket));
-                }
-            }
+            //     if (IsNetworkError(request)) {
+            //         if (OnNetworkError != null) {
+            //             OnNetworkError(request.error);
+            //         }
+            //     } 
+            //     else {
+            //         StartCoroutine(VerifyUpload(ticket));
+            //     }
+            // }
         }
 
         IEnumerator VerifyUpload(VimeoTicket ticket)
