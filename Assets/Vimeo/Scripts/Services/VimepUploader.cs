@@ -1,164 +1,63 @@
 using System.IO;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using SimpleJSON;
 
-/*
-    TODO:
-    - Format the whole code
-    - Get rid of unused namespaces
-    - Split functionality into seprate methods
-    - Split VideoChunk and VimeoUploader to seprate files
-*/
-
 namespace Vimeo
 {
-    class VideoChunk : MonoBehaviour
+    class VimeoUploader : MonoBehaviour
     {
-        private int indexByte;
-        private string url;
-        private byte[] bytes;
-        private string file_path;
-        private int chuckSize;
+        //Events
+        public delegate void UploadAction(string status, float progress = 0.0f);
+        public event UploadAction OnUploadProgress;
+        public event UploadAction OnUploadError;
+        public event UploadAction OnUploadComplete;
 
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
         public event UploadEvent OnChunckUploadComplete;
         public event UploadEvent OnChunckUploadError;
 
-        public void Init(int _indexByte, string _url, string _file_path, int _chucnkSize)
-        {
-            bytes = new byte[_chucnkSize];
-            file_path = _file_path;
-            indexByte = _indexByte;
-            url = _url;
-        }
-
-        private void ReadBytes()
-        {
-            using (BinaryReader reader = new BinaryReader(new FileStream(file_path, FileMode.Open, FileAccess.Read)))
-            {
-                reader.BaseStream.Seek(indexByte, SeekOrigin.Begin);
-                reader.Read(bytes, 0, bytes.Length);
-            }
-        }
-
-        private void DisposeBytes()
-        {
-            Array.Clear(bytes, 0, bytes.Length);
-        }
-
-        private IEnumerator SendTusRequest()
-        {
-            ReadBytes();
-            using (UnityWebRequest uploadRequest = UnityWebRequest.Put(url, bytes))
-            {
-                uploadRequest.chunkedTransfer = false;
-                uploadRequest.method = "PATCH";
-                uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
-                uploadRequest.SetRequestHeader("Upload-Offset", (indexByte).ToString());
-                uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
-
-                yield return VimeoApi.SendRequest(uploadRequest);
-
-                if (uploadRequest.isNetworkError || uploadRequest.isHttpError)
-                {
-                    string concatErr = "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode;
-                    OnChunckUploadError(this, concatErr);
-                }
-                else
-                {
-                    OnChunckUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
-                }
-            }
-            DisposeBytes();
-        }
-
-        public void Upload()
-        {
-            StartCoroutine(SendTusRequest());
-        }
-
-    }
-    class VimeoUploader : MonoBehaviour
-    {
-        public delegate void UploadAction(string status, float progress = 0.0f);
-        public event UploadAction OnUploadProgress;
+        //Private members
         private Queue<VideoChunk> myChunks;
-        private int numChunks;
+
+
+        //Public members
         public int maxChunkSize;
+        public int numChunks;
+
         public IEnumerator Init(string _file, string _token, int _maxChunkSize = 1000)
         {
             myChunks = new Queue<VideoChunk>();
-
             maxChunkSize = _maxChunkSize;
-
             FileInfo fileInfo = new FileInfo(_file);
-
             Debug.Log("File size in bytes" + fileInfo.Length.ToString());
-
             string tusResourceRequestBody = "{ \"upload\": { \"approach\": \"tus\", \"size\": \"" + fileInfo.Length.ToString() + "\" } }";
 
             using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/me/videos", tusResourceRequestBody))
             {
-                //Prep headers
-                request.chunkedTransfer = false;
-                request.method = "POST";
-                request.SetRequestHeader("Authorization", "bearer " + _token);
-                request.SetRequestHeader("Content-Type", "application/json");
-                request.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
+                UnityWebRequest videoResource = PrepareTusResourceRequest(request, _token);
 
-                yield return VimeoApi.SendRequest(request);
+                yield return VimeoApi.SendRequest(videoResource);
 
-                Debug.Log("After request");
-                if (request.isNetworkError || request.isHttpError)
+                if (videoResource.isNetworkError || videoResource.isHttpError)
                 {
-                    OnError("[Error] " + request.error + " error code is: " + request.responseCode);
+                    if (OnUploadError != null)
+                    {
+                        OnUploadError(videoResource.error + " error code is: " + videoResource.responseCode);
+                    }
                 }
                 else
                 {
 
-                    JSONNode rawJSON = JSON.Parse(request.downloadHandler.text);
-                    string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
-                    Debug.Log("[Vimeo] Secure tus upload link is: " + tusUploadLink);
+                    string tusUploadLink = GetTusUploadLink(videoResource);
 
-                    //Create the chunks
-                    numChunks = (int)Mathf.Ceil((int)fileInfo.Length / maxChunkSize);
-                    Debug.Log("Number of chunks is " + numChunks + " and file size is " + fileInfo.Length.ToString());
-                    for (int i = 0; i < numChunks; i++)
-                    {
-                        int indexByte = maxChunkSize * i;
-                        VideoChunk chunk = this.gameObject.AddComponent<VideoChunk>();
-
-                        //If we are at the last chunk set the max chunk size to the fractional remainder
-                        if (i + 1 == numChunks)
-                        {
-                            int remainder = (int)fileInfo.Length - (maxChunkSize * i);
-                            Debug.Log("Created last chunk and the remainder is: " + remainder);
-                            chunk.Init(indexByte, tusUploadLink, _file, remainder);
-                        }
-                        else
-                        {
-                            chunk.Init(indexByte, tusUploadLink, _file, maxChunkSize);
-                        }
-
-                        //Register evenets
-                        chunk.OnChunckUploadComplete += OnCompleteChunk;
-                        chunk.OnChunckUploadError += OnChunkError;
-
-                        //Push it to the queue
-                        myChunks.Enqueue(chunk);
-
-                    }
-
+                    CreateChunks(_file, fileInfo, tusUploadLink);
                 }
             }
 
         }
-
         public void SetChunkSize(int size)
         {
             maxChunkSize = size;
@@ -167,12 +66,22 @@ namespace Vimeo
         public void Upload()
         {
             //Kick off the first chunk, currently will call other chunks via the OnCompleteChunk event
+            if (OnUploadProgress != null)
+            {
+                OnUploadProgress("Uploading", (float)numChunks / myChunks.Count);
+            }
             VideoChunk firstChunk = myChunks.Dequeue();
             firstChunk.Upload();
         }
 
         private void OnCompleteChunk(VideoChunk chunk, string msg)
         {
+            //Emit the event
+            if (OnChunckUploadComplete != null)
+            {
+                OnChunckUploadComplete(chunk, msg);
+            }
+
             //Destroy the chunk
             Destroy(chunk);
 
@@ -180,21 +89,78 @@ namespace Vimeo
             if (myChunks.Count != 0)
             {
                 VideoChunk nextChunk = myChunks.Dequeue();
-                OnUploadProgress("Uploading", (float)numChunks / myChunks.Count);
+                // OnUploadProgress("Uploading", (float)numChunks / myChunks.Count);
                 nextChunk.Upload();
-            } else {
-                Debug.Log("Finished");
+            }
+            else
+            {
+                //Set the progress back to 0
+                if (OnUploadProgress != null)
+                {
+                    OnUploadProgress("Idle", 0.0f);
+                }
+                //Emit upload complete
+                if (OnUploadComplete != null)
+                {
+                    OnUploadComplete("Completed upload!");
+                }
             }
         }
 
         private void OnChunkError(VideoChunk chunk, string err)
         {
-            Debug.LogError(err);
+            if (OnChunckUploadError != null)
+            {
+                OnChunckUploadError(chunk, err);
+            }
         }
-
-        private void OnError(string err)
+        private void CreateChunks(string filePath, FileInfo fileInfo, string tusUploadLink)
         {
-            Debug.LogError(err);
+            //Create the chunks
+            numChunks = (int)Mathf.Ceil((int)fileInfo.Length / maxChunkSize);
+
+            for (int i = 0; i < numChunks; i++)
+            {
+                int indexByte = maxChunkSize * i;
+                VideoChunk chunk = this.gameObject.AddComponent<VideoChunk>();
+                chunk.hideFlags = HideFlags.HideInInspector;
+
+                //If we are at the last chunk set the max chunk size to the fractional remainder
+                if (i + 1 == numChunks)
+                {
+                    int remainder = (int)fileInfo.Length - (maxChunkSize * i);
+                    Debug.Log("Created last chunk and the remainder is: " + remainder);
+                    chunk.Init(indexByte, tusUploadLink, filePath, remainder);
+                }
+                else
+                {
+                    chunk.Init(indexByte, tusUploadLink, filePath, maxChunkSize);
+                }
+
+                //Register evenets
+                chunk.OnChunckUploadComplete += OnCompleteChunk;
+                chunk.OnChunckUploadError += OnChunkError;
+
+                //Push it to the queue
+                myChunks.Enqueue(chunk);
+
+            }
+        }
+        private UnityWebRequest PrepareTusResourceRequest(UnityWebRequest req, string token)
+        {
+            //Prep headers
+            req.chunkedTransfer = false;
+            req.method = "POST";
+            req.SetRequestHeader("Authorization", "bearer " + token);
+            req.SetRequestHeader("Content-Type", "application/json");
+            req.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
+
+            return req;
+        }
+        private string GetTusUploadLink(UnityWebRequest response)
+        {
+            JSONNode rawJSON = JSON.Parse(response.downloadHandler.text);
+            return rawJSON["upload"]["upload_link"].Value;
         }
     }
 }
