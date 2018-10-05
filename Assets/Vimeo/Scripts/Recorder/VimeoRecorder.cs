@@ -8,7 +8,7 @@ namespace Vimeo.Recorder
 {
     [AddComponentMenu("Video/Vimeo Recorder")]
     [HelpURL("https://github.com/vimeo/vimeo-unity-sdk")]
-    public class VimeoRecorder : RecorderSettings 
+    public class VimeoRecorder : RecorderSettings
     {
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
@@ -19,18 +19,18 @@ namespace Vimeo.Recorder
         public bool isUploading = false;
         public float uploadProgress = 0;
 
-        public void Start() 
+        public void Start()
         {
             if (encoder == null) {
                 encoder = gameObject.AddComponent<EncoderManager>();
                 encoder.Init(this);
             }
-            
+
             if (recordOnStart) {
                 BeginRecording();
             }
         }
-    
+
         public void BeginRecording()
         {
             if (!isRecording) {
@@ -57,7 +57,7 @@ namespace Vimeo.Recorder
                 Debug.Log("[Vimeo] Video did not automatically upload. VimeoPlayer.autoUpload is set to false.");
             }
         }
-            
+
         public void CancelRecording()
         {
             isRecording = false;
@@ -79,7 +79,7 @@ namespace Vimeo.Recorder
                 publisher.OnUploadProgress += UploadProgress;
                 publisher.OnNetworkError += NetworkError;
             }
-            
+
             publisher.PublishVideo(encoder.GetVideoFilePath());
         }
 
@@ -97,7 +97,8 @@ namespace Vimeo.Recorder
             }
         }
 
-        private void NetworkError(string status){
+        private void NetworkError(string status)
+        {
             Debug.LogError(status);
         }
 

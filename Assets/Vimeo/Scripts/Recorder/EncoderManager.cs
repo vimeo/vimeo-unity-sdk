@@ -35,17 +35,14 @@ namespace Vimeo.Recorder
         {
             _recorder = r;
 
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                
                 _vimeoEncoder = gameObject.AddComponent<RecorderController>();
                 _vimeoEncoder.Init(_recorder);
 #else
                 Debug.LogError("[Vimeo] Recording is only avaialabe in 2017.2 or higher.");
 #endif
-            }
-            else if (_recorder.encoderType == EncoderType.AVProMovieCapture)
-            {
+            } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder = r.avproEncoder;
 #endif            
@@ -56,14 +53,11 @@ namespace Vimeo.Recorder
         {
             isRecording = true;
 
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                
                 _vimeoEncoder.BeginRecording();
 #endif                
-            }
-            else
-            {
+            } else {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder.StartCapture();
 #endif             
@@ -74,14 +68,11 @@ namespace Vimeo.Recorder
         {
             isRecording = false;
 
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                          
                 _vimeoEncoder.EndRecording();
 #endif
-            }
-            else
-            {
+            } else {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 // _avproEncoder.StartCapture();
 #endif                    
@@ -97,12 +88,9 @@ namespace Vimeo.Recorder
         public void AddFrame()
         {
 #if MEDIA_ENCODER_SUPPORT                             
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
                 _vimeoEncoder.AddFrame();
-            }
-            else
-            {
+            } else {
                 Debug.LogWarning("[VimeoRecorder] AddFrame is only available for MediaEncoder.");
             }
 #endif            
@@ -110,14 +98,11 @@ namespace Vimeo.Recorder
 
         public string GetVideoFilePath()
         {
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                             
                 return _vimeoEncoder.encodedFilePath;
 #endif                
-            }
-            else if (_recorder.encoderType == EncoderType.AVProMovieCapture)
-            {
+            } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 return _avproEncoder.LastFilePath;
 #endif                    
@@ -128,14 +113,11 @@ namespace Vimeo.Recorder
 
         public int GetCurrentFrame()
         {
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                
                 return _vimeoEncoder.currentFrame;
 #endif
-            }
-            else if (_recorder.encoderType == EncoderType.AVProMovieCapture)
-            {
+            } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProMovieCapture");
                 return -1;
@@ -173,12 +155,9 @@ namespace Vimeo.Recorder
         public void ManualFrameCapture()
         {
 #if MEDIA_ENCODER_SUPPORT              
-            if (_recorder.encoderType == EncoderType.MediaEncoder)
-            {
+            if (_recorder.encoderType == EncoderType.MediaEncoder) {
                 _vimeoEncoder.manualFrameCapture = true;
-            }
-            else
-            {
+            } else {
                 Debug.LogWarning("[VimeoRecorder] ManualFrameCapture is only available for MediaEncoder.");
             }
 #endif            
@@ -187,8 +166,7 @@ namespace Vimeo.Recorder
         void OnDestroy()
         {
 #if MEDIA_ENCODER_SUPPORT             
-            if (_vimeoEncoder != null)
-            {
+            if (_vimeoEncoder != null) {
                 Destroy(_vimeoEncoder);
             }
 #endif            

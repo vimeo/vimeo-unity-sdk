@@ -30,8 +30,7 @@ namespace Vimeo
 
         private void ReadBytes()
         {
-            using (BinaryReader reader = new BinaryReader(new FileStream(file_path, FileMode.Open, FileAccess.Read)))
-            {
+            using (BinaryReader reader = new BinaryReader(new FileStream(file_path, FileMode.Open, FileAccess.Read))) {
                 reader.BaseStream.Seek(indexByte, SeekOrigin.Begin);
                 reader.Read(bytes, 0, bytes.Length);
             }
@@ -45,8 +44,7 @@ namespace Vimeo
         private IEnumerator SendTusRequest()
         {
             ReadBytes();
-            using (UnityWebRequest uploadRequest = UnityWebRequest.Put(url, bytes))
-            {
+            using (UnityWebRequest uploadRequest = UnityWebRequest.Put(url, bytes)) {
                 uploadRequest.chunkedTransfer = false;
                 uploadRequest.method = "PATCH";
                 uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
@@ -55,13 +53,10 @@ namespace Vimeo
 
                 yield return VimeoApi.SendRequest(uploadRequest);
 
-                if (uploadRequest.isNetworkError || uploadRequest.isHttpError)
-                {
+                if (uploadRequest.isNetworkError || uploadRequest.isHttpError) {
                     string concatErr = "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode;
                     OnChunckUploadError(this, concatErr);
-                }
-                else
-                {
+                } else {
                     OnChunckUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
                 }
             }
