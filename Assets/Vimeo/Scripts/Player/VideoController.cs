@@ -35,7 +35,10 @@ namespace Vimeo.Player
         public long seekFrame = 0;
         private long prevFrameIndex = 0;
         private bool frameStepping = false;
-
+        private void Start() 
+        {
+            this.hideFlags = HideFlags.HideInInspector;
+        }
         public void Setup()
         {  
             if (videoScreenObject != null) {
