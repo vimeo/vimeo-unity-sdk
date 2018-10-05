@@ -17,7 +17,7 @@ namespace Vimeo.Recorder
 
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
-        private VimeoApi vimeoApi;
+        private VimeoUploader vimeoUploader;
         private VimeoVideo video;
 
         private Coroutine saveCoroutine;
@@ -29,16 +29,14 @@ namespace Vimeo.Recorder
         {
             recorder = _recorder;
 
-            if (vimeoApi == null)
+            if (vimeoUploader == null)
             {
-                vimeoApi = gameObject.AddComponent<VimeoApi>();
-                vimeoApi.OnPatchComplete += VideoUpdated;
-                vimeoApi.OnUploadComplete += UploadComplete;
-                vimeoApi.OnUploadProgress += UploadProgress;
-                vimeoApi.OnError += ApiError;
-                vimeoApi.OnNetworkError += NetworkError;
+                vimeoUploader = gameObject.AddComponent<VimeoUploader>();
+                vimeoUploader.Init(recorder.GetVimeoToken());
 
-                vimeoApi.token = recorder.GetVimeoToken();
+                vimeoUploader.vimeoApi.OnPatchComplete += VideoUpdated;
+                vimeoUploader.OnUploadProgress += UploadProgress;
+                vimeoUploader.OnUploadComplete += UploadComplete;
             }
         }
 
@@ -62,11 +60,9 @@ namespace Vimeo.Recorder
         public void PublishVideo(string filename)
         {
             Debug.Log("[VimeoRecorder] Uploading to Vimeo");
-            vimeoApi.UploadVideoFile(filename);
+            vimeoUploader.Upload(filename);
         }
-
-
-        private void UploadProgress(string status, float progress)
+        void UploadProgress(string status, float progress)
         {
             if (OnUploadProgress != null)
             {
@@ -74,7 +70,7 @@ namespace Vimeo.Recorder
             }
         }
 
-        private void UploadComplete(string video_uri)
+        void UploadComplete(string video_uri, float number)
         {
             UploadProgress("SavingInfo", .999f);
 
@@ -83,22 +79,22 @@ namespace Vimeo.Recorder
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360)
             {
-                vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
+                vimeoUploader.vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
             }
 #endif
 
-            vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            vimeoUploader.vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
             if (recorder.enableDownloads == false)
             {
-                vimeoApi.SetVideoDownload(recorder.enableDownloads);
+                vimeoUploader.vimeoApi.SetVideoDownload(recorder.enableDownloads);
             }
-            vimeoApi.SetVideoComments(recorder.commentMode);
-            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
+            vimeoUploader.vimeoApi.SetVideoComments(recorder.commentMode);
+            vimeoUploader.vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
             SetVideoName(recorder.GetVideoName());
 
             if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword)
             {
-                vimeoApi.SetVideoPassword(recorder.videoPassword);
+                vimeoUploader.vimeoApi.SetVideoPassword(recorder.videoPassword);
             }
             SetVideoPrivacyMode(recorder.privacyMode);
         }
@@ -116,7 +112,7 @@ namespace Vimeo.Recorder
 
             if (recorder.currentFolder != null && recorder.currentFolder.uri != null)
             {
-                vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
+                vimeoUploader.vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
             }
 
             UploadProgress("SaveInfoComplete", 1f);
@@ -172,7 +168,7 @@ namespace Vimeo.Recorder
             if (title != null && title != "")
             {
                 if (saveCoroutine != null) { StopCoroutine(saveCoroutine); } // DRY
-                vimeoApi.SetVideoName(title);
+                vimeoUploader.vimeoApi.SetVideoName(title);
                 saveCoroutine = StartCoroutine("SaveVideo");
             }
         }
@@ -180,7 +176,7 @@ namespace Vimeo.Recorder
         public void SetVideoPrivacyMode(VimeoApi.PrivacyModeDisplay mode)
         {
             if (saveCoroutine != null) { StopCoroutine(saveCoroutine); }
-            vimeoApi.SetVideoViewPrivacy(mode);
+            vimeoUploader.vimeoApi.SetVideoViewPrivacy(mode);
             saveCoroutine = StartCoroutine("SaveVideo");
         }
 
@@ -190,7 +186,7 @@ namespace Vimeo.Recorder
 
             if (video != null)
             {
-                vimeoApi.SaveVideo(video);
+                vimeoUploader.vimeoApi.SaveVideo(video);
             }
         }
 
@@ -211,7 +207,7 @@ namespace Vimeo.Recorder
 
         public void Dispose()
         {
-            Destroy(vimeoApi);
+            Destroy(vimeoUploader);
         }
     }
 }
