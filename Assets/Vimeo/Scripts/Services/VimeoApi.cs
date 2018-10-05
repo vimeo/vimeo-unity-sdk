@@ -58,6 +58,7 @@ namespace Vimeo
 
         void Start()
         {
+            this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
         }
 

@@ -8,7 +8,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Vimeo.Recorder 
+namespace Vimeo.Recorder
 {
     public class RecorderController : MonoBehaviour
     {
@@ -36,6 +36,10 @@ namespace Vimeo.Recorder
         private AudioInput audioInput;
 #endif
 
+        private void Start()
+        {
+            this.hideFlags = HideFlags.HideInInspector;
+        }
         public void Init(VimeoRecorder r)
         {
             recorder = r;
@@ -61,10 +65,12 @@ namespace Vimeo.Recorder
         {
             InitInputs();
 
-            if (recorder.realTime) {
+            if (recorder.realTime)
+            {
                 Application.targetFrameRate = recorder.frameRate;
             }
-            else {
+            else
+            {
                 Time.captureFramerate = recorder.frameRate;
             }
 
@@ -87,7 +93,7 @@ namespace Vimeo.Recorder
             videoAttrs = new VideoTrackAttributes
             {
                 frameRate = new MediaRational(recorder.frameRate),
-                width  = (uint)videoInput.outputWidth,
+                width = (uint)videoInput.outputWidth,
                 height = (uint)videoInput.outputHeight,
                 includeAlpha = false
             };
@@ -95,11 +101,13 @@ namespace Vimeo.Recorder
             encodedFilePath = Path.Combine(outputPath, GetFileName());
             Debug.Log("[VimeoRecorder] Recording to " + GetFileName());
 
-            if (!recorder.realTime) {
+            if (!recorder.realTime)
+            {
                 recorder.recordAudio = false;
-            }   
+            }
 
-            if (recorder.recordAudio) {
+            if (recorder.recordAudio)
+            {
 #if UNITY_2018_1_OR_NEWER 
                 audioInput.BeginRecording();
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs, audioAttrs);
@@ -107,7 +115,8 @@ namespace Vimeo.Recorder
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
 #endif
             }
-            else {
+            else
+            {
                 encoder = new UnityEditor.Media.MediaEncoder(encodedFilePath, videoAttrs);
             }
         }
@@ -121,23 +130,26 @@ namespace Vimeo.Recorder
 
         public void EndRecording()
         {
-            if (encoder != null) {
+            if (encoder != null)
+            {
                 encoder.Dispose();
                 encoder = null;
             }
 
-            if (videoInput != null) {
+            if (videoInput != null)
+            {
                 videoInput.EndRecording();
-                 Release(videoInput);
+                Release(videoInput);
             }
 
 #if UNITY_2018_1_OR_NEWER            
-            if (audioInput != null) {
+            if (audioInput != null)
+            {
                 if (recorder.recordAudio) audioInput.EndRecording();
                 Release(audioInput);
             }
 #endif
-            
+
             Time.captureFramerate = 0;
 
             currentFrame = 0;
@@ -151,19 +163,22 @@ namespace Vimeo.Recorder
         IEnumerator RecordFrame()
         {
             yield return new WaitForEndOfFrame();
-            if (!manualFrameCapture) {
+            if (!manualFrameCapture)
+            {
                 AddFrame();
             }
         }
 
         public void AddFrame()
         {
-            if (encoder != null && isRecording) {
+            if (encoder != null && isRecording)
+            {
                 encoder.AddFrame(videoInput.GetFrame() as Texture2D);
                 videoInput.EndFrame();
 
 #if UNITY_2018_1_OR_NEWER
-                if (recorder.recordAudio) {
+                if (recorder.recordAudio)
+                {
                     audioInput.StartFrame();
                     encoder.AddSamples(audioInput.GetBuffer());
                     audioInput.EndFrame();
@@ -176,29 +191,36 @@ namespace Vimeo.Recorder
 
         public void LateUpdate()
         {
-            if (encoder != null && isRecording) {
-                if (recorder.recordMode == RecordMode.Duration) {
-                    if (currentFrame > recorder.frameRate * recorder.recordDuration) {
+            if (encoder != null && isRecording)
+            {
+                if (recorder.recordMode == RecordMode.Duration)
+                {
+                    if (currentFrame > recorder.frameRate * recorder.recordDuration)
+                    {
                         recorder.EndRecording();
                     }
-                    else {
+                    else
+                    {
                         StartCoroutine(RecordFrame());
                     }
                 }
-                else {
+                else
+                {
                     StartCoroutine(RecordFrame());
                 }
             }
         }
-        
+
         private void InitInputs()
         {
-            if (videoInput != null) {
+            if (videoInput != null)
+            {
                 Release(videoInput);
             }
 
 #if UNITY_2018_1_OR_NEWER
-            if (audioInput != null) {
+            if (audioInput != null)
+            {
                 Release(audioInput);
             }
 
@@ -207,7 +229,8 @@ namespace Vimeo.Recorder
             audioInput.recorder = recorder;
 #endif 
 
-            switch(recorder.defaultVideoInput) {
+            switch (recorder.defaultVideoInput)
+            {
                 case VideoInputType.Screen:
                     videoInput = gameObject.AddComponent<ScreenInput>();
                     break;
@@ -218,10 +241,10 @@ namespace Vimeo.Recorder
                     videoInput = gameObject.AddComponent<CameraInput>();
                     break;
                 case VideoInputType.RenderTexture:
-                     videoInput = gameObject.AddComponent<RenderTextureInput>();
-                     break;
+                    videoInput = gameObject.AddComponent<RenderTextureInput>();
+                    break;
             }
-            
+
             videoInput.recorder = recorder;
         }
 
@@ -232,9 +255,12 @@ namespace Vimeo.Recorder
 
         public void Release(MonoBehaviour obj)
         {
-            if (Application.isEditor) {
+            if (Application.isEditor)
+            {
                 DestroyImmediate(obj);
-            } else {
+            }
+            else
+            {
                 Destroy(obj);
             }
         }

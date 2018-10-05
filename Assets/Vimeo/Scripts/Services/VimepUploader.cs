@@ -26,7 +26,10 @@ namespace Vimeo
         //Public members
         public int maxChunkSize;
         public int numChunks;
-
+        private void Start()
+        {
+            this.hideFlags = HideFlags.HideInInspector;
+        }
         public IEnumerator Init(string _file, string _token, int _maxChunkSize = 1000)
         {
             myChunks = new Queue<VideoChunk>();
