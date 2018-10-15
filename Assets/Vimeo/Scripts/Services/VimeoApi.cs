@@ -312,10 +312,9 @@ namespace Vimeo
                     yield return VimeoApi.SendRequest(request);
 
                     if (request.error != null) {
-                        Debug.Log(request.error);
-                        Debug.Log(request.responseCode);
-                        Debug.LogError(request.downloadHandler.text);
-                        if (OnError != null) OnError(request.downloadHandler.text);
+                        if (OnError != null) {
+                            OnError(request.downloadHandler.text);
+                        }
                     } else {
                         if (OnRequestComplete != null) {
                             OnRequestComplete(request.downloadHandler.text);

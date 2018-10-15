@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +12,11 @@ namespace Vimeo
     class VimeoUploader : MonoBehaviour
     {
         //Events
+        public delegate void ErrorAction(string response);
+        public event ErrorAction OnApiError;
+        public event ErrorAction OnNetworkError;
         public delegate void UploadAction(string status, float progress = 0.0f);
         public event UploadAction OnUploadProgress;
-        public event UploadAction OnUploadError;
         public event UploadAction OnUploadComplete;
 
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
@@ -23,13 +26,14 @@ namespace Vimeo
         //Private members
         private Queue<VideoChunk> myChunks;
         public VimeoApi vimeoApi;
-        //TODO: In the future this will be stored in a hash table to provide batch uploading
+        //TODO: In the future this will be stored in a list to provide batch uploading
         private string file;
         private string vimeo_url;
         private FileInfo fileInfo;
 
 
         //Public members
+        public int concurentChunks = 4;
         public int maxChunkSize;
         public int numChunks;
         private void Start()
@@ -37,7 +41,7 @@ namespace Vimeo
             this.hideFlags = HideFlags.HideInInspector;
         }
 
-        public void Init(string _token, int _maxChunkSize = 1000)
+        public void Init(string _token, int _maxChunkSize = 10000)
         {
             //A queue of video chunks to upload
             myChunks = new Queue<VideoChunk>();
@@ -55,28 +59,32 @@ namespace Vimeo
             maxChunkSize = _maxChunkSize;
 
         }
+
         private void RequestComplete(string response)
         {
             string tusUploadLink = GetTusUploadLink(response);
             vimeo_url = GetVideoPermlink(response);
             CreateChunks(file, fileInfo, tusUploadLink);
 
-            //Kick off first chunks, others will be called on OnCompleteChunk()
+            
             VideoChunk firstChunk = myChunks.Dequeue();
             firstChunk.Upload();
         }
+
         public void SetChunkSize(int size)
         {
             maxChunkSize = size;
         }
+
         private void ApiError(string response)
         {
-
+            OnApiError(response);
         }
         private void NetworkError(string response)
         {
-
+            OnNetworkError(response);
         }
+
         public void Upload(string _file)
         {
             file = _file;
@@ -100,11 +108,12 @@ namespace Vimeo
 
             //Make sure the queue is not empty
             if (myChunks.Count != 0) {
-                VideoChunk nextChunk = myChunks.Dequeue();
+                VideoChunk currentChunk = myChunks.Dequeue();
+                
                 float progres = ((float)myChunks.Count / (float)numChunks) * -1.0f + 1.0f;
                 OnUploadProgress("Uploading", progres);
-                Debug.Log(progres);
-                nextChunk.Upload();
+
+                currentChunk.Upload();
             } else {
                 //Set the progress back to 0
                 if (OnUploadProgress != null) {
@@ -136,7 +145,6 @@ namespace Vimeo
                 //If we are at the last chunk set the max chunk size to the fractional remainder
                 if (i + 1 == numChunks) {
                     int remainder = (int)fileInfo.Length - (maxChunkSize * i);
-                    Debug.Log("Created last chunk and the remainder is: " + remainder);
                     chunk.Init(indexByte, tusUploadLink, filePath, remainder);
                 } else {
                     chunk.Init(indexByte, tusUploadLink, filePath, maxChunkSize);

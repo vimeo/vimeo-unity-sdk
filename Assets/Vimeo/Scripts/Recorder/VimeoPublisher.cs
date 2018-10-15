@@ -36,6 +36,8 @@ namespace Vimeo.Recorder
                 vimeoUploader.vimeoApi.OnPatchComplete += VideoUpdated;
                 vimeoUploader.OnUploadProgress += UploadProgress;
                 vimeoUploader.OnUploadComplete += UploadComplete;
+                vimeoUploader.OnNetworkError += NetworkError;
+                vimeoUploader.OnApiError += ApiError;
             }
         }
 

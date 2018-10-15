@@ -48,7 +48,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.defaultResolution = Vimeo.Recorder.Resolution.x540p;
         recorder.realTime          = true;
         recorder.recordMode        = RecordMode.Duration;
-        recorder.recordDuration    = 5;
+        recorder.recordDuration    = 1;
         recorder.privacyMode       = VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink;
         recorder.openInBrowser     = false;
 
@@ -59,6 +59,7 @@ public class VimeoRecorderPlayTest : TestConfig
     }
 
     [UnityTest]
+    [Timeout(100000000)]
     public IEnumerator Can_Record_Video_From_Screen_With_Valid_Token() 
     {    
         recorder.videoName = "Screen Test " + recorder.videoName;
@@ -68,13 +69,12 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        while (!uploaded) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> uploaded);
+        Assert.IsTrue(uploaded);
     }
 
     [UnityTest]
+    [Timeout(100000000)]
     public IEnumerator Can_Record_Video_From_MainCamera_With_Valid_Token() 
     {    
         recorder.videoName = "MainCamera Test " + recorder.videoName;
@@ -84,10 +84,8 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        while (!uploaded) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> uploaded);
+        Assert.IsTrue(uploaded);
     }    
 
     private void TimeoutCheck(string msg = "Test timed out")
