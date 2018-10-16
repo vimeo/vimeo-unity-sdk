@@ -1,5 +1,6 @@
 ﻿using System.Xml;
 using System.IO;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -58,7 +59,13 @@ namespace Vimeo
 
         void Start()
         {
-            this.hideFlags = HideFlags.HideInInspector;
+            // this.hideFlags = HideFlags.HideInInspector;
+            form = new WWWForm();
+        }
+
+        protected void InitApi()
+        {
+            // this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
         }
 
@@ -380,6 +387,14 @@ namespace Vimeo
             r.chunkedTransfer = false;
             r.SetRequestHeader("Authorization", "bearer " + token);
             r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
+        }
+
+        protected void TriggerDerivedOnProgress(string status, float progress){
+            OnUploadProgress(status, progress);
+        }
+
+        protected void TriggerDerivedOnComplete(string vimeo_uri){
+            OnUploadComplete(vimeo_uri);
         }
 
         public static bool IsNetworkError(UnityWebRequest req)

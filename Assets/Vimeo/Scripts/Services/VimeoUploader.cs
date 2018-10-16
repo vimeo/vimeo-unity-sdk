@@ -9,16 +9,8 @@ using Vimeo;
 
 namespace Vimeo
 {
-    class VimeoUploader : MonoBehaviour
+    class VimeoUploader : VimeoApi
     {
-        //Events
-        public delegate void ErrorAction(string response);
-        public event ErrorAction OnApiError;
-        public event ErrorAction OnNetworkError;
-        public delegate void UploadAction(string status, float progress = 0.0f);
-        public event UploadAction OnUploadProgress;
-        public event UploadAction OnUploadComplete;
-
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
         public event UploadEvent OnChunckUploadComplete;
         public event UploadEvent OnChunckUploadError;
@@ -31,33 +23,23 @@ namespace Vimeo
         private string vimeo_url;
         private FileInfo fileInfo;
 
-
         //Public members
         public int concurentChunks = 4;
         public int maxChunkSize;
         public int numChunks;
+
         private void Start()
         {
-            this.hideFlags = HideFlags.HideInInspector;
+            // this.hideFlags = HideFlags.HideInInspector;
         }
 
-        public void Init(string _token, int _maxChunkSize = 10000)
+        public void Init(string _token, int _maxChunkSize = 1000)
         {
-            //A queue of video chunks to upload
             myChunks = new Queue<VideoChunk>();
-
-            //Instantiate the Vimeo Api
-            if (vimeoApi == null) {
-                vimeoApi = gameObject.AddComponent<VimeoApi>();
-                vimeoApi.OnError += ApiError;
-                vimeoApi.OnNetworkError += NetworkError;
-                vimeoApi.OnRequestComplete += RequestComplete;
-
-                vimeoApi.token = _token;
-            }
-
+            token = _token;
+            InitApi();
+            OnRequestComplete += RequestComplete;
             maxChunkSize = _maxChunkSize;
-
         }
 
         private void RequestComplete(string response)
@@ -76,23 +58,14 @@ namespace Vimeo
             maxChunkSize = size;
         }
 
-        private void ApiError(string response)
-        {
-            OnApiError(response);
-        }
-        private void NetworkError(string response)
-        {
-            OnNetworkError(response);
-        }
-
         public void Upload(string _file)
         {
             file = _file;
             fileInfo = new FileInfo(_file);
-
+            Debug.Log("I am here");
             //Send the request, response will be catched in the RequestComplete() method
             StartCoroutine(
-                vimeoApi.RequestTusResource("me/videos", fileInfo.Length)
+                RequestTusResource("me/videos", fileInfo.Length)
             );
         }
 
@@ -111,18 +84,12 @@ namespace Vimeo
                 VideoChunk currentChunk = myChunks.Dequeue();
                 
                 float progres = ((float)myChunks.Count / (float)numChunks) * -1.0f + 1.0f;
-                OnUploadProgress("Uploading", progres);
-
+                TriggerDerivedOnProgress("Uploading", progres);
                 currentChunk.Upload();
             } else {
-                //Set the progress back to 0
-                if (OnUploadProgress != null) {
-                    OnUploadProgress("Idle", 0.0f);
-                }
-                //Emit upload complete
-                if (OnUploadComplete != null) {
-                    OnUploadComplete(vimeo_url);
-                }
+                TriggerDerivedOnProgress("Idle", 0.0f);
+                TriggerDerivedOnComplete(vimeo_url);
+                Debug.Log(vimeo_url);
             }
         }
 
@@ -153,7 +120,7 @@ namespace Vimeo
                 //Register evenets
                 chunk.OnChunckUploadComplete += OnCompleteChunk;
                 chunk.OnChunckUploadError += OnChunkError;
-
+                Debug.Log("Created chunk number: " + myChunks.Count);
                 //Push it to the queue
                 myChunks.Enqueue(chunk);
 
