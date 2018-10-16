@@ -57,16 +57,15 @@ namespace Vimeo
 
         private UnityWebRequest uploader;
 
-        void Start()
+        private void Start()
         {
-            // this.hideFlags = HideFlags.HideInInspector;
+            this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
         }
 
         protected void InitApi()
         {
-            // this.hideFlags = HideFlags.HideInInspector;
-            form = new WWWForm();
+            Start();
         }
 
         public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,description")
@@ -389,12 +388,18 @@ namespace Vimeo
             r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
         }
 
-        protected void TriggerDerivedOnProgress(string status, float progress){
-            OnUploadProgress(status, progress);
+        protected void TriggerDerivedOnProgress(string status, float progress)
+        {
+            if (OnUploadProgress != null) {
+                OnUploadProgress(status, progress);
+            }
         }
 
-        protected void TriggerDerivedOnComplete(string vimeo_uri){
-            OnUploadComplete(vimeo_uri);
+        protected void TriggerDerivedOnComplete(string vimeo_uri)
+        {
+            if (OnUploadComplete != null){
+                OnUploadComplete(vimeo_uri);
+            }
         }
 
         public static bool IsNetworkError(UnityWebRequest req)

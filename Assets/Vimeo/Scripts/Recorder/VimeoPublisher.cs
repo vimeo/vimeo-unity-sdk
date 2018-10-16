@@ -23,7 +23,7 @@ namespace Vimeo.Recorder
         private Coroutine saveCoroutine;
         private void Start()
         {
-            // this.hideFlags = HideFlags.HideInInspector;
+            this.hideFlags = HideFlags.HideInInspector;
         }
         public void Init(VimeoRecorder _recorder)
         {
@@ -37,8 +37,33 @@ namespace Vimeo.Recorder
                 vimeoUploader.OnUploadProgress += UploadProgress;
                 vimeoUploader.OnUploadComplete += UploadComplete;
                 vimeoUploader.OnNetworkError += NetworkError;
+                vimeoUploader.OnRequestComplete += RequestComplete;
                 vimeoUploader.OnError += ApiError;
             }
+        }
+        private void RequestComplete(string response)
+        {
+            string video_uri = vimeoUploader.GetVideoPermlink(response);
+            video = new VimeoVideo("", video_uri);
+
+#if UNITY_2018_1_OR_NEWER
+            if (recorder.defaultVideoInput == VideoInputType.Camera360) {
+                vimeoUploader.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
+            }
+#endif
+
+            vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            if (recorder.enableDownloads == false) {
+                vimeoUploader.SetVideoDownload(recorder.enableDownloads);
+            }
+            vimeoUploader.SetVideoComments(recorder.commentMode);
+            vimeoUploader.SetVideoReviewPage(recorder.enableReviewPage);
+            SetVideoName(recorder.GetVideoName());
+
+            if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
+                vimeoUploader.SetVideoPassword(recorder.videoPassword);
+            }
+            SetVideoPrivacyMode(recorder.privacyMode);
         }
 
         public string GetVimeoPermalink()
@@ -68,28 +93,7 @@ namespace Vimeo.Recorder
 
         private void UploadComplete(string video_uri)
         {
-            UploadProgress("SavingInfo", .999f);
-
-            video = new VimeoVideo("", video_uri);
-
-#if UNITY_2018_1_OR_NEWER
-            if (recorder.defaultVideoInput == VideoInputType.Camera360) {
-                vimeoUploader.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
-            }
-#endif
-
-            vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
-            if (recorder.enableDownloads == false) {
-                vimeoUploader.SetVideoDownload(recorder.enableDownloads);
-            }
-            vimeoUploader.SetVideoComments(recorder.commentMode);
-            vimeoUploader.SetVideoReviewPage(recorder.enableReviewPage);
-            SetVideoName(recorder.GetVideoName());
-
-            if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
-                vimeoUploader.SetVideoPassword(recorder.videoPassword);
-            }
-            SetVideoPrivacyMode(recorder.privacyMode);
+            UploadProgress("Finalizing", .999f);
         }
 
         private void VideoUpdated(string response)

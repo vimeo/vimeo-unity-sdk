@@ -30,7 +30,7 @@ namespace Vimeo
 
         private void Start()
         {
-            // this.hideFlags = HideFlags.HideInInspector;
+            this.hideFlags = HideFlags.HideInInspector;
         }
 
         public void Init(string _token, int _maxChunkSize = 1000)
@@ -142,7 +142,7 @@ namespace Vimeo
             JSONNode rawJSON = JSON.Parse(response);
             return rawJSON["upload"]["upload_link"].Value;
         }
-        private string GetVideoPermlink(string response)
+        public string GetVideoPermlink(string response)
         {
             JSONNode rawJSON = JSON.Parse(response);
             return rawJSON["link"].Value;
