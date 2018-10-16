@@ -15,15 +15,10 @@ namespace Vimeo
         public event UploadEvent OnChunckUploadComplete;
         public event UploadEvent OnChunckUploadError;
 
-        //Private members
         private Queue<VideoChunk> myChunks;
-        public VimeoApi vimeoApi;
-        //TODO: In the future this will be stored in a list to provide batch uploading
         private string file;
         private string vimeo_url;
         private FileInfo fileInfo;
-
-        //Public members
         public int concurentChunks = 4;
         public int maxChunkSize;
         public int numChunks;
@@ -44,7 +39,7 @@ namespace Vimeo
 
         private void RequestComplete(string response)
         {
-            string tusUploadLink = GetTusUploadLink(response);
+            string tusUploadLink = VimeoUploader.GetTusUploadLink(response);
             vimeo_url = GetVideoPermlink(response);
             CreateChunks(file, fileInfo, tusUploadLink);
 
@@ -62,11 +57,7 @@ namespace Vimeo
         {
             file = _file;
             fileInfo = new FileInfo(_file);
-            Debug.Log("I am here");
-            //Send the request, response will be catched in the RequestComplete() method
-            StartCoroutine(
-                RequestTusResource("me/videos", fileInfo.Length)
-            );
+            StartCoroutine(RequestTusResource("me/videos", fileInfo.Length));
         }
 
         private void OnCompleteChunk(VideoChunk chunk, string msg)
@@ -78,19 +69,9 @@ namespace Vimeo
 
             //Destroy the chunk
             Destroy(chunk);
-
-            //Make sure the queue is not empty
-            if (myChunks.Count != 0) {
-                VideoChunk currentChunk = myChunks.Dequeue();
-                
-                float progres = ((float)myChunks.Count / (float)numChunks) * -1.0f + 1.0f;
-                TriggerDerivedOnProgress("Uploading", progres);
-                currentChunk.Upload();
-            } else {
-                TriggerDerivedOnProgress("Idle", 0.0f);
-                TriggerDerivedOnComplete(vimeo_url);
-                Debug.Log(vimeo_url);
-            }
+            
+            //And upload the next one
+            UploadNextChunk();
         }
 
         private void OnChunkError(VideoChunk chunk, string err)
@@ -99,6 +80,7 @@ namespace Vimeo
                 OnChunckUploadError(chunk, err);
             }
         }
+
         private void CreateChunks(string filePath, FileInfo fileInfo, string tusUploadLink)
         {
             //Create the chunks
@@ -117,32 +99,35 @@ namespace Vimeo
                     chunk.Init(indexByte, tusUploadLink, filePath, maxChunkSize);
                 }
 
-                //Register evenets
-                chunk.OnChunckUploadComplete += OnCompleteChunk;
-                chunk.OnChunckUploadError += OnChunkError;
-                Debug.Log("Created chunk number: " + myChunks.Count);
-                //Push it to the queue
+                chunk.OnChunkUploadComplete += OnCompleteChunk;
+                chunk.OnChunkUploadError += OnChunkError;
                 myChunks.Enqueue(chunk);
 
             }
         }
-        private UnityWebRequest PrepareTusResourceRequest(UnityWebRequest req, string token)
-        {
-            //Prep headers
-            req.chunkedTransfer = false;
-            req.method = "POST";
-            req.SetRequestHeader("Authorization", "bearer " + token);
-            req.SetRequestHeader("Content-Type", "application/json");
-            req.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=3.4");
 
-            return req;
+        private void UploadNextChunk()
+        {
+            //Make sure the queue is not empty
+            if (myChunks.Count != 0) {
+                VideoChunk currentChunk = myChunks.Dequeue();
+                
+                float progress = ((float)myChunks.Count / (float)numChunks) * -1.0f + 1.0f;
+                TriggerDerivedOnProgress("Uploading", progress);
+                currentChunk.Upload();
+            } else {
+                TriggerDerivedOnComplete(vimeo_url);
+                TriggerDerivedOnProgress("Idle", 0.0f);
+            }
         }
-        private string GetTusUploadLink(string response)
+
+        private static string GetTusUploadLink(string response)
         {
             JSONNode rawJSON = JSON.Parse(response);
             return rawJSON["upload"]["upload_link"].Value;
         }
-        public string GetVideoPermlink(string response)
+
+        public static string GetVideoPermlink(string response)
         {
             JSONNode rawJSON = JSON.Parse(response);
             return rawJSON["link"].Value;

@@ -14,15 +14,15 @@ namespace Vimeo
         private string url;
         private byte[] bytes;
         private string file_path;
-        private int chuckSize;
+        private int chunkSize;
 
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
-        public event UploadEvent OnChunckUploadComplete;
-        public event UploadEvent OnChunckUploadError;
+        public event UploadEvent OnChunkUploadComplete;
+        public event UploadEvent OnChunkUploadError;
 
-        public void Init(int _indexByte, string _url, string _file_path, int _chucnkSize)
+        public void Init(int _indexByte, string _url, string _file_path, int _chunkSize)
         {
-            bytes = new byte[_chucnkSize];
+            bytes = new byte[_chunkSize];
             file_path = _file_path;
             indexByte = _indexByte;
             url = _url;
@@ -54,10 +54,9 @@ namespace Vimeo
                 yield return VimeoApi.SendRequest(uploadRequest);
 
                 if (uploadRequest.isNetworkError || uploadRequest.isHttpError) {
-                    string concatErr = "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode;
-                    OnChunckUploadError(this, concatErr);
+                    OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
                 } else {
-                    OnChunckUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
+                    OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
                 }
             }
             DisposeBytes();

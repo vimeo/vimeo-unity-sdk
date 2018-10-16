@@ -54,7 +54,7 @@ namespace Vimeo.Recorder
             if (autoUpload) {
                 PublishVideo();
             } else {
-                Debug.Log("[Vimeo] Video did not automatically upload. VimeoPlayer.autoUpload is set to false.");
+                Debug.Log("[VimeoRecorder] Video did not automatically upload. VimeoRecorder.autoUpload is set to false.");
             }
         }
 

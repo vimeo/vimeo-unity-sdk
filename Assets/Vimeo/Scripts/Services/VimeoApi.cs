@@ -375,11 +375,9 @@ namespace Vimeo
         }
         private void PrepareTusHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
-            r.chunkedTransfer = false;
             r.method = "POST";
-            r.SetRequestHeader("Authorization", "bearer " + token);
             r.SetRequestHeader("Content-Type", "application/json");
-            r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
+            PrepareHeaders(r, apiVersion);
         }
         private void PrepareHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {

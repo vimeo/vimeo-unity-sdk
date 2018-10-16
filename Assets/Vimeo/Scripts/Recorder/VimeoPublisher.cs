@@ -43,7 +43,7 @@ namespace Vimeo.Recorder
         }
         private void RequestComplete(string response)
         {
-            string video_uri = vimeoUploader.GetVideoPermlink(response);
+            string video_uri = VimeoUploader.GetVideoPermlink(response);
             video = new VimeoVideo("", video_uri);
 
 #if UNITY_2018_1_OR_NEWER
@@ -84,6 +84,7 @@ namespace Vimeo.Recorder
             Debug.Log("[VimeoRecorder] Uploading to Vimeo");
             vimeoUploader.Upload(filename);
         }
+        
         void UploadProgress(string status, float progress)
         {
             if (OnUploadProgress != null) {
@@ -93,7 +94,10 @@ namespace Vimeo.Recorder
 
         private void UploadComplete(string video_uri)
         {
-            UploadProgress("Finalizing", .999f);
+            if (recorder.openInBrowser == true) {
+                OpenVideo();
+            }
+            Debug.Log("[VimeoPublisher] Published video to " + video_uri);
         }
 
         private void VideoUpdated(string response)
@@ -101,10 +105,6 @@ namespace Vimeo.Recorder
             JSONNode json = JSON.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
-
-            if (recorder.openInBrowser == true) {
-                OpenVideo();
-            }
 
             if (recorder.currentFolder != null && recorder.currentFolder.uri != null) {
                 vimeoUploader.AddVideoToFolder(video, recorder.currentFolder);
