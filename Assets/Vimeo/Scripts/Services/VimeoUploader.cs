@@ -28,7 +28,7 @@ namespace Vimeo
             this.hideFlags = HideFlags.HideInInspector;
         }
 
-        public void Init(string _token, int _maxChunkSize = 1000)
+        public void Init(string _token, int _maxChunkSize = 20000)
         {
             myChunks = new Queue<VideoChunk>();
             token = _token;
@@ -116,8 +116,8 @@ namespace Vimeo
                 TriggerDerivedOnProgress("Uploading", progress);
                 currentChunk.Upload();
             } else {
+                TriggerDerivedOnProgress("UploadComplete", 1f);
                 TriggerDerivedOnComplete(vimeo_url);
-                TriggerDerivedOnProgress("Idle", 0.0f);
             }
         }
 

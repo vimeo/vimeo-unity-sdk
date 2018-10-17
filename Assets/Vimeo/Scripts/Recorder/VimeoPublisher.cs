@@ -97,6 +97,9 @@ namespace Vimeo.Recorder
             if (recorder.openInBrowser == true) {
                 OpenVideo();
             }
+            if (OnUploadProgress != null) {
+                OnUploadProgress("UploadComplete", 1f);
+            }
             Debug.Log("[VimeoPublisher] Published video to " + video_uri);
         }
 
@@ -109,8 +112,6 @@ namespace Vimeo.Recorder
             if (recorder.currentFolder != null && recorder.currentFolder.uri != null) {
                 vimeoUploader.AddVideoToFolder(video, recorder.currentFolder);
             }
-
-            UploadProgress("SaveInfoComplete", 1f);
         }
 
         private void NetworkError(string error_message)
@@ -144,7 +145,6 @@ namespace Vimeo.Recorder
                 }
 
             }
-            UploadProgress("SaveInfoComplete", 1f);
         }
 
         public void SetVideoName(string title)

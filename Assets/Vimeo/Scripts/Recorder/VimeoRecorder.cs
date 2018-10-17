@@ -87,7 +87,7 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status == "SaveInfoComplete") {
+            if (status == "UploadComplete") {
                 isUploading = false;
                 encoder.DeleteVideoFile();
 
