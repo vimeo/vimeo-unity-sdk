@@ -11,9 +11,12 @@ namespace Vimeo
 {
     class VimeoUploader : VimeoApi
     {
-        public delegate void UploadEvent(VideoChunk chunk, string msg = "");
-        public event UploadEvent OnChunckUploadComplete;
-        public event UploadEvent OnChunckUploadError;
+        public delegate void ChunkUploadEvent(VideoChunk chunk, string msg = "");
+        public event ChunkUploadEvent OnChunckUploadComplete;
+        public event ChunkUploadEvent OnChunckUploadError;
+        public delegate void UploadAction(string status, float progress);
+        public event UploadAction OnUploadProgress;
+        public event RequestAction OnUploadComplete;
 
         private Queue<VideoChunk> myChunks;
         private string file;
@@ -113,11 +116,17 @@ namespace Vimeo
                 VideoChunk currentChunk = myChunks.Dequeue();
                 
                 float progress = ((float)myChunks.Count / (float)numChunks) * -1.0f + 1.0f;
-                TriggerDerivedOnProgress("Uploading", progress);
+                if (OnUploadProgress != null) {
+                    OnUploadProgress("Uploading", progress);
+                }
                 currentChunk.Upload();
             } else {
-                TriggerDerivedOnProgress("UploadComplete", 1f);
-                TriggerDerivedOnComplete(vimeo_url);
+                if (OnUploadProgress != null) {
+                    OnUploadProgress("UploadComplete", 1f);
+                }
+                if (OnUploadComplete != null) {
+                    OnUploadComplete(vimeo_url);
+                }
             }
         }
 

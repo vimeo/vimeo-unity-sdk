@@ -40,13 +40,9 @@ namespace Vimeo
 
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
-        public event RequestAction OnUploadComplete;
         public event RequestAction OnPatchComplete;
         public event RequestAction OnError;
         public event RequestAction OnNetworkError;
-
-        public delegate void UploadAction(string status, float progress);
-        public event UploadAction OnUploadProgress;
 
         private string video_file_path;
 
@@ -256,31 +252,19 @@ namespace Vimeo
                 }
             }
         }
+
         private void PrepareTusHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
             r.method = "POST";
             r.SetRequestHeader("Content-Type", "application/json");
             PrepareHeaders(r, apiVersion);
         }
+        
         private void PrepareHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
             r.chunkedTransfer = false;
             r.SetRequestHeader("Authorization", "bearer " + token);
             r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
-        }
-
-        protected void TriggerDerivedOnProgress(string status, float progress)
-        {
-            if (OnUploadProgress != null) {
-                OnUploadProgress(status, progress);
-            }
-        }
-
-        protected void TriggerDerivedOnComplete(string vimeo_uri)
-        {
-            if (OnUploadComplete != null){
-                OnUploadComplete(vimeo_uri);
-            }
         }
 
         public static bool IsNetworkError(UnityWebRequest req)
