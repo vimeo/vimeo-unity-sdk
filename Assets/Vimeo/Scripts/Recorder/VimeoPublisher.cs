@@ -25,7 +25,7 @@ namespace Vimeo.Recorder
         {
             this.hideFlags = HideFlags.HideInInspector;
         }
-        
+
         public void Init(VimeoRecorder _recorder)
         {
             recorder = _recorder;
@@ -38,12 +38,12 @@ namespace Vimeo.Recorder
                 vimeoUploader.OnUploadProgress += UploadProgress;
                 vimeoUploader.OnUploadComplete += UploadComplete;
                 vimeoUploader.OnNetworkError += NetworkError;
-                vimeoUploader.OnRequestComplete += RequestComplete;
+                vimeoUploader.OnRequestComplete += OnUploadInit;
                 vimeoUploader.OnError += ApiError;
             }
         }
 
-        private void RequestComplete(string response)
+        private void OnUploadInit(string response)
         {
             string video_uri = VimeoUploader.GetVideoPermlink(response);
             video = new VimeoVideo("", video_uri);
