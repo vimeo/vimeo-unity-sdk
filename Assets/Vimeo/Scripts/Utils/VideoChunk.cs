@@ -1,42 +1,64 @@
 using System.IO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
 namespace Vimeo
 {
-    class VideoChunk : MonoBehaviour
+    public class VideoChunk : MonoBehaviour
     {
-        private int indexByte;
-        private string url;
-        private byte[] bytes;
-        private string file_path;
-        private int chunkSize;
+        private int m_index_byte;
+        public int index_byte {
+            get {
+                return m_index_byte;
+            }
+        }
+        private string m_url;
+        public string url {
+            get {
+                return m_url;
+            }
+        }
+        public byte[] bytes;
+        private string m_file_path;
+        public string file_path {
+            get {
+                return m_file_path;
+            }
+        }
+        
+        private int m_chunk_size;
+        public int chunk_size {
+            get {
+                return m_chunk_size;
+            }
+        }
 
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
         public event UploadEvent OnChunkUploadComplete;
         public event UploadEvent OnChunkUploadError;
 
-        public void Init(int _indexByte, string _url, string _file_path, int _chunkSize)
+        public void Init(int _indexByte, string _m_url, string _file_path, int _chunkSize)
         {
-            bytes = new byte[_chunkSize];
-            file_path = _file_path;
-            indexByte = _indexByte;
-            url = _url;
+            m_chunk_size = _chunkSize;
+            m_file_path = _file_path;
+            m_index_byte = _indexByte;
+            m_url = _m_url;
+            bytes = new byte[m_chunk_size];
         }
 
-        private void ReadBytes()
+        public void ReadBytes()
         {
             using (BinaryReader reader = new BinaryReader(new FileStream(file_path, FileMode.Open, FileAccess.Read))) {
-                reader.BaseStream.Seek(indexByte, SeekOrigin.Begin);
+                reader.BaseStream.Seek(m_index_byte, SeekOrigin.Begin);
                 reader.Read(bytes, 0, bytes.Length);
             }
         }
 
-        private void DisposeBytes()
+        public void DisposeBytes()
         {
             Array.Clear(bytes, 0, bytes.Length);
         }
@@ -44,11 +66,11 @@ namespace Vimeo
         private IEnumerator SendTusRequest()
         {
             ReadBytes();
-            using (UnityWebRequest uploadRequest = UnityWebRequest.Put(url, bytes)) {
+            using (UnityWebRequest uploadRequest = UnityWebRequest.Put(m_url, bytes)) {
                 uploadRequest.chunkedTransfer = false;
                 uploadRequest.method = "PATCH";
                 uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
-                uploadRequest.SetRequestHeader("Upload-Offset", (indexByte).ToString());
+                uploadRequest.SetRequestHeader("Upload-Offset", (m_index_byte).ToString());
                 uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
 
                 yield return VimeoApi.SendRequest(uploadRequest);
