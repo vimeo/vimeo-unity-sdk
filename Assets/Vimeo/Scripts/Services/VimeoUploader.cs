@@ -46,7 +46,6 @@ namespace Vimeo
             vimeo_url = GetVideoPermlink(response);
             CreateChunks(file, fileInfo, tusUploadLink);
 
-            
             VideoChunk firstChunk = myChunks.Dequeue();
             firstChunk.Upload();
         }

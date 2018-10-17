@@ -25,6 +25,7 @@ namespace Vimeo.Recorder
         {
             this.hideFlags = HideFlags.HideInInspector;
         }
+        
         public void Init(VimeoRecorder _recorder)
         {
             recorder = _recorder;
@@ -41,6 +42,7 @@ namespace Vimeo.Recorder
                 vimeoUploader.OnError += ApiError;
             }
         }
+
         private void RequestComplete(string response)
         {
             string video_uri = VimeoUploader.GetVideoPermlink(response);
@@ -133,7 +135,8 @@ namespace Vimeo.Recorder
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
-                    } else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
+                    } 
+                    else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
