@@ -33,6 +33,6 @@ public class VimeoUploaderTest : TestConfig
     [TearDown]
     public void _After()
     {
-
+        UnityEngine.GameObject.DestroyImmediate(uploaderObj);
     }
 }

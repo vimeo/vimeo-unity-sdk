@@ -56,6 +56,6 @@ public class VideoChunkTest : TestConfig
     [TearDown]
     public void _After()
     {
-
+        UnityEngine.GameObject.DestroyImmediate(chunkObj);
     }
 }
