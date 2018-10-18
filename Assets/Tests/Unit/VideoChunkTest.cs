@@ -26,10 +26,10 @@ public class VideoChunkTest : TestConfig
 
         chunk.Init(0, "test_tus_url", "test_file_path", 10000);
 
-        Assert.AreEqual("test_file_path", chunk.file_path);
+        Assert.AreEqual("test_file_path", chunk.filePath);
         Assert.AreEqual("test_tus_url", chunk.url);
-        Assert.AreEqual(0, chunk.index_byte);
-        Assert.AreEqual(10000, chunk.chunk_size);  
+        Assert.AreEqual(0, chunk.indexByte);
+        Assert.AreEqual(10000, chunk.chunkSize);  
         Assert.AreEqual(chunk.bytes.Length, 10000);
     }
 

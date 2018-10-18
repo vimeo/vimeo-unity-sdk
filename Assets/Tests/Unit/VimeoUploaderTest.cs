@@ -39,13 +39,13 @@ public class VimeoUploaderTest : TestConfig
         
         Assert.IsNotNull(uploader.chunks);
         Assert.AreEqual(uploader.token, "xtokenx");
-        Assert.AreEqual(uploader.max_chunk_size, 10000);
+        Assert.AreEqual(uploader.maxChunkSize, 10000);
     }
 
     [Test]
     public void Init_Sets_Default_Chunk_Size()
     {
-        Assert.AreEqual(uploader.max_chunk_size, 1024 * 1024 * 128);
+        Assert.AreEqual(uploader.maxChunkSize, 1024 * 1024 * 128);
     }
 
     [Test]
@@ -53,7 +53,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.Upload(TEST_IMAGE_PATH);
         Assert.AreEqual(uploader.file, TEST_IMAGE_PATH);
-        Assert.IsNotNull(uploader.file_info);
+        Assert.IsNotNull(uploader.fileInfo);
     }
 
     [Test]
@@ -70,7 +70,7 @@ public class VimeoUploaderTest : TestConfig
         uploader.Init("xtokenx", 100000000);
         uploader.CreateChunks("xxx", testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Count, 1);
-        Assert.AreEqual(uploader.chunks.Peek().chunk_size, testFileSize);
+        Assert.AreEqual(uploader.chunks.Peek().chunkSize, testFileSize);
     }
 
     [Test]
@@ -78,7 +78,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.CreateChunks("video file path", testFile, "upload url");
         Assert.AreEqual(uploader.chunks.Peek().url, "upload url");
-        Assert.AreEqual(uploader.chunks.Peek().file_path, "video file path");
+        Assert.AreEqual(uploader.chunks.Peek().filePath, "video file path");
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.Init("xtokenx", 1234);
         uploader.CreateChunks("xxx", testFile, "xxx");
-        Assert.AreEqual(uploader.chunks.Peek().chunk_size, 1234);
+        Assert.AreEqual(uploader.chunks.Peek().chunkSize, 1234);
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class VimeoUploaderTest : TestConfig
         uploader.Init("xtokenx", 1000);
         uploader.CreateChunks("xxx", testFile, "xxx");
         Assert.AreEqual(
-            uploader.chunks.ToArray()[uploader.chunks.Count - 1].chunk_size, 879
+            uploader.chunks.ToArray()[uploader.chunks.Count - 1].chunkSize, 879
         );
     }
 

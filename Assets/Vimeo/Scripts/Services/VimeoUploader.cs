@@ -30,29 +30,29 @@ namespace Vimeo
                 return m_file;
             }
         }
-        private string m_vimeo_url;
+        private string m_vimeoUrl;
         public string vimeo_url {
             get {
-                return m_vimeo_url;
+                return m_vimeoUrl;
             }
         }
-        private FileInfo m_file_info;
-        public FileInfo file_info {
+        private FileInfo m_fileInfo;
+        public FileInfo fileInfo {
             get {
-                return m_file_info;
+                return m_fileInfo;
             }
         }
         // private int m_concurent_chunks = 4; Not used
-        private int m_max_chunk_size;
-        public int max_chunk_size {
+        private int m_maxChunkSize;
+        public int maxChunkSize {
             get {
-                return m_max_chunk_size;
+                return m_maxChunkSize;
             }
         }
-        private int m_num_chunks;
-        public int num_chunks {
+        private int m_numChunks;
+        public int numChunks {
             get {
-                return m_num_chunks;
+                return m_numChunks;
             }
         }
 
@@ -60,7 +60,7 @@ namespace Vimeo
         {
             m_chunks = new Queue<VideoChunk>();
             token = _token;
-            m_max_chunk_size = _maxChunkByteSize;
+            m_maxChunkSize = _maxChunkByteSize;
         }
 
         private void RequestComplete(string response)
@@ -68,8 +68,8 @@ namespace Vimeo
             OnRequestComplete -= RequestComplete;
 
             string tusUploadLink = VimeoUploader.GetTusUploadLink(response);
-            m_vimeo_url = GetVideoPermlink(response);
-            CreateChunks(m_file, m_file_info, tusUploadLink);
+            m_vimeoUrl = GetVideoPermlink(response);
+            CreateChunks(m_file, m_fileInfo, tusUploadLink);
 
             VideoChunk firstChunk = m_chunks.Dequeue();
             firstChunk.Upload();
@@ -78,10 +78,10 @@ namespace Vimeo
         public void Upload(string _file)
         {
             m_file = _file;
-            m_file_info = new FileInfo(m_file);
+            m_fileInfo = new FileInfo(m_file);
 
             OnRequestComplete += RequestComplete;
-            StartCoroutine(RequestTusResource("me/videos", m_file_info.Length));
+            StartCoroutine(RequestTusResource("me/videos", m_fileInfo.Length));
         }
 
         private void OnCompleteChunk(VideoChunk chunk, string msg)
@@ -106,19 +106,19 @@ namespace Vimeo
         public void CreateChunks(string filePath, FileInfo fileInfo, string tusUploadLink)
         {
             //Create the chunks
-            m_num_chunks = (int)Mathf.Ceil((float)fileInfo.Length / (float)m_max_chunk_size);
+            m_numChunks = (int)Mathf.Ceil((float)fileInfo.Length / (float)m_maxChunkSize);
 
-            for (int i = 0; i < m_num_chunks; i++) {
-                int indexByte = m_max_chunk_size * i;
+            for (int i = 0; i < m_numChunks; i++) {
+                int indexByte = m_maxChunkSize * i;
                 VideoChunk chunk = this.gameObject.AddComponent<VideoChunk>();
                 chunk.hideFlags = HideFlags.HideInInspector;
 
                 //If we are at the last chunk set the max chunk size to the fractional remainder
-                if (i == m_num_chunks - 1) {
-                    int remainder = (int)fileInfo.Length - (m_max_chunk_size * i);
+                if (i == m_numChunks - 1) {
+                    int remainder = (int)fileInfo.Length - (m_maxChunkSize * i);
                     chunk.Init(indexByte, tusUploadLink, filePath, remainder);
                 } else {
-                    chunk.Init(indexByte, tusUploadLink, filePath, m_max_chunk_size);
+                    chunk.Init(indexByte, tusUploadLink, filePath, m_maxChunkSize);
                 }
 
                 chunk.OnChunkUploadComplete += OnCompleteChunk;
@@ -133,7 +133,7 @@ namespace Vimeo
             if (m_chunks.Count != 0) {
                 VideoChunk currentChunk = m_chunks.Dequeue();
                 
-                float progress = ((float)m_chunks.Count / (float)m_num_chunks) * -1.0f + 1.0f;
+                float progress = ((float)m_chunks.Count / (float)m_numChunks) * -1.0f + 1.0f;
                 if (OnUploadProgress != null) {
                     OnUploadProgress("Uploading", progress);
                 }
@@ -143,7 +143,7 @@ namespace Vimeo
                     OnUploadProgress("UploadComplete", 1f);
                 }
                 if (OnUploadComplete != null) {
-                    OnUploadComplete(m_vimeo_url);
+                    OnUploadComplete(m_vimeoUrl);
                 }
             }
         }

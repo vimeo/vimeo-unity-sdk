@@ -10,10 +10,10 @@ namespace Vimeo
 {
     public class VideoChunk : MonoBehaviour
     {
-        private int m_index_byte;
-        public int index_byte {
+        private int m_indexByte;
+        public int indexByte {
             get {
-                return m_index_byte;
+                return m_indexByte;
             }
         }
         private string m_url;
@@ -23,17 +23,17 @@ namespace Vimeo
             }
         }
         public byte[] bytes;
-        private string m_file_path;
-        public string file_path {
+        private string m_filePath;
+        public string filePath {
             get {
-                return m_file_path;
+                return m_filePath;
             }
         }
         
-        private int m_chunk_size;
-        public int chunk_size {
+        private int m_chunkSize;
+        public int chunkSize {
             get {
-                return m_chunk_size;
+                return m_chunkSize;
             }
         }
 
@@ -41,19 +41,19 @@ namespace Vimeo
         public event UploadEvent OnChunkUploadComplete;
         public event UploadEvent OnChunkUploadError;
 
-        public void Init(int _indexByte, string _m_url, string _file_path, int _chunkSize)
+        public void Init(int _indexByte, string _url, string _filePath, int _chunkSize)
         {
-            m_chunk_size = _chunkSize;
-            m_file_path = _file_path;
-            m_index_byte = _indexByte;
-            m_url = _m_url;
-            bytes = new byte[m_chunk_size];
+            m_chunkSize = _chunkSize;
+            m_filePath = _filePath;
+            m_indexByte = _indexByte;
+            m_url = _url;
+            bytes = new byte[m_chunkSize];
         }
 
         public void ReadBytes()
         {
-            using (BinaryReader reader = new BinaryReader(new FileStream(file_path, FileMode.Open, FileAccess.Read))) {
-                reader.BaseStream.Seek(m_index_byte, SeekOrigin.Begin);
+            using (BinaryReader reader = new BinaryReader(new FileStream(filePath, FileMode.Open, FileAccess.Read))) {
+                reader.BaseStream.Seek(m_indexByte, SeekOrigin.Begin);
                 reader.Read(bytes, 0, bytes.Length);
             }
         }
@@ -70,7 +70,7 @@ namespace Vimeo
                 uploadRequest.chunkedTransfer = false;
                 uploadRequest.method = "PATCH";
                 uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
-                uploadRequest.SetRequestHeader("Upload-Offset", (m_index_byte).ToString());
+                uploadRequest.SetRequestHeader("Upload-Offset", (m_indexByte).ToString());
                 uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
 
                 yield return VimeoApi.SendRequest(uploadRequest);
