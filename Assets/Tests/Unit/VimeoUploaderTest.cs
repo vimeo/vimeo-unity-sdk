@@ -60,7 +60,7 @@ public class VimeoUploaderTest : TestConfig
     public void CreateChunks_Makes_Multiple_Chunks()
     {
         uploader.Init("xtokenx", 1000);
-        uploader.CreateChunks("xxx", testFile, "xxx");
+        uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Count, 3);
     }
 
@@ -68,7 +68,7 @@ public class VimeoUploaderTest : TestConfig
     public void CreateChunks_Makes_One_Chunk_For_Small_Files()
     {
         uploader.Init("xtokenx", 100000000);
-        uploader.CreateChunks("xxx", testFile, "xxx");
+        uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Count, 1);
         Assert.AreEqual(uploader.chunks.Peek().chunkSize, testFileSize);
     }
@@ -76,16 +76,16 @@ public class VimeoUploaderTest : TestConfig
     [Test]
     public void CreateChunks_Properly_Sets_Up_Chunk()
     {
-        uploader.CreateChunks("video file path", testFile, "upload url");
+        uploader.CreateChunks(testFile, "upload url");
         Assert.AreEqual(uploader.chunks.Peek().url, "upload url");
-        Assert.AreEqual(uploader.chunks.Peek().filePath, "video file path");
+        Assert.AreEqual(uploader.chunks.Peek().filePath, TEST_IMAGE_PATH);
     }
 
     [Test]
     public void CreateChunks_Sets_Size_Of_Each_Chunk()
     {
         uploader.Init("xtokenx", 1234);
-        uploader.CreateChunks("xxx", testFile, "xxx");
+        uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Peek().chunkSize, 1234);
     }
 
@@ -93,7 +93,7 @@ public class VimeoUploaderTest : TestConfig
     public void CreateChunks_Last_Chunk_Is_Remainder()
     {
         uploader.Init("xtokenx", 1000);
-        uploader.CreateChunks("xxx", testFile, "xxx");
+        uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(
             uploader.chunks.ToArray()[uploader.chunks.Count - 1].chunkSize, 879
         );
@@ -102,7 +102,7 @@ public class VimeoUploaderTest : TestConfig
     [Test]
     public void UploadNextChunk_Dequeues()
     {
-        uploader.CreateChunks(testFile.FullName, testFile, "xxx");
+        uploader.CreateChunks(testFile, "xxx");
 
         int length = uploader.chunks.Count;
         uploader.UploadNextChunk();

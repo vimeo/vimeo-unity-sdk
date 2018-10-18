@@ -69,7 +69,7 @@ namespace Vimeo
 
             string tusUploadLink = VimeoUploader.GetTusUploadLink(response);
             m_vimeoUrl = GetVideoPermlink(response);
-            CreateChunks(m_file, m_fileInfo, tusUploadLink);
+            CreateChunks(m_fileInfo, tusUploadLink);
 
             VideoChunk firstChunk = m_chunks.Dequeue();
             firstChunk.Upload();
@@ -103,7 +103,7 @@ namespace Vimeo
             }
         }
 
-        public void CreateChunks(string filePath, FileInfo fileInfo, string tusUploadLink)
+        public void CreateChunks(FileInfo fileInfo, string tusUploadLink)
         {
             //Create the chunks
             m_numChunks = (int)Mathf.Ceil((float)fileInfo.Length / (float)m_maxChunkSize);
@@ -116,9 +116,9 @@ namespace Vimeo
                 //If we are at the last chunk set the max chunk size to the fractional remainder
                 if (i == m_numChunks - 1) {
                     int remainder = (int)fileInfo.Length - (m_maxChunkSize * i);
-                    chunk.Init(indexByte, tusUploadLink, filePath, remainder);
+                    chunk.Init(indexByte, tusUploadLink, fileInfo.FullName, remainder);
                 } else {
-                    chunk.Init(indexByte, tusUploadLink, filePath, m_maxChunkSize);
+                    chunk.Init(indexByte, tusUploadLink, fileInfo.FullName, m_maxChunkSize);
                 }
 
                 chunk.OnChunkUploadComplete += OnCompleteChunk;
