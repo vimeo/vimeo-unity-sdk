@@ -77,12 +77,15 @@ namespace Vimeo.Recorder
 
         public string GetVimeoPermalink()
         {
-            if (recorder.videoPermalink != null && video.id != null) {
+            if (recorder.videoPermalink != null) {
                 if (recorder.defaultShareLink == LinkType.ReviewPage) {
                     return recorder.videoReviewPermalink;
                 } else {
                     return recorder.videoPermalink;
                 }
+            }
+
+            if (video != null && video.id != 0) {
                 return "https://vimeo.com/" + video.id;
             }
 
