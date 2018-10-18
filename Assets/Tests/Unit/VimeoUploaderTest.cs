@@ -78,7 +78,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.CreateChunks(testFile, "upload url");
         Assert.AreEqual(uploader.chunks.Peek().url, "upload url");
-        Assert.AreEqual(uploader.chunks.Peek().filePath, TEST_IMAGE_PATH);
+        Assert.AreEqual(uploader.chunks.Peek().filePath, new FileInfo(TEST_IMAGE_PATH).FullName);
     }
 
     [Test]
