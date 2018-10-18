@@ -5,6 +5,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
+using SimpleJSON;
 
 public class VimeoRecorderPlayTest : TestConfig
 {
@@ -17,10 +18,8 @@ public class VimeoRecorderPlayTest : TestConfig
     VimeoRecorder recorder;
 
     bool uploaded;
+    bool finished;
     bool error;
-
-    float timeout = 30;
-    float elapsed = 0;
 
     [SetUp]
     public void _Before()
@@ -56,6 +55,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.videoName = "(Unity " + Application.unityVersion + ")";
 
         uploaded = false;
+        finished = false;
     }
 
     [UnityTest]
@@ -88,24 +88,46 @@ public class VimeoRecorderPlayTest : TestConfig
         Assert.IsTrue(uploaded);
     }    
 
-    private void TimeoutCheck(string msg = "Test timed out")
-    {
-        elapsed += .25f;
-        if (elapsed >= timeout) {
-            recorder.CancelRecording();
-            Assert.Fail(msg);
-        }
-    }
-
     private void UploadComplete()
     {
         uploaded = true;
     }
 
+    [UnityTest]
+    [Timeout(300000)]
+    public IEnumerator Uploads_Video_And_Adds_Video_To_Project() 
+    {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        recorder.currentFolder = new VimeoFolder("Unity Tests", TEST_PROJECT_FOLDER);
+        recorder.videoName = "Folder Test " + recorder.videoName;
+        recorder.defaultVideoInput = VideoInputType.Camera;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += FolderCheckUploadComplete;
+
+        yield return new WaitUntil(()=> finished == true);
+    }    
+
+    private void FolderCheckUploadComplete()
+    {
+        VimeoApi api = recorderObj.AddComponent<VimeoApi>();
+        api.token = VALID_RECORDING_TOKEN;
+        api.OnRequestComplete += GetFoldersComplete;
+        api.GetVideosInFolder(new VimeoFolder("Unity Tests", TEST_PROJECT_FOLDER));
+    }
+
+    private void GetFoldersComplete(string resp)
+    {
+        JSONNode json = JSON.Parse(resp);
+        Assert.AreEqual(recorder.publisher.video.uri, json["data"][0]["uri"].Value);
+        finished = true;
+    }
+
     [TearDown]
     public void _After()
     {
-        uploaded = false;
         UnityEngine.GameObject.DestroyImmediate(camObj);
         UnityEngine.GameObject.DestroyImmediate(light);
         UnityEngine.GameObject.DestroyImmediate(cube);

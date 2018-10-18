@@ -23,7 +23,7 @@ namespace Vimeo.Recorder
                 return m_vimeoUploader;
             }
         }
-        private VimeoVideo video;
+        public VimeoVideo video;
 
         private Coroutine saveCoroutine;
         private void Start()
@@ -140,7 +140,6 @@ namespace Vimeo.Recorder
             JSONNode json = JSON.Parse(response);
 
             if (json["invalid_parameters"] != null) {
-
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
                     // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
@@ -158,7 +157,6 @@ namespace Vimeo.Recorder
                         }
                     }
                 }
-
             }
         }
 
