@@ -13,6 +13,7 @@ namespace Vimeo
     {
         public string name;
         public string uri;
+        public string tusUploadLink;
         public int id;
         public string description;
         public int duration;
@@ -82,6 +83,25 @@ namespace Vimeo
                 }   
                 progressiveFiles.Sort(SortByQuality);
             }
+        }
+
+        public VimeoVideo(string jsonString)
+        {
+            name = "Untitled";
+            tusUploadLink = GetTusUploadLink(jsonString);
+            uri = GetVideoUri(jsonString);
+        }
+
+        public string GetTusUploadLink(string response)
+        {
+            JSONNode rawJSON = JSON.Parse(response);
+            return rawJSON["upload"]["upload_link"].Value;
+        }
+
+        public string GetVideoUri(string response)
+        {
+            JSONNode rawJSON = JSON.Parse(response);
+            return rawJSON["uri"].Value;
         }
         
         public int CompareTo(VimeoVideo other)

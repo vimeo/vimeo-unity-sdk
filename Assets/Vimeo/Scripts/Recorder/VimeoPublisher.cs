@@ -52,8 +52,7 @@ namespace Vimeo.Recorder
         {
             m_vimeoUploader.OnRequestComplete -= OnUploadInit;
 
-            string video_uri = VimeoUploader.GetVideoUri(response);
-            video = new VimeoVideo("", video_uri);
+            video = new VimeoVideo(response);
 
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
