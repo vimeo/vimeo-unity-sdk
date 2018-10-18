@@ -51,15 +51,10 @@ namespace Vimeo
         public static string API_URL = "https://api.vimeo.com";
         private WWWForm form;
 
-        private void Start()
+        public void Start()
         {
             this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
-        }
-
-        protected void InitApi()
-        {
-            Start();
         }
 
         public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,description")

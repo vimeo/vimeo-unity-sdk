@@ -22,25 +22,23 @@ public class VideoChunkTest : TestConfig
     [Test]
     public void Init_Works()
     {
+        Assert.IsNull(chunk.bytes);
+
         chunk.Init(0, "test_tus_url", "test_file_path", 10000);
 
         Assert.AreEqual("test_file_path", chunk.file_path);
         Assert.AreEqual("test_tus_url", chunk.url);
         Assert.AreEqual(0, chunk.index_byte);
-        Assert.AreEqual(10000, chunk.chunk_size);   
+        Assert.AreEqual(10000, chunk.chunk_size);  
+        Assert.AreEqual(chunk.bytes.Length, 10000);
     }
 
     [Test]
     public void Stores_And_Disposes_Bytes()
     {
         chunk.Init(0, "test_tus_url", "test_file_path", 10000);
-        chunk.bytes = new byte[chunk.chunk_size];
         chunk.bytes[0] = 5;   
-
-        Assert.AreEqual(chunk.bytes.Length, chunk.chunk_size);
-        
         chunk.DisposeBytes();
-        
         Assert.AreNotEqual(chunk.bytes[0], 5);
     }
 
@@ -48,9 +46,9 @@ public class VideoChunkTest : TestConfig
     public void Reads_Bytes_From_File()
     {
         chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1);
+        Assert.AreEqual(chunk.bytes[0], 0);
         chunk.ReadBytes();
-
-        Assert.IsNotEmpty(chunk.bytes);
+        Assert.AreNotEqual(chunk.bytes[0], 0);
     }
 
     [TearDown]

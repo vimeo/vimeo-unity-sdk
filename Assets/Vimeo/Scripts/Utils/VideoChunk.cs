@@ -88,6 +88,5 @@ namespace Vimeo
         {
             StartCoroutine(SendTusRequest());
         }
-
     }
 }

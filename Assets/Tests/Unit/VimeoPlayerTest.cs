@@ -161,7 +161,6 @@ public class VimeoPlayerTest : TestConfig {
         public void Load_Video_Parses_Channel_Video_With_Http()
         {
             player.LoadVideo("https://vimeo.com/channels/staffpicks/249752354");
-            Debug.Log(">>> " + player.vimeoVideoId);
             Assert.AreEqual(player.vimeoVideoId, "249752354");
         }
 
