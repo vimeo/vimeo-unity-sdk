@@ -174,14 +174,18 @@ namespace Vimeo
                 // Reset the form
                 form = new WWWForm();
 
+                 // TODO: DRY with ResponseHandler
                 if (request.responseCode != 200) {
                     Debug.LogError(request.downloadHandler.text);
-                    if (OnError != null) OnError(request.downloadHandler.text);
+                    if (OnError != null) { 
+                        OnError(request.downloadHandler.text);
+                    }
                 } else if (OnPatchComplete != null) {
                     OnPatchComplete(request.downloadHandler.text);
                 }
             }
         }
+
         public IEnumerator RequestTusResource(string api_path, long fileByteCount)
         {
             string tusResourceRequestBody = "{ \"upload\": { \"approach\": \"tus\", \"size\": \"" + fileByteCount.ToString() + "\" } }";
@@ -190,19 +194,11 @@ namespace Vimeo
                 using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/me/videos", tusResourceRequestBody)) {
                     PrepareTusHeaders(request);
                     yield return VimeoApi.SendRequest(request);
-
-                    if (request.error != null) {
-                        if (OnError != null) {
-                            OnError(request.downloadHandler.text);
-                        }
-                    } else {
-                        if (OnRequestComplete != null) {
-                            OnRequestComplete(request.downloadHandler.text);
-                        }
-                    }
+                    ResponseHandler(request);
                 }
             }
         }
+
         IEnumerator Put(string api_path)
         {
             if (token != null) {
@@ -210,16 +206,20 @@ namespace Vimeo
                 using (UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, data)) {
                     PrepareHeaders(request);
                     yield return VimeoApi.SendRequest(request);
-
-                    if (request.error != null) {
-                        Debug.LogError(request.downloadHandler.text);
-                        if (OnError != null) OnError(request.downloadHandler.text);
-                    } else {
-                        if (OnRequestComplete != null) {
-                            OnRequestComplete(request.downloadHandler.text);
-                        }
-                    }
+                    ResponseHandler(request);
                 }
+            }
+        }
+
+        private void ResponseHandler(UnityWebRequest request)
+        {
+            if (request.error != null) {
+                Debug.LogError(request.downloadHandler.text);
+                if (OnError != null) {
+                    OnError(request.downloadHandler.text);
+                }
+            } else if (OnRequestComplete != null) {
+                OnRequestComplete(request.downloadHandler.text);
             }
         }
 
@@ -230,6 +230,7 @@ namespace Vimeo
                 PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
 
+                // TODO: DRY with ResponseHandler
                 if (request.responseCode != 200) {
                     if (request.responseCode == 401) {
                         Debug.LogError("[VimeoApi] 401 Unauthorized request.");
