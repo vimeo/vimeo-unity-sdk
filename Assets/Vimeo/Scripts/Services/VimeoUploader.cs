@@ -68,7 +68,7 @@ namespace Vimeo
             OnRequestComplete -= RequestComplete;
 
             string tusUploadLink = VimeoUploader.GetTusUploadLink(response);
-            m_vimeoUrl = GetVideoPermlink(response);
+            m_vimeoUrl = GetVideoPermalink(response);
             CreateChunks(m_fileInfo, tusUploadLink);
 
             VideoChunk firstChunk = m_chunks.Dequeue();
@@ -154,10 +154,16 @@ namespace Vimeo
             return rawJSON["upload"]["upload_link"].Value;
         }
 
-        public static string GetVideoPermlink(string response)
+        public static string GetVideoPermalink(string response)
         {
             JSONNode rawJSON = JSON.Parse(response);
             return rawJSON["link"].Value;
+        }
+
+        public static string GetVideoUri(string response)
+        {
+            JSONNode rawJSON = JSON.Parse(response);
+            return rawJSON["uri"].Value;
         }
     }
 }
