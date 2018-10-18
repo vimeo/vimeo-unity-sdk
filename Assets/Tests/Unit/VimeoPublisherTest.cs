@@ -43,6 +43,13 @@ public class VimeoPublisherTest : TestConfig
         Assert.IsNull(publisher.GetVimeoPermalink());
     }
 
+    [Test]
+    public void PublishVideo_Breaks_When_Video_File_Doesnt_Exist()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("File doesn't exist, try recording it again"));
+        publisher.PublishVideo("xxx");
+    }
+
     [TearDown]
     public void _After()
     {
