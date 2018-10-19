@@ -40,7 +40,6 @@ namespace Vimeo
 
         public delegate void RequestAction(string response);
         public event RequestAction OnRequestComplete;
-        public event RequestAction OnPatchComplete;
         public event RequestAction OnError;
         public event RequestAction OnNetworkError;
 
