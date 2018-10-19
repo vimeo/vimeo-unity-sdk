@@ -55,6 +55,12 @@ namespace Vimeo
                 return m_numChunks;
             }
         }
+        private float m_uploadProgress = 0.0f;
+        public float uploadProgress {
+            get {
+                return m_uploadProgress;
+            }
+        }
 
         public void Init(string _token, int _maxChunkByteSize = 1024 * 1024 * 128)
         {
@@ -98,6 +104,15 @@ namespace Vimeo
             UploadNextChunk();
         }
 
+        private void OnUploadChunkProgress(VideoChunk chunk, float progress)
+        {
+            //Calculate the addition of each chunk to the total file length (in bytes)
+            m_uploadProgress = (chunks.Count + 1) * ((progress * (float)chunk.chunkSize) / (float)m_fileInfo.Length);
+            if (OnUploadProgress != null) {
+                OnUploadProgress("Uploading", m_uploadProgress);
+            }
+        }
+
         private void OnChunkError(VideoChunk chunk, string err)
         {
             if (OnChunckUploadError != null) {
@@ -125,6 +140,7 @@ namespace Vimeo
 
                 chunk.OnChunkUploadComplete += OnCompleteChunk;
                 chunk.OnChunkUploadError += OnChunkError;
+                chunk.OnChunkUploadProgress += OnUploadChunkProgress;
                 m_chunks.Enqueue(chunk);
             }
         }
@@ -135,10 +151,6 @@ namespace Vimeo
             if (m_chunks.Count != 0) {
                 VideoChunk currentChunk = m_chunks.Dequeue();
                 
-                float progress = ((float)m_chunks.Count / (float)m_numChunks) * -1.0f + 1.0f;
-                if (OnUploadProgress != null) {
-                    OnUploadProgress("Uploading", progress);
-                }
                 currentChunk.Upload();
             } else {
                 if (OnUploadProgress != null) {

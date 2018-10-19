@@ -37,9 +37,20 @@ namespace Vimeo
             }
         }
 
+        private bool m_isUploadingChunk = false;
+        public bool isUploadingChunk {
+            get {
+                return m_isUploadingChunk;
+            }
+        }
+
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
         public event UploadEvent OnChunkUploadComplete;
         public event UploadEvent OnChunkUploadError;
+        public delegate void UploadProgressEvent(VideoChunk chunk, float progress = 0.0f);
+        public event UploadProgressEvent OnChunkUploadProgress;
+
+        private UnityWebRequest chunkUploadRequest;
 
         public void Init(int _indexByte, string _url, string _filePath, int _chunkSize)
         {
@@ -72,16 +83,35 @@ namespace Vimeo
                 uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
                 uploadRequest.SetRequestHeader("Upload-Offset", (m_indexByte).ToString());
                 uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
+                chunkUploadRequest = uploadRequest;
+                m_isUploadingChunk = true;
 
                 yield return VimeoApi.SendRequest(uploadRequest);
 
                 if (uploadRequest.isNetworkError || uploadRequest.isHttpError) {
+                    m_isUploadingChunk = false;
                     OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
                 } else {
+                    m_isUploadingChunk = false;
                     OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
                 }
             }
             DisposeBytes();
+        }
+
+        private void Update() {
+
+            //Make sure that we are uploading this chunk and the request is not null
+            if (m_isUploadingChunk && chunkUploadRequest != null) {
+
+                //We only emit events if the upload started (i.e > 0) or it hasn't finished yet (i.e < 1)
+                if (chunkUploadRequest.uploadProgress > 0.0f &&
+                    chunkUploadRequest.uploadProgress < 1.0f) {
+                        OnChunkUploadProgress(this, chunkUploadRequest.uploadProgress);
+                }
+                
+            }
+
         }
 
         public void Upload()
