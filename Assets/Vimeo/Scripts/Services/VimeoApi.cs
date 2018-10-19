@@ -209,7 +209,7 @@ namespace Vimeo
                     SendError("401 Unauthorized request. Are you using a valid token?", request.downloadHandler.text);
                 }
                 else if (IsNetworkError(request)) {
-                    Debug.LogError("[VimeoApi] Unable to send request. Are you connected to the internet?");
+                    Debug.LogError("[VimeoApi] It seems like you are not connected to the internet or are having connection problems.");
                     if (OnNetworkError != null) {
                         OnNetworkError(request.error);
                     }

@@ -47,7 +47,6 @@ namespace Vimeo.Player
                 api = gameObject.AddComponent<VimeoApi>();
                 api.token = GetVimeoToken();
                 api.OnError  += ApiError;
-                api.OnNetworkError += NetworkError;
             }
 
             SetupVideoController();
@@ -370,11 +369,6 @@ namespace Vimeo.Player
             if (OnLoadError != null) {
                 OnLoadError();
             }
-        }
-
-        private void NetworkError(string error_message)
-        {
-            Debug.LogError("It seems like you are not connected to the internet or are having connection problems.");
         }
     }
 }
