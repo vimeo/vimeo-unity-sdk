@@ -69,8 +69,8 @@ namespace Vimeo
 
             JSONNode rawJSON = JSON.Parse(response);
 
-            string tusUploadLink = rawJSON["link"].Value;
-            m_vimeoUrl = rawJSON["upload"]["upload_link"].Value;
+            string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
+            m_vimeoUrl = rawJSON["link"].Value;
             CreateChunks(m_fileInfo, tusUploadLink);
 
             VideoChunk firstChunk = m_chunks.Dequeue();

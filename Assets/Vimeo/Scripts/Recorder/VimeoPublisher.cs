@@ -51,9 +51,9 @@ namespace Vimeo.Recorder
         public void OnUploadInit(string response)
         {
             m_vimeoUploader.OnRequestComplete -= OnUploadInit;
-
-            video = new VimeoVideo(response);
-
+            JSONNode jsonResponse = JSON.Parse(response);
+            video = new VimeoVideo(jsonResponse);
+            
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
                 m_vimeoUploader.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");

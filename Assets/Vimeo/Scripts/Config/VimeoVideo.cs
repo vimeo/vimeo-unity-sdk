@@ -40,8 +40,13 @@ namespace Vimeo
 
         public VimeoVideo(JSONNode video)
         {
-            name = video["name"].Value;
-            uri = video["uri"].Value;
+            if (video["name"] != null) {
+                name = video["name"].Value;
+            }
+            
+            if (video["uri"] != null) {
+                uri = video["uri"].Value;
+            }
             
             if (video["description"] != null) {
                 description = video["description"].Value;
@@ -72,36 +77,18 @@ namespace Vimeo
                     name = name + " (" + id + ")";
                 }
             }
+            if (video["play"] != null) {
+                files = video["play"];
 
-            files = video["play"];
-
-            // Sort the progressive files quality
-            progressiveFiles = new List<JSONNode>();
-            if (files != null) {
-                for (int i = 0; i < files["progressive"].Count; i++) {
-                    progressiveFiles.Add(files["progressive"][i]);
-                }   
-                progressiveFiles.Sort(SortByQuality);
+                // Sort the progressive files quality
+                progressiveFiles = new List<JSONNode>();
+                if (files != null) {
+                    for (int i = 0; i < files["progressive"].Count; i++) {
+                        progressiveFiles.Add(files["progressive"][i]);
+                    }   
+                    progressiveFiles.Sort(SortByQuality);
+                }
             }
-        }
-
-        public VimeoVideo(string jsonString)
-        {
-            name = "Untitled";
-            tusUploadLink = GetTusUploadLink(jsonString);
-            uri = GetVideoUri(jsonString);
-        }
-
-        public string GetTusUploadLink(string response)
-        {
-            JSONNode rawJSON = JSON.Parse(response);
-            return rawJSON["upload"]["upload_link"].Value;
-        }
-
-        public string GetVideoUri(string response)
-        {
-            JSONNode rawJSON = JSON.Parse(response);
-            return rawJSON["uri"].Value;
         }
         
         public int CompareTo(VimeoVideo other)
