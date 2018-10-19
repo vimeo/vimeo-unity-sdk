@@ -59,9 +59,11 @@ public class VimeoRecorderPlayTest : TestConfig
     }
 
     [UnityTest]
-    [Timeout(300000)]
+    [Timeout(30000)]
     public IEnumerator Can_Record_Video_From_Screen_With_Valid_Token() 
     {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        
         recorder.videoName = "Screen Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Screen;
         recorder.SignIn(VALID_RECORDING_TOKEN);
@@ -74,9 +76,11 @@ public class VimeoRecorderPlayTest : TestConfig
     }
 
     [UnityTest]
-    [Timeout(300000)]
+    [Timeout(30000)]
     public IEnumerator Can_Record_Video_From_MainCamera_With_Valid_Token() 
     {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
         recorder.videoName = "MainCamera Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Camera;
         recorder.SignIn(VALID_RECORDING_TOKEN);
@@ -94,7 +98,7 @@ public class VimeoRecorderPlayTest : TestConfig
     }
 
     [UnityTest]
-    [Timeout(300000)]
+    [Timeout(30000)]
     public IEnumerator Uploads_Video_And_Adds_Video_To_Project() 
     {    
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
