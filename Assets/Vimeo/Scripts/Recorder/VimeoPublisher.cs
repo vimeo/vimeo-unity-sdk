@@ -39,7 +39,6 @@ namespace Vimeo.Recorder
                 m_vimeoUploader = gameObject.AddComponent<VimeoUploader>();
                 m_vimeoUploader.Init(recorder.GetVimeoToken());
 
-                m_vimeoUploader.OnPatchComplete += VideoUpdated;
                 m_vimeoUploader.OnUploadProgress += UploadProgress;
                 m_vimeoUploader.OnUploadComplete += UploadComplete;
                 m_vimeoUploader.OnNetworkError += NetworkError;
@@ -51,6 +50,8 @@ namespace Vimeo.Recorder
         public void OnUploadInit(string response)
         {
             m_vimeoUploader.OnRequestComplete -= OnUploadInit;
+            m_vimeoUploader.OnRequestComplete += OnVideoUpdated;
+
             JSONNode jsonResponse = JSON.Parse(response);
             video = new VimeoVideo(jsonResponse);
             
@@ -120,8 +121,10 @@ namespace Vimeo.Recorder
             Debug.Log("[VimeoPublisher] Published video to " + video_url);
         }
 
-        private void VideoUpdated(string response)
+        private void OnVideoUpdated(string response)
         {
+            m_vimeoUploader.OnRequestComplete -= OnVideoUpdated;
+            
             JSONNode json = JSON.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
