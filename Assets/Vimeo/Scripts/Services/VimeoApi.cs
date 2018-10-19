@@ -173,16 +173,7 @@ namespace Vimeo
 
                 // Reset the form
                 form = new WWWForm();
-
-                 // TODO: DRY with ResponseHandler
-                if (request.responseCode != 200) {
-                    Debug.LogError(request.downloadHandler.text);
-                    if (OnError != null) { 
-                        OnError(request.downloadHandler.text);
-                    }
-                } else if (OnPatchComplete != null) {
-                    OnPatchComplete(request.downloadHandler.text);
-                }
+                ResponseHandler(request);
             }
         }
 
@@ -214,12 +205,29 @@ namespace Vimeo
         private void ResponseHandler(UnityWebRequest request)
         {
             if (request.error != null) {
-                Debug.LogError(request.downloadHandler.text);
-                if (OnError != null) {
-                    OnError(request.downloadHandler.text);
+                if (request.responseCode == 401) {
+                    SendError("401 Unauthorized request. Are you using a valid token?", request.downloadHandler.text);
+                }
+                else if (IsNetworkError(request)) {
+                    Debug.LogError("[VimeoApi] Unable to send request. Are you connected to the internet?");
+                    if (OnNetworkError != null) {
+                        OnNetworkError(request.error);
+                    }
+                }
+                else {
+                    SendError(request.url + " - " + request.downloadHandler.text, request.downloadHandler.text);
                 }
             } else if (OnRequestComplete != null) {
                 OnRequestComplete(request.downloadHandler.text);
+            }
+        }
+
+        private void SendError(string msg, string error)
+        {
+            Debug.LogError("[VimeoApi] " + msg);
+
+            if (OnError != null) {
+                OnError(error);
             }
         }
 
@@ -229,23 +237,7 @@ namespace Vimeo
                 UnityWebRequest request = UnityWebRequest.Get(API_URL + api_path);
                 PrepareHeaders(request);
                 yield return VimeoApi.SendRequest(request);
-
-                // TODO: DRY with ResponseHandler
-                if (request.responseCode != 200) {
-                    if (request.responseCode == 401) {
-                        Debug.LogError("[VimeoApi] 401 Unauthorized request.");
-                    }
-
-                    if (OnNetworkError != null && IsNetworkError(request)) {
-                        OnNetworkError(request.error);
-                    }
-
-                    if (OnError != null && !IsNetworkError(request)) {
-                        OnError(request.downloadHandler.text);
-                    }
-                } else if (OnRequestComplete != null) {
-                    OnRequestComplete(request.downloadHandler.text);
-                }
+                ResponseHandler(request);
             }
         }
 

@@ -367,8 +367,6 @@ namespace Vimeo.Player
         
         private void ApiError(string response)
         {
-            Debug.LogError(response);
-
             if (OnLoadError != null) {
                 OnLoadError();
             }
