@@ -88,8 +88,12 @@ namespace Vimeo.Recorder
             uploadProgress = progress;
 
             if (status == "UploadComplete") {
+                publisher.OnUploadProgress -= UploadProgress;
+                publisher.OnNetworkError -= NetworkError;
+
                 isUploading = false;
                 encoder.DeleteVideoFile();
+                Destroy(publisher);
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete();

@@ -21,6 +21,8 @@ public class VimeoRecorderPlayTest : TestConfig
     bool finished;
     bool error;
 
+    string version = "(Unity " + Application.unityVersion + ")";
+
     [SetUp]
     public void _Before()
     {
@@ -52,7 +54,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.openInBrowser     = false;
 
         System.DateTime dt = System.DateTime.Now;
-        recorder.videoName = "(Unity " + Application.unityVersion + ")";
+        recorder.videoName = version;
 
         uploaded = false;
         finished = false;
@@ -126,6 +128,54 @@ public class VimeoRecorderPlayTest : TestConfig
     {
         JSONNode json = JSON.Parse(resp);
         Assert.AreEqual(recorder.publisher.video.uri, json["data"][0]["uri"].Value);
+        finished = true;
+    }
+
+    [UnityTest]
+    [Timeout(30000)]
+    public IEnumerator Multiple_Uploads_Work()
+    {
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        recorder.videoName = "Multi Upload Test #1 " + version;
+        recorder.OnUploadComplete += FirstUploadComplete;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        yield return new WaitUntil(()=> finished == true);
+    }
+
+    private void FirstUploadComplete()
+    {
+        recorder.OnUploadComplete -= FirstUploadComplete;
+        Debug.Log("[TEST] FirstUploadComplete");
+        UnityEngine.GameObject.DestroyImmediate(cube);
+        
+        cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        cube.AddComponent<ObjectRotation>();
+
+        recorder.videoName = "Multi Upload Test #2 " + version;
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += SecondUploadComplete;
+    }
+
+    private void SecondUploadComplete()
+    {
+        Debug.Log("[TEST] SecondUploadComplete");
+        VimeoApi api = recorderObj.AddComponent<VimeoApi>();
+        api.token = VALID_RECORDING_TOKEN;
+        api.OnRequestComplete += CheckRecentVideos;
+        api.GetRecentUserVideos("name", 2);
+    }
+
+    private void CheckRecentVideos(string resp)
+    {
+        Debug.Log("[TEST] CheckRecentVideos " + resp);
+        JSONNode json = JSON.Parse(resp);
+        
+        Assert.AreEqual(json["data"][0]["name"].Value, "Multi Upload Test #2 " + version);
+        Assert.AreEqual(json["data"][1]["name"].Value, "Multi Upload Test #1 " + version);
+
         finished = true;
     }
 

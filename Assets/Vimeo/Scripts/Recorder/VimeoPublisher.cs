@@ -118,13 +118,14 @@ namespace Vimeo.Recorder
             if (OnUploadProgress != null) {
                 OnUploadProgress("UploadComplete", 1f);
             }
-            Debug.Log("[VimeoPublisher] Published video to " + video_url);
+            
+            Debug.Log("[VimeoPublisher] Uploaded video to " + video_url);
         }
 
         private void OnVideoUpdated(string response)
         {
             m_vimeoUploader.OnRequestComplete -= OnVideoUpdated;
-            
+
             JSONNode json = JSON.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];

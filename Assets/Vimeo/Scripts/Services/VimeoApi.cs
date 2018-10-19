@@ -74,14 +74,14 @@ namespace Vimeo
             }
         }
 
-        public void GetRecentUserVideos(string fields = "name,uri")
+        public void GetRecentUserVideos(string fields = "name,uri", int per_page = 100)
         {
-            StartCoroutine("Request", "/me/videos?fields=" + fields + "&per_page=100");
+            StartCoroutine("Request", "/me/videos?fields=" + fields + "&per_page=" + per_page);
         }
 
-        public void GetVideosInFolder(VimeoFolder folder, string fields = "name,uri")
+        public void GetVideosInFolder(VimeoFolder folder, string fields = "name,uri", int per_page = 100)
         {
-            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?fields=" + fields + "&per_page=100");
+            StartCoroutine("Request", "/me/folders/" + folder.id + "/videos?fields=" + fields + "&per_page=" + per_page);
         }
 
         public void SetVideoViewPrivacy(PrivacyModeDisplay mode)
