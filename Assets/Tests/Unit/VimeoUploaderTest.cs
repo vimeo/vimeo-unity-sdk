@@ -127,21 +127,6 @@ public class VimeoUploaderTest : TestConfig
     }
 
     [Test]
-    public void RegisterChunkEvents_Registers_Chunk_Events()
-    {
-        uploader.Init("xtokenx", 1000);
-        uploader.CreateChunks(testFile, "xxx");
-        uploader.chunks[0].OnChunkUploadComplete += new VideoChunk.UploadEvent(delegate {
-            Debug.Log("yay!");
-        });
-        uploader.chunks[0].OnChunkUploadError += new VideoChunk.UploadEvent(delegate {
-            Debug.Log("yay!");
-        });
-        Assert.IsTrue(uploader.chunks[0].areEventsRegistered());
-        Assert.IsFalse(uploader.chunks[1].areEventsRegistered());
-    }
-
-    [Test]
     public void TotalChunksRemaining_Shows_All_Chunks_Before_Upload_Starts()
     {
         uploader.Init("xtokenx", 1000);

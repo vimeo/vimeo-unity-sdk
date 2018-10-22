@@ -37,16 +37,22 @@ namespace Vimeo
             }
         }
 
-        private bool m_isUploadingChunk = false;
-        public bool isUploadingChunk {
+        private bool m_isUploading = false;
+        public bool isUploading {
             get {
-                return m_isUploadingChunk;
+                return m_isUploading;
+            }
+            set {
+                m_isUploading = value;
             }
         }
         private bool m_isFinishedUploading = false;
         public bool isFinishedUploading {
             get {
                 return m_isFinishedUploading;
+            }
+            set {
+                m_isFinishedUploading = value;
             }
         }
 
@@ -93,17 +99,17 @@ namespace Vimeo
                 uploadRequest.SetRequestHeader("Upload-Offset", (m_indexByte).ToString());
                 uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
                 m_chunkUploadRequest = uploadRequest;
-                m_isUploadingChunk = true;
+                m_isUploading = true;
 
                 yield return VimeoApi.SendRequest(uploadRequest);
 
                 if (uploadRequest.isNetworkError || uploadRequest.isHttpError) {
-                    m_isUploadingChunk = false;
+                    m_isUploading = false;
                     if (OnChunkUploadError != null) {
                         OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
                     }
                 } else {
-                    m_isUploadingChunk = false;
+                    m_isUploading = false;
                     m_isFinishedUploading = true;
                     if (OnChunkUploadComplete != null) {
                         OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
@@ -115,7 +121,7 @@ namespace Vimeo
 
         public ulong GetBytesUploaded()
         {
-            if (m_isUploadingChunk) {
+            if (m_isUploading && m_chunkUploadRequest != null) {
                 return m_chunkUploadRequest.uploadedBytes;
             } else if (m_isFinishedUploading) {
                 return (ulong)m_chunkSize;
@@ -126,11 +132,6 @@ namespace Vimeo
         public void Upload()
         {
             StartCoroutine(SendTusRequest());
-        }
-
-        public bool areEventsRegistered()
-        {
-            return OnChunkUploadError != null && OnChunkUploadComplete != null;
         }
     }
 }
