@@ -99,21 +99,6 @@ namespace Vimeo
             DisposeBytes();
         }
 
-        private void Update() {
-
-            //Make sure that we are uploading this chunk and the request is not null
-            if (m_isUploadingChunk && chunkUploadRequest != null) {
-
-                //We only emit events if the upload started (i.e > 0) or it hasn't finished yet (i.e < 1)
-                if (chunkUploadRequest.uploadProgress > 0.0f &&
-                    chunkUploadRequest.uploadProgress < 1.0f) {
-                        OnChunkUploadProgress(this, chunkUploadRequest.uploadProgress);
-                }
-                
-            }
-
-        }
-
         public void Upload()
         {
             StartCoroutine(SendTusRequest());

@@ -70,15 +70,15 @@ public class VimeoUploaderTest : TestConfig
         uploader.Init("xtokenx", 100000000);
         uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Count, 1);
-        Assert.AreEqual(uploader.chunks.Peek().chunkSize, testFileSize);
+        Assert.AreEqual(uploader.chunks[0].chunkSize, testFileSize);
     }
 
     [Test]
     public void CreateChunks_Properly_Sets_Up_Chunk()
     {
         uploader.CreateChunks(testFile, "upload url");
-        Assert.AreEqual(uploader.chunks.Peek().url, "upload url");
-        Assert.AreEqual(uploader.chunks.Peek().filePath, new FileInfo(TEST_IMAGE_PATH).FullName);
+        Assert.AreEqual(uploader.chunks[0].url, "upload url");
+        Assert.AreEqual(uploader.chunks[0].filePath, new FileInfo(TEST_IMAGE_PATH).FullName);
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.Init("xtokenx", 1234);
         uploader.CreateChunks(testFile, "xxx");
-        Assert.AreEqual(uploader.chunks.Peek().chunkSize, 1234);
+        Assert.AreEqual(uploader.chunks[0].chunkSize, 1234);
     }
 
     [Test]
@@ -99,15 +99,15 @@ public class VimeoUploaderTest : TestConfig
         );
     }
 
-    [Test]
-    public void UploadNextChunk_Dequeues()
-    {
-        uploader.CreateChunks(testFile, "xxx");
+    // [Test]
+    // public void UploadNextChunk_Dequeues()
+    // {
+    //     uploader.CreateChunks(testFile, "xxx");
 
-        int length = uploader.chunks.Count;
-        uploader.UploadNextChunk();
-        Assert.AreEqual(uploader.chunks.Count, length - 1);
-    }
+    //     int length = uploader.chunks.Count;
+    //     uploader.UploadNextChunk();
+    //     Assert.AreEqual(uploader.chunks.Count, length - 1);
+    // }
 
     // TODO setup way to load mock json file
     // [Test]

@@ -92,7 +92,25 @@ public class VimeoRecorderPlayTest : TestConfig
 
         yield return new WaitUntil(()=> uploaded == true);
         Assert.IsTrue(uploaded);
-    }    
+    }
+
+    [UnityTest]
+    [Timeout(100000)]
+    public IEnumerator Can_Record_And_Upload_Multiple_Chunks()
+    {
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        recorder.videoName = "MainCamera Test " + recorder.videoName;
+        recorder.defaultVideoInput = VideoInputType.Camera;
+        recorder.customByteChunkSize = 50000;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += UploadComplete;
+
+        yield return new WaitUntil(()=> uploaded == true);
+        Assert.IsTrue(uploaded);
+    }
 
     private void UploadComplete()
     {

@@ -18,6 +18,12 @@ namespace Vimeo.Recorder
         public bool isRecording = false;
         public bool isUploading = false;
         public float uploadProgress = 0;
+        private int m_customByteChunkSize = 1024 * 1024 * 128;
+        public int customByteChunkSize {
+            set {
+                m_customByteChunkSize = value;
+            }
+        }
 
         public void Start()
         {
@@ -74,7 +80,7 @@ namespace Vimeo.Recorder
 
             if (publisher == null) {
                 publisher = gameObject.AddComponent<VimeoPublisher>();
-                publisher.Init(this);
+                publisher.Init(this, m_customByteChunkSize);
 
                 publisher.OnUploadProgress += UploadProgress;
                 publisher.OnNetworkError += NetworkError;
