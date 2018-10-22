@@ -102,7 +102,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.videoName = "MainCamera Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Camera;
-        recorder.customByteChunkSize = 50000;
+        recorder.byteChunkSize = 50000;
         recorder.SignIn(VALID_RECORDING_TOKEN);
         recorder.BeginRecording();
 
