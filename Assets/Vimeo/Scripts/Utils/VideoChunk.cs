@@ -43,14 +43,23 @@ namespace Vimeo
                 return m_isUploadingChunk;
             }
         }
+        private bool m_isFinishedUploading = false;
+        public bool isFinishedUploading {
+            get {
+                return m_isFinishedUploading;
+            }
+        }
 
         public delegate void UploadEvent(VideoChunk chunk, string msg = "");
         public event UploadEvent OnChunkUploadComplete;
         public event UploadEvent OnChunkUploadError;
-        public delegate void UploadProgressEvent(VideoChunk chunk, float progress = 0.0f);
-        public event UploadProgressEvent OnChunkUploadProgress;
 
-        private UnityWebRequest chunkUploadRequest;
+        private UnityWebRequest m_chunkUploadRequest;
+        public UnityWebRequest chunkUploadRequest {
+            get {
+                return m_chunkUploadRequest;
+            }
+        }
 
         public void Init(int _indexByte, string _url, string _filePath, int _chunkSize)
         {
@@ -83,7 +92,7 @@ namespace Vimeo
                 uploadRequest.SetRequestHeader("Tus-Resumable", "1.0.0");
                 uploadRequest.SetRequestHeader("Upload-Offset", (m_indexByte).ToString());
                 uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
-                chunkUploadRequest = uploadRequest;
+                m_chunkUploadRequest = uploadRequest;
                 m_isUploadingChunk = true;
 
                 yield return VimeoApi.SendRequest(uploadRequest);
@@ -93,10 +102,21 @@ namespace Vimeo
                     OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
                 } else {
                     m_isUploadingChunk = false;
+                    m_isFinishedUploading = true;
                     OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
                 }
             }
             DisposeBytes();
+        }
+
+        public ulong GetBytesUploaded()
+        {
+            if (m_isUploadingChunk) {
+                return m_chunkUploadRequest.uploadedBytes;
+            } else if (m_isFinishedUploading) {
+                return (ulong)m_chunkSize;
+            }
+            return 0;
         }
 
         public void Upload()
