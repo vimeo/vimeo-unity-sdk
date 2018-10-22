@@ -99,15 +99,62 @@ public class VimeoUploaderTest : TestConfig
         );
     }
 
-    // [Test]
-    // public void UploadNextChunk_Dequeues()
-    // {
-    //     uploader.CreateChunks(testFile, "xxx");
+    [Test]
+    public void Upload_Sets_Upload_States()
+    {
+        Assert.IsFalse(uploader.isUploading);
+        uploader.Init("xtokenx", 1000);
+        uploader.CreateChunks(testFile, "xxx");
+        uploader.Upload(testFile.FullName);
+        Assert.IsTrue(uploader.isUploading);
+    }
 
-    //     int length = uploader.chunks.Count;
-    //     uploader.UploadNextChunk();
-    //     Assert.AreEqual(uploader.chunks.Count, length - 1);
-    // }
+    [Test]
+    public void GetTotalBytes_Returns_Zero_Even_If_No_Chunks_Are_Created()
+    {
+        uploader.Init("xtokenx", 1000);
+        Assert.AreEqual(uploader.GetTotalBytesUploaded(), 0);
+    }
+
+    [Test]
+    public void ClearAllChunks_Clears_All_Chunks()
+    {
+        uploader.Init("xtokenx", 1000);
+        uploader.CreateChunks(testFile, "xxx");
+        Assert.Greater(uploader.chunks.Count, 0);
+        uploader.ClearAllChunks();
+        Assert.AreEqual(uploader.chunks.Count, 0);
+    }
+
+    [Test]
+    public void RegisterChunkEvents_Registers_Chunk_Events()
+    {
+        uploader.Init("xtokenx", 1000);
+        uploader.CreateChunks(testFile, "xxx");
+        uploader.chunks[0].OnChunkUploadComplete += new VideoChunk.UploadEvent(delegate {
+            Debug.Log("yay!");
+        });
+        uploader.chunks[0].OnChunkUploadError += new VideoChunk.UploadEvent(delegate {
+            Debug.Log("yay!");
+        });
+        Assert.IsTrue(uploader.chunks[0].areEventsRegistered());
+        Assert.IsFalse(uploader.chunks[1].areEventsRegistered());
+    }
+
+    [Test]
+    public void TotalChunksRemaining_Shows_All_Chunks_Before_Upload_Starts()
+    {
+        uploader.Init("xtokenx", 1000);
+        uploader.CreateChunks(testFile, "xxx");
+        Assert.AreEqual(uploader.chunks.Count, uploader.TotalChunksRemaining());
+    }
+
+    [Test]
+    public void TotalChunksRemaining_Does_Not_Break_Before_Chunks_Are_Created()
+    {
+        uploader.Init("xtokenx", 1000);
+        Assert.AreEqual(uploader.TotalChunksRemaining(), 0);
+    }
 
     // TODO setup way to load mock json file
     // [Test]

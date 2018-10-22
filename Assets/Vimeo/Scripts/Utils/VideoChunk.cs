@@ -99,11 +99,15 @@ namespace Vimeo
 
                 if (uploadRequest.isNetworkError || uploadRequest.isHttpError) {
                     m_isUploadingChunk = false;
-                    OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
+                    if (OnChunkUploadError != null) {
+                        OnChunkUploadError(this, "[Error] " + uploadRequest.error + " error code is: " + uploadRequest.responseCode);
+                    }
                 } else {
                     m_isUploadingChunk = false;
                     m_isFinishedUploading = true;
-                    OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
+                    if (OnChunkUploadComplete != null) {
+                        OnChunkUploadComplete(this, uploadRequest.GetResponseHeader("Upload-Offset"));
+                    }
                 }
             }
             DisposeBytes();
@@ -122,6 +126,11 @@ namespace Vimeo
         public void Upload()
         {
             StartCoroutine(SendTusRequest());
+        }
+
+        public bool areEventsRegistered()
+        {
+            return OnChunkUploadError != null && OnChunkUploadComplete != null;
         }
     }
 }
