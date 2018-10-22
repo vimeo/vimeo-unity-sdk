@@ -31,13 +31,13 @@ namespace Vimeo.Recorder
             this.hideFlags = HideFlags.HideInInspector;
         }
 
-        public void Init(VimeoRecorder _recorder)
+        public void Init(VimeoRecorder _recorder, int _chunkSize = 1024 * 1024 * 128)
         {
             recorder = _recorder;
 
             if (m_vimeoUploader == null) {
                 m_vimeoUploader = gameObject.AddComponent<VimeoUploader>();
-                m_vimeoUploader.Init(recorder.GetVimeoToken());
+                m_vimeoUploader.Init(recorder.GetVimeoToken(), _chunkSize);
 
                 m_vimeoUploader.OnUploadProgress += UploadProgress;
                 m_vimeoUploader.OnUploadComplete += UploadComplete;
