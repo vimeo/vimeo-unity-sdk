@@ -142,7 +142,9 @@ namespace Vimeo
             ulong sum = 0;
             if (m_chunks != null) {
                 for (int i = 0; i < m_chunks.Count; i++) {
-                    sum += m_chunks[i].GetBytesUploaded();
+                    if (m_chunks[i] != null) {
+                        sum += m_chunks[i].GetBytesUploaded();
+                    }
                 }
             }
             return sum;
