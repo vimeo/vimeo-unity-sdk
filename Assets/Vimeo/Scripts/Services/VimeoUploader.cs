@@ -77,7 +77,7 @@ namespace Vimeo
 
         private void Update() 
         {
-            if (m_isUploading) {
+            if (m_isUploading && fileInfo != null) {
                 if ((Time.time - savedTime) > progressIntervalTime ) {
                     OnUploadProgress("Uploading", (float)GetTotalBytesUploaded() / (float)fileInfo.Length);
 
