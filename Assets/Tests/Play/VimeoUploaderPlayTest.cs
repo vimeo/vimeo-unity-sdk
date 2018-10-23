@@ -34,12 +34,9 @@ public class VimeoUploaderPlayTest : TestConfig
         //Register events
         uploader.OnUploadComplete += UploadComplete;
         uploader.OnUploadProgress += UploadProgress;
+        uploader.OnUploadInit += UploadInit;
         uploader.OnError += UploadError;
         uploader.OnNetworkError += UploadError;
-
-        //Set the privacy
-        uploader.SetVideoViewPrivacy(VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink);
-        uploader.SetVideoName("Large file test (" + Application.platform + " " + Application.unityVersion + ")");
 
         //Upload the big file
         uploader.Upload(VERY_BIG_FILE_PATH);
@@ -50,6 +47,15 @@ public class VimeoUploaderPlayTest : TestConfig
     public void UploadComplete(string status)
     {
         uploaded = true;
+    }
+
+    public void UploadInit(string response)
+    {
+        VimeoVideo video = new VimeoVideo(JSON.Parse(response));
+        uploader.SetVideoViewPrivacy(VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink);
+        uploader.SetVideoName("Large file test (" + Application.platform + " " + Application.unityVersion + ")");
+        uploader.SaveVideo(video);
+
     }
 
     public void UploadProgress(string status, float progress)

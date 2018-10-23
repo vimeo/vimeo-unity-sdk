@@ -17,6 +17,7 @@ namespace Vimeo
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
         public event RequestAction OnUploadComplete;
+        public event RequestAction OnUploadInit;
 
         private List<VideoChunk> m_chunks;
         public List<VideoChunk> chunks {
@@ -99,6 +100,10 @@ namespace Vimeo
             VideoChunk currentChunk = m_chunks[currentChunkIndex];
             RegisterChunkEvents(currentChunk);
             currentChunk.Upload();
+            
+            if (OnUploadInit != null) {
+                OnUploadInit(response);
+            }
         }
 
         public void Upload(string _file)
