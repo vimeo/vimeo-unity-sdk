@@ -59,7 +59,7 @@ Assets/*TestScene*.unity*
 TestResults*.xml
 
 # Test Assets
-*Heavy_Video_Upload_Test_File.mp4*
+Assets/Tests/*.mp4*
 
 # Misc OS files
 .DS_Store
