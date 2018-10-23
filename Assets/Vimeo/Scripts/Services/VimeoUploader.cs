@@ -170,7 +170,7 @@ namespace Vimeo
 
         public void CreateChunks(FileInfo fileInfo, string tusUploadLink)
         {
-            //Create the chunks
+            //Calculate total number of chunks we are uploading
             m_numChunks = (int)Mathf.Ceil((float)fileInfo.Length / (float)m_maxChunkSize);
 
             for (int i = 0; i < m_numChunks; i++) {
@@ -178,7 +178,7 @@ namespace Vimeo
                 VideoChunk chunk = gameObject.AddComponent<VideoChunk>();
                 chunk.hideFlags = HideFlags.HideInInspector;
 
-                //If we are at the last chunk set the max chunk size to the fractional remainder
+                //If we are at the last chunk set the size to remaining file size
                 if (i == m_numChunks - 1) {
                     int remainder = (int)fileInfo.Length - (m_maxChunkSize * i);
                     chunk.Init(indexByte, tusUploadLink, fileInfo.FullName, remainder);
