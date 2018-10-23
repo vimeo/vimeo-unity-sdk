@@ -100,7 +100,7 @@ public class VimeoRecorderPlayTest : TestConfig
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
-        recorder.videoName = "MainCamera Test " + recorder.videoName;
+        recorder.videoName = "Multi Chunk Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Camera;
         recorder.byteChunkSize = 50000;
         recorder.SignIn(VALID_RECORDING_TOKEN);
