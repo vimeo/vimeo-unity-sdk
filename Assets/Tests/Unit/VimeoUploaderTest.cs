@@ -70,7 +70,7 @@ public class VimeoUploaderTest : TestConfig
         uploader.Init("xtokenx", 100000000);
         uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(uploader.chunks.Count, 1);
-        Assert.AreEqual(uploader.chunks[0].chunkSize, testFileSize);
+        Assert.AreEqual(uploader.chunks[0].totalBytes, testFileSize);
     }
 
     [Test]
@@ -86,7 +86,7 @@ public class VimeoUploaderTest : TestConfig
     {
         uploader.Init("xtokenx", 1234);
         uploader.CreateChunks(testFile, "xxx");
-        Assert.AreEqual(uploader.chunks[0].chunkSize, 1234);
+        Assert.AreEqual(uploader.chunks[0].totalBytes, 1234);
     }
 
     [Test]
@@ -95,7 +95,7 @@ public class VimeoUploaderTest : TestConfig
         uploader.Init("xtokenx", 1000);
         uploader.CreateChunks(testFile, "xxx");
         Assert.AreEqual(
-            uploader.chunks.ToArray()[uploader.chunks.Count - 1].chunkSize, 879
+            uploader.chunks.ToArray()[uploader.chunks.Count - 1].totalBytes, 879
         );
     }
 

@@ -29,15 +29,16 @@ public class VideoChunkTest : TestConfig
 
         Assert.AreEqual("test_file_path", chunk.filePath);
         Assert.AreEqual("test_tus_url", chunk.url);
-        Assert.AreEqual(0, chunk.indexByte);
-        Assert.AreEqual(10000, chunk.chunkSize);  
-        Assert.AreEqual(chunk.bytes.Length, 10000);
+        Assert.AreEqual(0, chunk.startByte);
+        Assert.AreEqual(0, chunk.lastByteUploaded);
+        Assert.AreEqual(10000, chunk.totalBytes);
     }
 
     [Test]
     public void Stores_And_Disposes_Bytes()
     {
-        chunk.Init(0, "test_tus_url", "test_file_path", 10000);
+        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 10000);
+        chunk.ReadBytes();
         chunk.bytes[0] = 5;   
         chunk.DisposeBytes();
         Assert.AreNotEqual(chunk.bytes[0], 5);
@@ -46,9 +47,10 @@ public class VideoChunkTest : TestConfig
     [Test]
     public void Reads_Bytes_From_File()
     {
-        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1);
-        Assert.AreEqual(chunk.bytes[0], 0);
+        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 12412);
+        Assert.AreEqual(chunk.bytes, null);
         chunk.ReadBytes();
+        Assert.AreEqual(chunk.bytes.Length, 12412);
         Assert.AreNotEqual(chunk.bytes[0], 0);
     }
 
@@ -75,6 +77,42 @@ public class VideoChunkTest : TestConfig
         
         Assert.AreEqual(chunk.GetBytesUploaded(), 0);
     }
+
+    [Test]
+    public void UploadError_Retries_Upload()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, new Regex("Retrying..."));
+        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1441);
+        Assert.AreEqual(chunk.totalRetries, 0);
+        chunk.UploadError("my msg");
+        Assert.AreEqual(chunk.totalRetries, 1);
+    }
+
+    [Test]
+    public void UploadError_Retries_Three_Times_And_Errors()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("it's error time"));
+        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1441);
+        Assert.AreEqual(chunk.totalRetries, 0);
+        chunk.UploadError("my msg");
+        Assert.AreEqual(chunk.totalRetries, 1);
+        chunk.UploadError("my msg");
+        Assert.AreEqual(chunk.totalRetries, 2);
+        chunk.UploadError("my msg");
+        Assert.AreEqual(chunk.totalRetries, 3);
+
+        chunk.UploadError("it's error time");
+    }
+
+    [Test]
+    public void Can_Resume_Upload()
+    {
+        chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1541);
+        chunk.lastByteUploaded = 541;
+        chunk.ReadBytes();
+        Assert.AreEqual(chunk.bytes.Length, 1541 - 541);
+    }
+
 
     [TearDown]
     public void _After()
