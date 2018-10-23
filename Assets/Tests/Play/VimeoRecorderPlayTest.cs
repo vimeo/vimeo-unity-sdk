@@ -21,7 +21,7 @@ public class VimeoRecorderPlayTest : TestConfig
     bool finished;
     bool error;
 
-    string version = "(Unity " + Application.unityVersion + ")";
+    string version = "(" + Application.platform + " " + Application.unityVersion + ")";
 
     [SetUp]
     public void _Before()

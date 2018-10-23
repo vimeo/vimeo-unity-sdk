@@ -29,6 +29,8 @@ public class VimeoUploaderPlayTest : TestConfig
     [Timeout(500000)]
     public IEnumerator Can_Upload_Very_Big_File()
     {
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        
         //Register events
         uploader.OnUploadComplete += UploadComplete;
         uploader.OnUploadProgress += UploadProgress;
@@ -37,7 +39,7 @@ public class VimeoUploaderPlayTest : TestConfig
 
         //Set the privacy
         uploader.SetVideoViewPrivacy(VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink);
-        uploader.SetVideoName("Big video file upload test");
+        uploader.SetVideoName("Large file test (" + Application.platform + " " + Application.unityVersion + ")");
 
         //Upload the big file
         uploader.Upload(VERY_BIG_FILE_PATH);
