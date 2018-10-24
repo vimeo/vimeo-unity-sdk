@@ -70,16 +70,22 @@ namespace Vimeo.Recorder
 
 #if VIMEO_LOOKING_GLASS_SUPPORT
             if (_recorder.captureLookingGlassRT) {
-                 _recorder.renderTextureTarget = GetHoloPlayQuilt().quiltRT;
+                HoloPlay.Quilt quilt = GetHoloPlayQuilt();
+                if (quilt != null) {
+                    _recorder.renderTextureTarget = quilt.quiltRT;
 
     #if VIMEO_AVPRO_CAPTURE_SUPPORT
-                if (_recorder.avproEncoder != null) {
-                    RenderHeads.Media.AVProMovieCapture.CaptureFromTexture avproTexture = _recorder.avproEncoder.gameObject.GetComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromTexture>();
-                    if (avproTexture != null) {
-                        avproTexture.SetSourceTexture(_recorder.renderTextureTarget);
+                    if (_recorder.avproEncoder != null) {
+                        RenderHeads.Media.AVProMovieCapture.CaptureFromTexture avproTexture = _recorder.avproEncoder.gameObject.GetComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromTexture>();
+                        if (avproTexture != null) {
+                            avproTexture.SetSourceTexture(_recorder.renderTextureTarget);
+                        }
                     }
-                }
     #endif 
+                }
+                else {
+                    Debug.LogError("[VimeoRecorer] HoloPlay SDK was not found.");
+                }
             }
 #endif
         }
