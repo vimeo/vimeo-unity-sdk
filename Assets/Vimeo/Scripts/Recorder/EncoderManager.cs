@@ -81,7 +81,7 @@ namespace Vimeo.Recorder
                             avproTexture.SetSourceTexture(_recorder.renderTextureTarget);
                         }
                         else {
-                            Debug.LogError("[VimeoRecorder] In order to use AVPro and HoloPlay together, you need to use the CaptureFromTexture component.")
+                            Debug.LogError("[VimeoRecorder] In order to use AVPro and HoloPlay together, you need to use the CaptureFromTexture component.");
                         }
                     }
     #endif 
@@ -225,7 +225,7 @@ namespace Vimeo.Recorder
         {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
             // Hooking into AVPro by monitoring status changes
-            if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
+            if (_recorder != null && _recorder.encoderType == EncoderType.AVProMovieCapture && _avproEncoder != null) {
                 if (_avproEncoder.IsCapturing()) {
                     isRecording = true;
                 }

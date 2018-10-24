@@ -62,6 +62,41 @@ public class EncoderManagerTest : TestConfig
         recorder.captureLookingGlassRT = false;
         encoder.Init(recorder);
     }
+
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
+    [Test]
+    public void Init_LookingGlass_AVPro_Movie_Capture_Works()
+    {
+        var holoplay = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/HoloPlay/HoloPlay Capture.prefab", typeof(GameObject));
+        asset = GameObject.Instantiate(holoplay, Vector3.zero, Quaternion.identity);
+
+        var avpro = obj.AddComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromTexture>();
+        recorder.encoderType = EncoderType.AVProMovieCapture;
+        recorder.avproEncoder = avpro;
+        recorder.captureLookingGlassRT = true;
+
+        Assert.AreEqual(recorder.renderTextureTarget, null);
+        encoder.Init(recorder);
+        Assert.AreNotEqual(recorder.renderTextureTarget, null);
+    }
+
+    [Test]
+    public void Init_LookingGlass_AVPro_Movie_Capture_Fails_With_Wrong_Compnent()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("you need to use the CaptureFromTexture"));
+        var holoplay = (GameObject)AssetDatabase.LoadAssetAtPath("Assets/HoloPlay/HoloPlay Capture.prefab", typeof(GameObject));
+        asset = GameObject.Instantiate(holoplay, Vector3.zero, Quaternion.identity);
+
+        var avpro = obj.AddComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromScreen>();
+        recorder.encoderType = EncoderType.AVProMovieCapture;
+        recorder.avproEncoder = avpro;
+        recorder.captureLookingGlassRT = true;
+
+        encoder.Init(recorder);
+    }
+#endif
+
+    
 #endif
 
 
