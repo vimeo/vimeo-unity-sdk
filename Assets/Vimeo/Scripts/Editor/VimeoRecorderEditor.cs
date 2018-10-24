@@ -152,7 +152,7 @@ namespace Vimeo.Recorder
             GUILayout.EndHorizontal();
 
             // Recording progress bar
-          if (EditorApplication.isPlaying && recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
+            if (EditorApplication.isPlaying && recorder.isRecording && recorder.encoderType == EncoderType.MediaEncoder) {
                 EditorGUILayout.Space();
                 var rect = EditorGUILayout.BeginHorizontal();
                 rect.height = 20;
@@ -191,6 +191,10 @@ namespace Vimeo.Recorder
             if (recordingFold) {
                 EditorGUI.indentLevel++;
 
+#if VIMEO_LOOKING_GLASS_SUPPORT
+                EditorGUILayout.PropertyField(so.FindProperty("captureLookingGlassRT"), new GUIContent("Capture Looking Glass"));
+#endif
+
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 EditorGUILayout.PropertyField(so.FindProperty("encoderType"), new GUIContent("Encoder"));    
 
@@ -199,7 +203,13 @@ namespace Vimeo.Recorder
                 }
                 else {
 #endif
-                EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"), new GUIContent("Input"));
+
+                if (recorder.captureLookingGlassRT) {
+                    recorder.defaultVideoInput = VideoInputType.RenderTexture;
+                }
+                else {
+                    EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"), new GUIContent("Input"));
+                }
 
                 if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera) {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultCamera"), new GUIContent("Camera"));
@@ -220,7 +230,7 @@ namespace Vimeo.Recorder
                     }
                 }
 
-                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.RenderTexture) {
+                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.RenderTexture && !recorder.captureLookingGlassRT) {
                     EditorGUILayout.PropertyField(so.FindProperty("renderTextureTarget"), new GUIContent("Target"));    
                 }
 

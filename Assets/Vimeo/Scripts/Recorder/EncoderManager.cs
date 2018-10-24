@@ -47,12 +47,12 @@ namespace Vimeo.Recorder
                 _avproEncoder = r.avproEncoder;
 #endif            
             }
+
+            EncoderSetup();
         }
 
         public void BeginRecording()
         {
-            isRecording = true;
-
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                
                 _vimeoEncoder.BeginRecording();
@@ -63,6 +63,46 @@ namespace Vimeo.Recorder
 #endif             
             }
         }
+
+        private void EncoderSetup()
+        {
+            isRecording = true;
+
+#if VIMEO_LOOKING_GLASS_SUPPORT
+            if (_recorder.captureLookingGlassRT) {
+                 _recorder.renderTextureTarget = GetHoloPlayQuilt().quiltRT;
+
+    #if VIMEO_AVPRO_CAPTURE_SUPPORT
+                if (_recorder.avproEncoder != null) {
+                    RenderHeads.Media.AVProMovieCapture.CaptureFromTexture avproTexture = _recorder.avproEncoder.gameObject.GetComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromTexture>();
+                    if (avproTexture != null) {
+                        avproTexture.SetSourceTexture(_recorder.renderTextureTarget);
+                    }
+                }
+    #endif 
+            }
+#endif
+        }
+
+#if VIMEO_LOOKING_GLASS_SUPPORT
+        private HoloPlay.Quilt GetHoloPlayQuilt()
+        {
+            GameObject[] objects = gameObject.scene.GetRootGameObjects();
+
+            for (int i = 0; i < objects.Length; i++) {
+                if (objects[i].GetComponent<HoloPlay.Quilt>() != null) {
+                    return objects[i].GetComponent<HoloPlay.Quilt>();
+                }
+
+                HoloPlay.Quilt[] quilts = objects[i].GetComponentsInChildren<HoloPlay.Quilt>();
+                if (quilts.Length > 0) {
+                    return quilts[0];
+                }
+            }
+
+            return null;
+        }
+#endif
 
         public void EndRecording()
         {
