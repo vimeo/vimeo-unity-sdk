@@ -192,7 +192,7 @@ namespace Vimeo.Recorder
                 EditorGUI.indentLevel++;
 
 #if VIMEO_LOOKING_GLASS_SUPPORT
-                EditorGUILayout.PropertyField(so.FindProperty("captureLookingGlassRT"), new GUIContent("Capture Looking Glass"));
+                EditorGUILayout.PropertyField(so.FindProperty("captureLookingGlassRT"), new GUIContent("Capture Hologram"));
 #endif
 
 #if VIMEO_AVPRO_CAPTURE_SUPPORT

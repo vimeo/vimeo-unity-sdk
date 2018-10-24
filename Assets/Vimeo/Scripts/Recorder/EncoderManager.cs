@@ -75,10 +75,13 @@ namespace Vimeo.Recorder
                     _recorder.renderTextureTarget = quilt.quiltRT;
 
     #if VIMEO_AVPRO_CAPTURE_SUPPORT
-                    if (_recorder.avproEncoder != null) {
+                    if (_recorder.encoderType == EncoderType.AVProMovieCapture && _recorder.avproEncoder != null) {
                         RenderHeads.Media.AVProMovieCapture.CaptureFromTexture avproTexture = _recorder.avproEncoder.gameObject.GetComponent<RenderHeads.Media.AVProMovieCapture.CaptureFromTexture>();
                         if (avproTexture != null) {
                             avproTexture.SetSourceTexture(_recorder.renderTextureTarget);
+                        }
+                        else {
+                            Debug.LogError("[VimeoRecorder] In order to use AVPro and HoloPlay together, you need to use the CaptureFromTexture component.")
                         }
                     }
     #endif 
