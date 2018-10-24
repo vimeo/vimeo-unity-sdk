@@ -21,11 +21,13 @@ public class VimeoRecorderPlayTest : TestConfig
     bool finished;
     bool error;
 
-    string version = "(" + Application.platform + " " + Application.unityVersion + ")";
+    string version;
 
     [SetUp]
     public void _Before()
     {
+        version = "(" + Application.platform + " " + Application.unityVersion + ")";
+        
         // Setup cube
         cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.AddComponent<ObjectRotation>();
