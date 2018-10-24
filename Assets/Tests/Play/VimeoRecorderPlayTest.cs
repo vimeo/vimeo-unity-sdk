@@ -5,6 +5,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
+using SimpleJSON;
 
 public class VimeoRecorderPlayTest : TestConfig
 {
@@ -17,14 +18,16 @@ public class VimeoRecorderPlayTest : TestConfig
     VimeoRecorder recorder;
 
     bool uploaded;
+    bool finished;
     bool error;
 
-    float timeout = 30;
-    float elapsed = 0;
+    string version;
 
     [SetUp]
     public void _Before()
     {
+        version = "(" + Application.platform + " " + Application.unityVersion + ")";
+        
         // Setup cube
         cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.AddComponent<ObjectRotation>();
@@ -53,14 +56,18 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.openInBrowser     = false;
 
         System.DateTime dt = System.DateTime.Now;
-        recorder.videoName = "(Unity " + Application.unityVersion + ")";
+        recorder.videoName = version;
 
         uploaded = false;
+        finished = false;
     }
 
     [UnityTest]
+    [Timeout(30000)]
     public IEnumerator Can_Record_Video_From_Screen_With_Valid_Token() 
     {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        
         recorder.videoName = "Screen Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Screen;
         recorder.SignIn(VALID_RECORDING_TOKEN);
@@ -68,15 +75,16 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        while (!uploaded) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> uploaded == true);
+        Assert.IsTrue(uploaded);
     }
 
     [UnityTest]
+    [Timeout(30000)]
     public IEnumerator Can_Record_Video_From_MainCamera_With_Valid_Token() 
     {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
         recorder.videoName = "MainCamera Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Camera;
         recorder.SignIn(VALID_RECORDING_TOKEN);
@@ -84,19 +92,26 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        while (!uploaded) {
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
-    }    
+        yield return new WaitUntil(()=> uploaded == true);
+        Assert.IsTrue(uploaded);
+    }
 
-    private void TimeoutCheck(string msg = "Test timed out")
+    [UnityTest]
+    [Timeout(100000)]
+    public IEnumerator Can_Record_And_Upload_Multiple_Chunks()
     {
-        elapsed += .25f;
-        if (elapsed >= timeout) {
-            recorder.CancelRecording();
-            Assert.Fail(msg);
-        }
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        recorder.videoName = "Multi Chunk Test " + recorder.videoName;
+        recorder.defaultVideoInput = VideoInputType.Camera;
+        recorder.byteChunkSize = 50000;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += UploadComplete;
+
+        yield return new WaitUntil(()=> uploaded == true);
+        Assert.IsTrue(uploaded);
     }
 
     private void UploadComplete()
@@ -104,10 +119,89 @@ public class VimeoRecorderPlayTest : TestConfig
         uploaded = true;
     }
 
+    [UnityTest]
+    [Timeout(30000)]
+    public IEnumerator Uploads_Video_And_Adds_Video_To_Project() 
+    {    
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        recorder.currentFolder = new VimeoFolder("Unity Tests", TEST_PROJECT_FOLDER);
+        recorder.videoName = "Folder Test " + recorder.videoName;
+        recorder.defaultVideoInput = VideoInputType.Camera;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += FolderCheckUploadComplete;
+
+        yield return new WaitUntil(()=> finished == true);
+    }    
+
+    private void FolderCheckUploadComplete()
+    {
+        VimeoApi api = recorderObj.AddComponent<VimeoApi>();
+        api.token = VALID_RECORDING_TOKEN;
+        api.OnRequestComplete += GetFoldersComplete;
+        api.GetVideosInFolder(new VimeoFolder("Unity Tests", TEST_PROJECT_FOLDER));
+    }
+
+    private void GetFoldersComplete(string resp)
+    {
+        JSONNode json = JSON.Parse(resp);
+        Assert.AreEqual(recorder.publisher.video.uri, json["data"][0]["uri"].Value);
+        finished = true;
+    }
+
+    [UnityTest]
+    [Timeout(30000)]
+    public IEnumerator Multiple_Uploads_Work()
+    {
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        recorder.videoName = "Multi Upload Test #1 " + version;
+        recorder.OnUploadComplete += FirstUploadComplete;
+        recorder.SignIn(VALID_RECORDING_TOKEN);
+        recorder.BeginRecording();
+
+        yield return new WaitUntil(()=> finished == true);
+    }
+
+    private void FirstUploadComplete()
+    {
+        recorder.OnUploadComplete -= FirstUploadComplete;
+        Debug.Log("[TEST] FirstUploadComplete");
+        UnityEngine.GameObject.DestroyImmediate(cube);
+        
+        cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
+        cube.AddComponent<ObjectRotation>();
+
+        recorder.videoName = "Multi Upload Test #2 " + version;
+        recorder.BeginRecording();
+
+        recorder.OnUploadComplete += SecondUploadComplete;
+    }
+
+    private void SecondUploadComplete()
+    {
+        Debug.Log("[TEST] SecondUploadComplete");
+        VimeoApi api = recorderObj.AddComponent<VimeoApi>();
+        api.token = VALID_RECORDING_TOKEN;
+        api.OnRequestComplete += CheckRecentVideos;
+        api.GetRecentUserVideos("name", 2);
+    }
+
+    private void CheckRecentVideos(string resp)
+    {
+        Debug.Log("[TEST] CheckRecentVideos " + resp);
+        JSONNode json = JSON.Parse(resp);
+        
+        Assert.AreEqual(json["data"][0]["name"].Value, "Multi Upload Test #2 " + version);
+        Assert.AreEqual(json["data"][1]["name"].Value, "Multi Upload Test #1 " + version);
+
+        finished = true;
+    }
+
     [TearDown]
     public void _After()
     {
-        uploaded = false;
         UnityEngine.GameObject.DestroyImmediate(camObj);
         UnityEngine.GameObject.DestroyImmediate(light);
         UnityEngine.GameObject.DestroyImmediate(cube);

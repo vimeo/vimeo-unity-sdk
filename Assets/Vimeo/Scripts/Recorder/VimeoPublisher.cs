@@ -7,7 +7,7 @@ using SimpleJSON;
 
 namespace Vimeo.Recorder
 {
-    public class VimeoPublisher : MonoBehaviour 
+    public class VimeoPublisher : MonoBehaviour
     {
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
@@ -17,25 +17,62 @@ namespace Vimeo.Recorder
 
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
-        private VimeoApi vimeoApi;
-        private VimeoVideo video;
+        private VimeoUploader m_vimeoUploader;
+        public VimeoUploader vimeoUploader {
+            get {
+                return m_vimeoUploader;
+            }
+        }
+        public VimeoVideo video;
 
         private Coroutine saveCoroutine;
+        private void Start()
+        {
+            this.hideFlags = HideFlags.HideInInspector;
+        }
 
-        public void Init(VimeoRecorder _recorder) 
+        public void Init(VimeoRecorder _recorder, int _chunkSize = 1024 * 1024 * 128)
         {
             recorder = _recorder;
-            
-            if (vimeoApi == null) {
-                vimeoApi = gameObject.AddComponent<VimeoApi>();
-                vimeoApi.OnPatchComplete  += VideoUpdated;
-                vimeoApi.OnUploadComplete += UploadComplete;
-                vimeoApi.OnUploadProgress += UploadProgress;
-                vimeoApi.OnError          += ApiError;
-                vimeoApi.OnNetworkError   += NetworkError;
 
-                vimeoApi.token = recorder.GetVimeoToken();
+            if (m_vimeoUploader == null) {
+                m_vimeoUploader = gameObject.AddComponent<VimeoUploader>();
+                m_vimeoUploader.Init(recorder.GetVimeoToken(), _chunkSize);
+
+                m_vimeoUploader.OnUploadProgress += UploadProgress;
+                m_vimeoUploader.OnUploadComplete += UploadComplete;
+                m_vimeoUploader.OnNetworkError += NetworkError;
+                m_vimeoUploader.OnRequestComplete += OnUploadInit;
+                m_vimeoUploader.OnError += ApiError;
             }
+        }
+
+        public void OnUploadInit(string response)
+        {
+            m_vimeoUploader.OnRequestComplete -= OnUploadInit;
+            m_vimeoUploader.OnRequestComplete += OnVideoUpdated;
+
+            JSONNode jsonResponse = JSON.Parse(response);
+            video = new VimeoVideo(jsonResponse);
+            
+#if UNITY_2018_1_OR_NEWER
+            if (recorder.defaultVideoInput == VideoInputType.Camera360) {
+                m_vimeoUploader.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
+            }
+#endif
+
+            m_vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            if (recorder.enableDownloads == false) {
+                m_vimeoUploader.SetVideoDownload(recorder.enableDownloads);
+            }
+            m_vimeoUploader.SetVideoComments(recorder.commentMode);
+            m_vimeoUploader.SetVideoReviewPage(recorder.enableReviewPage);
+            SetVideoName(recorder.GetVideoName());
+
+            if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
+                m_vimeoUploader.SetVideoPassword(recorder.videoPassword);
+            }
+            SetVideoPrivacyMode(recorder.privacyMode);
         }
 
         public string GetVimeoPermalink()
@@ -43,70 +80,59 @@ namespace Vimeo.Recorder
             if (recorder.videoPermalink != null) {
                 if (recorder.defaultShareLink == LinkType.ReviewPage) {
                     return recorder.videoReviewPermalink;
-                } 
-                else {
+                } else {
                     return recorder.videoPermalink;
                 }
-            } 
-             
-            return "https://vimeo.com/" + video.id;
+            }
+
+            if (video != null && video.id != 0) {
+                return "https://vimeo.com/" + video.id;
+            }
+
+            Debug.LogError("No vimeo video link found, try recording again");
+            return null;
         }
 
         public void PublishVideo(string filename)
         {
-            Debug.Log("[VimeoRecorder] Uploading to Vimeo");            
-            vimeoApi.UploadVideoFile(filename);
+            if (System.IO.File.Exists(filename)) {
+                Debug.Log("[VimeoRecorder] Uploading to Vimeo");
+                m_vimeoUploader.Upload(filename);
+            } else {
+                Debug.LogError("File doesn't exist, try recording it again");
+            }   
         }
-
-
-        private void UploadProgress(string status, float progress)
+        
+        void UploadProgress(string status, float progress)
         {
             if (OnUploadProgress != null) {
                 OnUploadProgress(status, progress);
             }
         }
 
-        private void UploadComplete(string video_uri)
+        private void UploadComplete(string video_url)
         {
-            UploadProgress("SavingInfo", .999f);
-
-            video = new VimeoVideo("", video_uri);
-
-#if UNITY_2018_1_OR_NEWER
-            if (recorder.defaultVideoInput == VideoInputType.Camera360) {
-                vimeoApi.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
+            if (recorder.openInBrowser == true) {
+                OpenVideo();
             }
-#endif
-
-            vimeoApi.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
-            if (recorder.enableDownloads == false) {
-                vimeoApi.SetVideoDownload(recorder.enableDownloads);
+            if (OnUploadProgress != null) {
+                OnUploadProgress("UploadComplete", 1f);
             }
-            vimeoApi.SetVideoComments(recorder.commentMode);
-            vimeoApi.SetVideoReviewPage(recorder.enableReviewPage);
-            SetVideoName(recorder.GetVideoName());
-
-            if (recorder.privacyMode == VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword) {
-                vimeoApi.SetVideoPassword(recorder.videoPassword);
-            }
-            SetVideoPrivacyMode(recorder.privacyMode);
+            
+            Debug.Log("[VimeoPublisher] Uploaded video to " + video_url);
         }
 
-        private void VideoUpdated(string response)
+        private void OnVideoUpdated(string response)
         {
+            m_vimeoUploader.OnRequestComplete -= OnVideoUpdated;
+
             JSONNode json = JSON.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
 
-            if (recorder.openInBrowser == true) {
-                OpenVideo();
-            }
-
             if (recorder.currentFolder != null && recorder.currentFolder.uri != null) {
-                vimeoApi.AddVideoToFolder(video, recorder.currentFolder);
+                m_vimeoUploader.AddVideoToFolder(video, recorder.currentFolder);
             }
-
-            UploadProgress("SaveInfoComplete", 1f);
         }
 
         private void NetworkError(string error_message)
@@ -121,43 +147,39 @@ namespace Vimeo.Recorder
             JSONNode json = JSON.Parse(response);
 
             if (json["invalid_parameters"] != null) {
-
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
                     // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
-                    }
+                    } 
                     else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
-                    }
-                    else {
+                    } else {
                         if (OnNetworkError != null) {
                             OnNetworkError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
                         }
                     }
                 }
-                
             }
-            UploadProgress("SaveInfoComplete", 1f);
         }
 
         public void SetVideoName(string title)
         {
             if (title != null && title != "") {
-                if (saveCoroutine != null) { StopCoroutine (saveCoroutine); } // DRY
-                vimeoApi.SetVideoName(title);
+                if (saveCoroutine != null) { StopCoroutine(saveCoroutine); } // DRY
+                m_vimeoUploader.SetVideoName(title);
                 saveCoroutine = StartCoroutine("SaveVideo");
             }
         }
 
         public void SetVideoPrivacyMode(VimeoApi.PrivacyModeDisplay mode)
         {
-            if (saveCoroutine != null) { StopCoroutine (saveCoroutine); }
-            vimeoApi.SetVideoViewPrivacy(mode);
+            if (saveCoroutine != null) { StopCoroutine(saveCoroutine); }
+            m_vimeoUploader.SetVideoViewPrivacy(mode);
             saveCoroutine = StartCoroutine("SaveVideo");
         }
 
@@ -166,7 +188,7 @@ namespace Vimeo.Recorder
             yield return new WaitForSeconds(1f);
 
             if (video != null) {
-                vimeoApi.SaveVideo(video);
+                m_vimeoUploader.SaveVideo(video);
             }
         }
 
@@ -182,12 +204,12 @@ namespace Vimeo.Recorder
 
         void OnDestroy()
         {
-            Dispose();            
+            Dispose();
         }
 
         public void Dispose()
         {
-            Destroy(vimeoApi);
+            Destroy(m_vimeoUploader);
         }
     }
 }

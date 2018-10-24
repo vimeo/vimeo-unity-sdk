@@ -64,7 +64,6 @@ public class VimeoPlayerPlayTest : TestConfig
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
         
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("401"));
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Something strange occurred"));
         
         while (!triggered) {
             yield return new WaitForSeconds(.25f);

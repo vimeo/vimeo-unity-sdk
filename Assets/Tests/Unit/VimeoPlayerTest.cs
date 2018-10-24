@@ -122,4 +122,67 @@ public class VimeoPlayerTest : TestConfig {
     {
         UnityEngine.GameObject.DestroyImmediate(playerObj);
     }
+
+    
+    ////////////////////////////////////////////////////////
+    // Regex pattern matching tests
+    // See https://regexr.com/3prh6
+    public class RegexTests : TestConfig
+    {
+        GameObject playerObj;
+        VimeoPlayer player;
+
+        [SetUp]
+        public void _Before()
+        {
+            playerObj = new GameObject();
+            player = playerObj.AddComponent<VimeoPlayer>();
+            player.videoScreen = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            player.vimeoVideoId = INVALID_VIMEO_VIDEO_ID;
+            player.SignIn("xxx");
+            player.Start();
+        }
+
+        [Test]
+        public void Load_Video_Parses_Video_Id()
+        {
+            player.LoadVideo("1234");
+            Assert.AreEqual(player.vimeoVideoId, "1234");
+        }
+
+        [Test]
+        public void Load_Video_Parses_Channel_Video()
+        {
+            player.LoadVideo("vimeo.com/channels/360vr/3252329");
+            Assert.AreEqual(player.vimeoVideoId, "3252329");
+        }
+
+        [Test]
+        public void Load_Video_Parses_Channel_Video_With_Http()
+        {
+            player.LoadVideo("https://vimeo.com/channels/staffpicks/249752354");
+            Assert.AreEqual(player.vimeoVideoId, "249752354");
+        }
+
+        [Test]
+        public void Load_Video_Parses_Private_Video()
+        {
+            player.LoadVideo("vimeo.com/2304923/4434k3k3j3k3");
+            Assert.AreEqual(player.vimeoVideoId, "2304923");
+        }
+
+        [Test]
+        public void Load_Video_Fails_If_Bad_Vimeo_Url()
+        {
+            UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Invalid Vimeo URL"));
+            player.LoadVideo("vimeo.com/casey");
+        }
+
+        [TearDown]
+        public void _After()
+        {
+            UnityEngine.GameObject.DestroyImmediate(playerObj);
+        }
+    }
+
 }

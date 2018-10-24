@@ -27,21 +27,13 @@ public class VimeoRecorderTest : TestConfig
 
         System.DateTime dt = System.DateTime.Now;
         recorder.videoName = "(Unity " + Application.unityVersion + ")";
-        
+
+#if !UNITY_2017_3_OR_NEWER        
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("Recording is only avaialabe in 2017.2 or higher"));
+#endif
+
         recorder.Start();
     }
-
-#if !UNITY_2017_3_OR_NEWER
-    [Test]
-    public void Throw_Error_If_Old_Unity_Version()
-    {
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex(" Recording is only avaialabe in 2017.2 or higher"));
-        GameObject recorderObj = new GameObject();
-        VimeoRecorder r = recorderObj.AddComponent<VimeoRecorder>();
-        r.Start();
-        UnityEngine.GameObject.DestroyImmediate(recorderObj);
-    }
-#endif 
 
     [Test]
 

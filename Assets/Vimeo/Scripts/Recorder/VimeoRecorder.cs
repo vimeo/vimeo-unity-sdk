@@ -8,7 +8,7 @@ namespace Vimeo.Recorder
 {
     [AddComponentMenu("Video/Vimeo Recorder")]
     [HelpURL("https://github.com/vimeo/vimeo-unity-sdk")]
-    public class VimeoRecorder : RecorderSettings 
+    public class VimeoRecorder : RecorderSettings
     {
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
@@ -18,19 +18,25 @@ namespace Vimeo.Recorder
         public bool isRecording = false;
         public bool isUploading = false;
         public float uploadProgress = 0;
+        private int m_byteChunkSize = 1024 * 1024 * 128;
+        public int byteChunkSize {
+            set {
+                m_byteChunkSize = value;
+            }
+        }
 
-        public void Start() 
+        public void Start()
         {
             if (encoder == null) {
                 encoder = gameObject.AddComponent<EncoderManager>();
                 encoder.Init(this);
             }
-            
+
             if (recordOnStart) {
                 BeginRecording();
             }
         }
-    
+
         public void BeginRecording()
         {
             if (!isRecording) {
@@ -54,10 +60,10 @@ namespace Vimeo.Recorder
             if (autoUpload) {
                 PublishVideo();
             } else {
-                Debug.Log("[Vimeo] Video did not automatically upload. VimeoPlayer.autoUpload is set to false.");
+                Debug.Log("[VimeoRecorder] Video did not automatically upload. VimeoRecorder.autoUpload is set to false.");
             }
         }
-            
+
         public void CancelRecording()
         {
             isRecording = false;
@@ -74,12 +80,12 @@ namespace Vimeo.Recorder
 
             if (publisher == null) {
                 publisher = gameObject.AddComponent<VimeoPublisher>();
-                publisher.Init(this);
+                publisher.Init(this, m_byteChunkSize);
 
                 publisher.OnUploadProgress += UploadProgress;
                 publisher.OnNetworkError += NetworkError;
             }
-            
+
             publisher.PublishVideo(encoder.GetVideoFilePath());
         }
 
@@ -87,9 +93,13 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status == "SaveInfoComplete") {
+            if (status == "UploadComplete") {
+                publisher.OnUploadProgress -= UploadProgress;
+                publisher.OnNetworkError -= NetworkError;
+
                 isUploading = false;
                 encoder.DeleteVideoFile();
+                Destroy(publisher);
 
                 if (OnUploadComplete != null) {
                     OnUploadComplete();
@@ -97,7 +107,8 @@ namespace Vimeo.Recorder
             }
         }
 
-        private void NetworkError(string status){
+        private void NetworkError(string status)
+        {
             Debug.LogError(status);
         }
 

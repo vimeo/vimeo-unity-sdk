@@ -13,6 +13,7 @@ namespace Vimeo
     {
         public string name;
         public string uri;
+        public string tusUploadLink;
         public int id;
         public string description;
         public int duration;
@@ -39,8 +40,13 @@ namespace Vimeo
 
         public VimeoVideo(JSONNode video)
         {
-            name = video["name"].Value;
-            uri = video["uri"].Value;
+            if (video["name"] != null) {
+                name = video["name"].Value;
+            }
+            
+            if (video["uri"] != null) {
+                uri = video["uri"].Value;
+            }
             
             if (video["description"] != null) {
                 description = video["description"].Value;
@@ -71,16 +77,17 @@ namespace Vimeo
                     name = name + " (" + id + ")";
                 }
             }
+            if (video["play"] != null) {
+                files = video["play"];
 
-            files = video["play"];
-
-            // Sort the progressive files quality
-            progressiveFiles = new List<JSONNode>();
-            if (files != null) {
-                for (int i = 0; i < files["progressive"].Count; i++) {
-                    progressiveFiles.Add(files["progressive"][i]);
-                }   
-                progressiveFiles.Sort(SortByQuality);
+                // Sort the progressive files quality
+                progressiveFiles = new List<JSONNode>();
+                if (files != null) {
+                    for (int i = 0; i < files["progressive"].Count; i++) {
+                        progressiveFiles.Add(files["progressive"][i]);
+                    }   
+                    progressiveFiles.Sort(SortByQuality);
+                }
             }
         }
         

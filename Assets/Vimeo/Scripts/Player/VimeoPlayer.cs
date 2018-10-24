@@ -47,7 +47,6 @@ namespace Vimeo.Player
                 api = gameObject.AddComponent<VimeoApi>();
                 api.token = GetVimeoToken();
                 api.OnError  += ApiError;
-                api.OnNetworkError += NetworkError;
             }
 
             SetupVideoController();
@@ -72,11 +71,12 @@ namespace Vimeo.Player
 
         public void LoadVideo(string vimeo_url)
         {
-            if (vimeo_url != null && vimeo_url != "") {
+            if (!String.IsNullOrEmpty(vimeo_url)) {
                 vimeoVideo = null;
-                string[] matches = Regex.Split(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); // See https://regexr.com/3prh6
-                if (matches[3] != null) {
-                    vimeoVideoId = matches[3];
+                Match match = Regex.Match(vimeo_url, "(vimeo.com)?(/channels/[^/]+)?/?([0-9]+)"); 
+
+                if (match.Success) {
+                    vimeoVideoId = match.Groups[3].Value;
                     LoadVideo(int.Parse(vimeoVideoId));
                 }
                 else {
@@ -366,16 +366,9 @@ namespace Vimeo.Player
         
         private void ApiError(string response)
         {
-            Debug.LogError(response);
-
             if (OnLoadError != null) {
                 OnLoadError();
             }
-        }
-
-        private void NetworkError(string error_message)
-        {
-            Debug.LogError("It seems like you are not connected to the internet or are having connection problems.");
         }
     }
 }
