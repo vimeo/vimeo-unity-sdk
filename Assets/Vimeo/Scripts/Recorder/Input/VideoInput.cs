@@ -29,7 +29,6 @@ namespace Vimeo.Recorder
             int w, h;
             GameViewSize.GetGameRenderSize(out w, out h);
 
-#if UNITY_EDITOR
             switch (recorder.defaultResolution)
             {
                 case Resolution.Window:
@@ -72,12 +71,10 @@ namespace Vimeo.Recorder
                 m_ModifiedResolution = true;
                 GameViewSize.SelectSize(size);
             }
-#endif            
         }
 
         public virtual void EndRecording()
         {
-#if UNITY_EDITOR
             if (m_ModifiedResolution)
             {
                 GameViewSize.m_ModifiedResolutionCount--;
@@ -86,7 +83,6 @@ namespace Vimeo.Recorder
                     GameViewSize.RestoreSize();
                 }
             }
-#endif            
         }
     }
 }
