@@ -22,7 +22,7 @@ public class EncoderManagerTest : TestConfig
         recorder = obj.AddComponent<VimeoRecorder>();
     }
 
-#if VIMEO_LOOKING_GLASS_SUPPORT
+#if VIMEO_LOOKING_GLASS_SUPPORT && UNITY_2017_3_OR_NEWER
     [Test]
     public void Init_LookingGlass_Render_Texture_Doesnt_Overide()
     {
