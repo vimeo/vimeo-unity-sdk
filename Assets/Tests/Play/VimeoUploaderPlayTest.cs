@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
-using SimpleJSON;
+using Vimeo.SimpleJSON;
 
 public class VimeoUploaderPlayTest : TestConfig
 {

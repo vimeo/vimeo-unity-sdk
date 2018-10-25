@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Vimeo.Player;
 using Vimeo.Recorder;
-using SimpleJSON;
+using Vimeo.SimpleJSON;
 using System.Linq;
 
 namespace Vimeo
