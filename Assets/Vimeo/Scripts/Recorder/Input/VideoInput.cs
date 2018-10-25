@@ -51,18 +51,14 @@ namespace Vimeo.Recorder
 
             //Debug.Log("Screen resolution: " + w + "x" + h);
 
-            if (w != outputWidth || h != outputHeight)
-            {
+            if (w != outputWidth || h != outputHeight) {
                 Debug.Log("[VimeoRecorder] Setting window size to: " + outputWidth + "x" + outputHeight);
                 var size = GameViewSize.SetCustomSize(outputWidth, outputHeight) ?? GameViewSize.AddSize(outputWidth, outputHeight);
-                if (GameViewSize.m_ModifiedResolutionCount == 0)
-                {
+                if (GameViewSize.m_ModifiedResolutionCount == 0) {
                     GameViewSize.BackupCurrentSize();
                 }
-                else
-                {
-                    if (size != GameViewSize.currentSize)
-                    {
+                else {
+                    if (size != GameViewSize.currentSize) {
                         Debug.LogError("[VimeoRecorder] Requestion a resultion change while a recorder's input has already requested one! Undefined behaviour.");
                     }
                 }
@@ -75,11 +71,9 @@ namespace Vimeo.Recorder
 
         public virtual void EndRecording()
         {
-            if (m_ModifiedResolution)
-            {
+            if (m_ModifiedResolution) {
                 GameViewSize.m_ModifiedResolutionCount--;
-                if (GameViewSize.m_ModifiedResolutionCount == 0)
-                {
+                if (GameViewSize.m_ModifiedResolutionCount == 0) {
                     GameViewSize.RestoreSize();
                 }
             }

@@ -7,9 +7,13 @@ using System;
 using System.IO;
 using Vimeo.Recorder;
 
+#if VIMEO_LOOKING_GLASS_SUPPORT
+using HoloPlay;
+#endif // VIMEO_LOOKING_GLASS_SUPPORT
+
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
 using RenderHeads.Media.AVProMovieCapture;
-#endif
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT
 
 namespace Vimeo.Recorder
 {
@@ -20,11 +24,11 @@ namespace Vimeo.Recorder
 
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
             private CaptureBase _avproEncoder;
-#endif
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT
 
 #if MEDIA_ENCODER_SUPPORT
         private RecorderController _vimeoEncoder;
-#endif
+#endif // MEDIA_ENCODER_SUPPORT
 
         private void Start()
         {
@@ -41,11 +45,11 @@ namespace Vimeo.Recorder
                 _vimeoEncoder.Init(_recorder);
 #else
                 Debug.LogError("[Vimeo] Recording is only avaialabe in 2017.2 or higher.");
-#endif
+#endif // MEDIA_ENCODER_SUPPORT
             } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder = r.avproEncoder;
-#endif            
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT
             }
 
             EncoderSetup();
@@ -56,11 +60,11 @@ namespace Vimeo.Recorder
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                
                 _vimeoEncoder.BeginRecording();
-#endif                
+#endif // MEDIA_ENCODER_SUPPORT            
             } else {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 _avproEncoder.StartCapture();
-#endif             
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT      
             }
         }
 
@@ -70,7 +74,7 @@ namespace Vimeo.Recorder
 
 #if VIMEO_LOOKING_GLASS_SUPPORT
             if (_recorder.captureLookingGlassRT) {
-                HoloPlay.Quilt quilt = GetHoloPlayQuilt();
+                Quilt quilt = GetHoloPlayQuilt();
                 if (quilt != null) {
                     _recorder.renderTextureTarget = quilt.quiltRT;
 
@@ -84,26 +88,26 @@ namespace Vimeo.Recorder
                             Debug.LogError("[VimeoRecorder] In order to use AVPro and HoloPlay together, you need to use the CaptureFromTexture component.");
                         }
                     }
-    #endif 
+    #endif // VIMEO_AVPRO_CAPTURE_SUPPORT
                 }
                 else {
                     Debug.LogError("[VimeoRecorer] HoloPlay SDK was not found.");
                 }
             }
-#endif
+#endif // VIMEO_LOOKING_GLASS_SUPPORT
         }
 
 #if VIMEO_LOOKING_GLASS_SUPPORT
-        private HoloPlay.Quilt GetHoloPlayQuilt()
+        private Quilt GetHoloPlayQuilt()
         {
             GameObject[] objects = gameObject.scene.GetRootGameObjects();
 
             for (int i = 0; i < objects.Length; i++) {
-                if (objects[i].GetComponent<HoloPlay.Quilt>() != null) {
-                    return objects[i].GetComponent<HoloPlay.Quilt>();
+                if (objects[i].GetComponent<Quilt>() != null) {
+                    return objects[i].GetComponent<Quilt>();
                 }
 
-                HoloPlay.Quilt[] quilts = objects[i].GetComponentsInChildren<HoloPlay.Quilt>();
+                Quilt[] quilts = objects[i].GetComponentsInChildren<Quilt>();
                 if (quilts.Length > 0) {
                     return quilts[0];
                 }
@@ -111,7 +115,7 @@ namespace Vimeo.Recorder
 
             return null;
         }
-#endif
+#endif // VIMEO_LOOKING_GLASS_SUPPORT
 
         public void EndRecording()
         {
@@ -120,11 +124,11 @@ namespace Vimeo.Recorder
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                          
                 _vimeoEncoder.EndRecording();
-#endif
+#endif // MEDIA_ENCODER_SUPPORT
             } else {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 // _avproEncoder.StartCapture();
-#endif                    
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT             
             }
         }
 
@@ -142,7 +146,7 @@ namespace Vimeo.Recorder
             } else {
                 Debug.LogWarning("[VimeoRecorder] AddFrame is only available for MediaEncoder.");
             }
-#endif            
+#endif // MEDIA_ENCODER_SUPPORT         
         }
 
         public string GetVideoFilePath()
@@ -150,11 +154,11 @@ namespace Vimeo.Recorder
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                             
                 return _vimeoEncoder.encodedFilePath;
-#endif                
+#endif // MEDIA_ENCODER_SUPPORT          
             } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 return _avproEncoder.LastFilePath;
-#endif                    
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT                
             }
 
             return null;
@@ -165,12 +169,12 @@ namespace Vimeo.Recorder
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                
                 return _vimeoEncoder.currentFrame;
-#endif
+#endif // MEDIA_ENCODER_SUPPORT
             } else if (_recorder.encoderType == EncoderType.AVProMovieCapture) {
 #if VIMEO_AVPRO_CAPTURE_SUPPORT
                 Debug.LogWarning("[VimeoRecorder] GetCurrentFrame not supported for AVProMovieCapture");
                 return -1;
-#endif            
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT        
             }
 
             return -1;
@@ -182,7 +186,7 @@ namespace Vimeo.Recorder
             return _vimeoEncoder.GetOutputWidth();
 #else
             return -1;
-#endif 
+#endif // MEDIA_ENCODER_SUPPORT
         }
 
         public int GetOutputHeight()
@@ -191,14 +195,14 @@ namespace Vimeo.Recorder
             return _vimeoEncoder.GetOutputHeight();
 #else
             return -1;
-#endif
+#endif // MEDIA_ENCODER_SUPPORT
         }
 
         public void DeleteVideoFile()
         {
 #if MEDIA_ENCODER_SUPPORT               
             // controller.DeleteVideoFile();
-#endif            
+#endif // MEDIA_ENCODER_SUPPORT      
         }
 
         public void ManualFrameCapture()
@@ -209,7 +213,7 @@ namespace Vimeo.Recorder
             } else {
                 Debug.LogWarning("[VimeoRecorder] ManualFrameCapture is only available for MediaEncoder.");
             }
-#endif            
+#endif // MEDIA_ENCODER_SUPPORT         
         }
 
         void OnDestroy()
@@ -218,7 +222,7 @@ namespace Vimeo.Recorder
             if (_vimeoEncoder != null) {
                 Destroy(_vimeoEncoder);
             }
-#endif            
+#endif // MEDIA_ENCODER_SUPPORT        
         }
 
         void Update()
@@ -241,7 +245,7 @@ namespace Vimeo.Recorder
                     }
                 }
             }
-#endif
+#endif // VIMEO_AVPRO_CAPTURE_SUPPORT
         }
 
     }
