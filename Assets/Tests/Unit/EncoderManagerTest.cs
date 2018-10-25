@@ -9,6 +9,9 @@ using Vimeo.Recorder;
 
 public class EncoderManagerTest : TestConfig 
 {
+
+#if VIMEO_LOOKING_GLASS_SUPPORT && UNITY_2017_3_OR_NEWER
+
     GameObject obj;
     EncoderManager encoder;
     VimeoRecorder recorder;
@@ -22,7 +25,7 @@ public class EncoderManagerTest : TestConfig
         recorder = obj.AddComponent<VimeoRecorder>();
     }
 
-#if VIMEO_LOOKING_GLASS_SUPPORT && UNITY_2017_3_OR_NEWER
+
     [Test]
     public void Init_LookingGlass_Render_Texture_Doesnt_Overide()
     {
@@ -63,7 +66,7 @@ public class EncoderManagerTest : TestConfig
         encoder.Init(recorder);
     }
 
-#if VIMEO_AVPRO_CAPTURE_SUPPORT
+    #if VIMEO_AVPRO_CAPTURE_SUPPORT
     [Test]
     public void Init_LookingGlass_AVPro_Movie_Capture_Works()
     {
@@ -94,15 +97,15 @@ public class EncoderManagerTest : TestConfig
 
         encoder.Init(recorder);
     }
-#endif
 
-    
-#endif
-
+    #endif //VIMEO_AVPRO_CAPTURE_SUPPORT
 
     [TearDown]
     public void _After()
     {
         UnityEngine.GameObject.DestroyImmediate(asset);
-    }
+    }   
+
+#endif // VIMEO_LOOKING_GLASS_SUPPORT && UNITY_2017_3_OR_NEWER
+
 }
