@@ -206,14 +206,12 @@ namespace Vimeo
             if (request.error != null) {
                 if (request.responseCode == 401) {
                     SendError("401 Unauthorized request. Are you using a valid token?", request.downloadHandler.text);
-                }
-                else if (IsNetworkError(request)) {
+                } else if (IsNetworkError(request)) {
                     Debug.LogError("[VimeoApi] It seems like you are not connected to the internet or are having connection problems.");
                     if (OnNetworkError != null) {
                         OnNetworkError(request.error);
                     }
-                }
-                else {
+                } else {
                     SendError(request.url + " - " + request.downloadHandler.text, request.downloadHandler.text);
                 }
             } else if (OnRequestComplete != null) {
@@ -246,7 +244,7 @@ namespace Vimeo
             r.SetRequestHeader("Content-Type", "application/json");
             PrepareHeaders(r, apiVersion);
         }
-        
+
         private void PrepareHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
             r.chunkedTransfer = false;

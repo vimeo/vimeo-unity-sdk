@@ -26,8 +26,10 @@ namespace Vimeo.Recorder
         private RenderTexture cubemap2; // right
 
         Shader m_copyShader;
-        public Shader copyShader {
-            get {
+        public Shader copyShader
+        {
+            get
+            {
                 if (m_copyShader == null) {
                     m_copyShader = Shader.Find("Hidden/Recorder/Inputs/CBRenderTexture/CopyFB");
                 }
@@ -38,10 +40,11 @@ namespace Vimeo.Recorder
         }
 
         Material m_copyMaterial;
-        public Material copyMaterial {
-            get {
-                if (m_copyMaterial == null)
-                {
+        public Material copyMaterial
+        {
+            get
+            {
+                if (m_copyMaterial == null) {
                     m_copyMaterial = new Material(copyShader);
                     copyMaterial.EnableKeyword("OFFSCREEN");
                     // if (cbSettings.m_AllowTransparency)
@@ -54,12 +57,11 @@ namespace Vimeo.Recorder
         private void AddCameraFollower()
         {
             // rename to camera source?
-            switch(recorder.defaultCamera) {
-                case CameraType.MainCamera: 
-                {
-                    targetCamera = Camera.main;
-                    break;
-                }
+            switch (recorder.defaultCamera) {
+                case CameraType.MainCamera: {
+                        targetCamera = Camera.main;
+                        break;
+                    }
 
             }
         }
@@ -89,8 +91,7 @@ namespace Vimeo.Recorder
             var eyesEyeSepBackup = targetCamera.stereoSeparation;
             var eyeMaskBackup = targetCamera.stereoTargetEye;
 
-            if (recorder.defaultRenderMode360 == RenderMode360.Stereo)
-            {
+            if (recorder.defaultRenderMode360 == RenderMode360.Stereo) {
                 targetCamera.stereoSeparation = stereoSeparation;
                 targetCamera.stereoTargetEye = StereoTargetEyeMask.Left;
                 targetCamera.RenderToCubemap(cubemap1, 63, Camera.MonoOrStereoscopicEye.Left);
@@ -101,13 +102,11 @@ namespace Vimeo.Recorder
 
                 cubemap1.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Left);
                 cubemap2.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Right);
-            }
-            else
-            {
+            } else {
                 targetCamera.RenderToCubemap(cubemap1, 63, Camera.MonoOrStereoscopicEye.Mono);
                 cubemap1.ConvertToEquirect(outputRT, Camera.MonoOrStereoscopicEye.Mono);
             }
-            
+
             targetCamera.stereoSeparation = eyesEyeSepBackup;
             targetCamera.stereoTargetEye = eyeMaskBackup;
         }
@@ -125,9 +124,8 @@ namespace Vimeo.Recorder
                 base.BeginRecording();
                 AddCameraFollower();
                 SetupCommandBuffer();
-            }
-            else {
-                outputWidth  = outputWidth360;
+            } else {
+                outputWidth = outputWidth360;
                 outputHeight = outputHeight360;
 
                 PrepFrameRenderTexture();
@@ -139,7 +137,7 @@ namespace Vimeo.Recorder
         {
             base.EndRecording();
 
-            if (recorder.defaultVideoInput != VideoInputType.Camera || 
+            if (recorder.defaultVideoInput != VideoInputType.Camera ||
                 recorder.defaultVideoInput == VideoInputType.Screen) {
                 ReleaseCamera();
                 ReleaseBuffer();
@@ -151,8 +149,7 @@ namespace Vimeo.Recorder
             bool isNewTexture = PrepFrameRenderTexture();
 
             if (targetCamera != null && isNewTexture) {
-                if (cbCopyFB != null)
-                {
+                if (cbCopyFB != null) {
                     targetCamera.RemoveCommandBuffer(CameraEvent.AfterEverything, cbCopyFB);
                     cbCopyFB.Release();
                 }
@@ -164,7 +161,7 @@ namespace Vimeo.Recorder
                 cbCopyFB.SetRenderTarget(outputRT);
                 cbCopyFB.DrawMesh(CreateFullscreenQuad(), Matrix4x4.identity, copyMaterial, 0, 0);
                 cbCopyFB.ReleaseTemporaryRT(tid);
-                
+
                 targetCamera.AddCommandBuffer(CameraEvent.AfterEverything, cbCopyFB);
             }
         }
@@ -177,27 +174,30 @@ namespace Vimeo.Recorder
                 }
 
                 ReleaseBuffer();
-            } 
+            }
 
-            if (recorder.defaultVideoInput == VideoInputType.Camera || 
+            if (recorder.defaultVideoInput == VideoInputType.Camera ||
                 recorder.defaultVideoInput == VideoInputType.Screen) {
-                outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32) {
+                outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32)
+                {
                     wrapMode = TextureWrapMode.Repeat
                 };
-            }
-            else { // 360 
-                outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32) {
+            } else { // 360 
+                outputRT = new RenderTexture(outputWidth, outputHeight, 0, RenderTextureFormat.ARGB32)
+                {
                     wrapMode = TextureWrapMode.Repeat
                     // dimension = TextureDimension.Tex2D,
                     // antiAliasing = 8
                 };
 
-                cubemap1 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32) {
+                cubemap1 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32)
+                {
                     dimension = TextureDimension.Cube,
                     antiAliasing = 8
                 };
 
-                cubemap2 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32) {
+                cubemap2 = new RenderTexture(cubeMapSize, cubeMapSize, 24, RenderTextureFormat.ARGB32)
+                {
                     dimension = TextureDimension.Cube,
                     antiAliasing = 8
                 };
@@ -210,8 +210,7 @@ namespace Vimeo.Recorder
 
         private void ReleaseCamera()
         {
-            if (cbCopyFB != null)
-            {
+            if (cbCopyFB != null) {
                 if (targetCamera != null) {
                     targetCamera.RemoveCommandBuffer(CameraEvent.AfterEverything, cbCopyFB);
                 }
@@ -235,13 +234,13 @@ namespace Vimeo.Recorder
                 outputRT.Release();
                 outputRT = null;
             }
-            
+
             if (cubemap1) {
                 cubemap1.Release();
                 cubemap1 = null;
             }
 
-            if(cubemap2) {
+            if (cubemap2) {
                 cubemap2.Release();
                 cubemap2 = null;
             }

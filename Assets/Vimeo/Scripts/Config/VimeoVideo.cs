@@ -1,4 +1,4 @@
-using System; 
+using System;
 using System.Text.RegularExpressions;
 using SimpleJSON;
 using System.Collections;
@@ -25,13 +25,13 @@ namespace Vimeo
 
         private JSONNode files;
         private List<JSONNode> progressiveFiles;
-        
+
         public VimeoVideo(string _name, string _uri = null)
         {
             name = _name;
             uri = _uri;
             if (_uri != null) {
-                string[] matches = Regex.Split(_uri, "/([0-9]+)$"); 
+                string[] matches = Regex.Split(_uri, "/([0-9]+)$");
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                 }
@@ -43,15 +43,15 @@ namespace Vimeo
             if (video["name"] != null) {
                 name = video["name"].Value;
             }
-            
+
             if (video["uri"] != null) {
                 uri = video["uri"].Value;
             }
-            
+
             if (video["description"] != null) {
                 description = video["description"].Value;
             }
-            
+
             if (video["duration"] != null) {
                 duration = int.Parse(video["duration"].Value);
             }
@@ -66,12 +66,12 @@ namespace Vimeo
 
             if (video["spatial"] != null && !video["spatial"].IsNull) {
                 is3D = true;
-                projection   = video["spatial"]["projection"].Value;
+                projection = video["spatial"]["projection"].Value;
                 stereoFormat = video["spatial"]["stereo_format"].Value;
             }
 
             if (uri != null) {
-                string[] matches = Regex.Split(uri, "/([0-9]+)$"); 
+                string[] matches = Regex.Split(uri, "/([0-9]+)$");
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                     name = name + " (" + id + ")";
@@ -85,18 +85,18 @@ namespace Vimeo
                 if (files != null) {
                     for (int i = 0; i < files["progressive"].Count; i++) {
                         progressiveFiles.Add(files["progressive"][i]);
-                    }   
+                    }
                     progressiveFiles.Sort(SortByQuality);
                 }
             }
         }
-        
+
         public int CompareTo(VimeoVideo other)
         {
             if (other == null) {
                 return 1;
             }
-            
+
             return 0;
         }
 
@@ -104,16 +104,15 @@ namespace Vimeo
         {
             return _width * ((float)height / (float)width);
         }
-        
+
         public override string ToString()
-        {   
-            return name;
-        }  
-        
-        public string GetAdaptiveVideoFileURL() 
         {
-            switch (Application.platform)
-            {
+            return name;
+        }
+
+        public string GetAdaptiveVideoFileURL()
+        {
+            switch (Application.platform) {
                 case RuntimePlatform.OSXPlayer:
                 case RuntimePlatform.OSXEditor:
                 case RuntimePlatform.IPhonePlayer:
@@ -123,8 +122,8 @@ namespace Vimeo
                 default:
                     return files["dash"]["link"];
             }
-            
-        }  
+
+        }
 
         public JSONNode GetHighestResolutionVideoFileURL()
         {
@@ -135,7 +134,7 @@ namespace Vimeo
         {
             return GetVideoFileByResolution(resolution)["link"];
         }
-                
+
         public JSONNode GetVideoFileByResolution(StreamingResolution resolution)
         {
             if (resolution == StreamingResolution.Adaptive) {
@@ -159,18 +158,17 @@ namespace Vimeo
                 if (_preferred_qualities.Count == 0) {
                     Debug.Log("[Vimeo] This video does not have a " + resolution + " resolution. Defaulting to " + progressiveFiles[progressiveFiles.Count - 1]["height"] + "p.");
                     return progressiveFiles[progressiveFiles.Count - 1];
-                }
-                else {
+                } else {
                     Debug.Log("[Vimeo] This video does not have a " + resolution + " resolution. Defaulting to " + _preferred_qualities[0]["height"] + "p.");
                 }
             }
 
             return _preferred_qualities[0];
         }
-        
+
         private static int SortByQuality(JSONNode q1, JSONNode q2)
         {
             return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
         }
-    } 
+    }
 }

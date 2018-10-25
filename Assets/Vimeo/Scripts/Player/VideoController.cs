@@ -8,7 +8,8 @@ using SimpleJSON;
 
 namespace Vimeo.Player
 {
-    public class VideoController : MonoBehaviour {
+    public class VideoController : MonoBehaviour
+    {
 
         public delegate void PlaybackAction(VideoController controller);
         public event PlaybackAction OnVideoStart;
@@ -29,22 +30,22 @@ namespace Vimeo.Player
         private string stereoFormat;
         private MaterialPropertyBlock block;
 
-        private VimeoVideo vimeoVideo; 
+        private VimeoVideo vimeoVideo;
 
         public bool isSeeking = false;
         public long seekFrame = 0;
         private long prevFrameIndex = 0;
         private bool frameStepping = false;
-        private void Start() 
+        private void Start()
         {
             this.hideFlags = HideFlags.HideInInspector;
         }
         public void Setup()
-        {  
+        {
             if (videoScreenObject != null) {
                 if (videoPlayer == null) {
                     videoPlayer = videoScreenObject.AddComponent<VideoPlayer>();
-                    
+
                     if (audioSource == null) {
                         audioSource = videoScreenObject.AddComponent<AudioSource>();
                         audioSource.volume = playerSettings.muteAudio ? 0 : 1;
@@ -60,21 +61,19 @@ namespace Vimeo.Player
 
                     if (videoScreenObject.GetComponent<RawImage>() != null) {
                         SetupRenderTexture();
-                    }
-                    else {
+                    } else {
                         SetupMaterialOverride();
                     }
-                                    
-                    videoPlayer.errorReceived    += VideoPlayerError;
+
+                    videoPlayer.errorReceived += VideoPlayerError;
                     videoPlayer.prepareCompleted += VideoPlayerStarted;
-                    videoPlayer.seekCompleted    += VideoSeekCompleted;
-                    videoPlayer.frameReady       += VideoFrameReady;
+                    videoPlayer.seekCompleted += VideoSeekCompleted;
+                    videoPlayer.frameReady += VideoFrameReady;
 
                     videoPlayer.isLooping = true;
 
                     block = new MaterialPropertyBlock();
-                }
-                else {
+                } else {
                     Pause();
                     videoPlayer.Stop();
                 }
@@ -101,19 +100,18 @@ namespace Vimeo.Player
             videoPlayer.renderMode = VideoRenderMode.MaterialOverride;
             if (videoScreenObject.GetComponent<Renderer>().sharedMaterial.name.StartsWith("360VideoScreen")) {
                 videoPlayer.targetMaterialProperty = "_Tex";
-            } 
-            else {
+            } else {
                 videoPlayer.targetMaterialProperty = "_MainTex";
             }
         }
 
-        public void PlayVideo(VimeoVideo _vimeoVideo, StreamingResolution resolution) 
+        public void PlayVideo(VimeoVideo _vimeoVideo, StreamingResolution resolution)
         {
             vimeoVideo = _vimeoVideo;
             PlayVideoByUrl(vimeoVideo.GetVideoFileUrlByResolution(resolution), vimeoVideo.is3D, vimeoVideo.stereoFormat);
         }
 
-        public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat) 
+        public void PlayVideoByUrl(string file_url, bool is3D, string stereoFormat)
         {
             Setup();
             this.stereoFormat = stereoFormat;
@@ -125,18 +123,18 @@ namespace Vimeo.Player
 
         public void SeekBackward(float amount)
         {
-            videoPlayer.frame = (long) (videoPlayer.frame - amount);
+            videoPlayer.frame = (long)(videoPlayer.frame - amount);
         }
 
         public void SeekForward(float amount)
         {
-            videoPlayer.frame = (long) (videoPlayer.frame + amount);
+            videoPlayer.frame = (long)(videoPlayer.frame + amount);
         }
 
         public void Seek(float seek)
         {
             isSeeking = true;
-            seekFrame = videoPlayer.frame = (long) (Mathf.Clamp01(seek) * videoPlayer.frameCount);
+            seekFrame = videoPlayer.frame = (long)(Mathf.Clamp01(seek) * videoPlayer.frameCount);
         }
 
         public void SeekBySeconds(int seconds)
@@ -146,7 +144,7 @@ namespace Vimeo.Player
 
         public int GetDuration()
         {
-            return (int)(videoPlayer.frameCount / videoPlayer.frameRate);   
+            return (int)(videoPlayer.frameCount / videoPlayer.frameRate);
         }
 
         IEnumerator PlayVideo()
@@ -157,10 +155,9 @@ namespace Vimeo.Player
 
         public void TogglePlayback()
         {
-            if (videoPlayer.isPlaying){
+            if (videoPlayer.isPlaying) {
                 Pause();
-            }
-            else {
+            } else {
                 Play();
             }
         }
@@ -182,13 +179,13 @@ namespace Vimeo.Player
             if (isSeeking) {
                 return seekFrame;
             }
-            
-            return videoPlayer.frame; 
+
+            return videoPlayer.frame;
         }
 
         public ulong GetTotalFrames()
         {
-            return videoPlayer.frameCount; 
+            return videoPlayer.frameCount;
         }
 
         private void VideoPlayerError(VideoPlayer source, string message)
@@ -199,7 +196,7 @@ namespace Vimeo.Player
         void Update()
         {
             if (videoPlayer != null && videoPlayer.sendFrameReadyEvents) {
-                if (videoPlayer.canStep && frameStepping && (videoPlayer.frame == prevFrameIndex+1 || videoPlayer.frame == prevFrameIndex)) {
+                if (videoPlayer.canStep && frameStepping && (videoPlayer.frame == prevFrameIndex + 1 || videoPlayer.frame == prevFrameIndex)) {
                     videoPlayer.StepForward();
                 }
             }
@@ -209,7 +206,7 @@ namespace Vimeo.Player
         {
             prevFrameIndex = frameIdx;
 
-            if (OnFrameReady != null) { 
+            if (OnFrameReady != null) {
                 OnFrameReady(this);
             }
         }
@@ -218,12 +215,11 @@ namespace Vimeo.Player
         {
             if (frameStepping) {
                 source.Pause();
-            }
-            else {
+            } else {
                 source.Play();
             }
 
-            width  = videoPlayer.texture.width;
+            width = videoPlayer.texture.width;
             height = videoPlayer.texture.height;
 
             if (videoPlayer.renderMode == VideoRenderMode.RenderTexture) {
@@ -242,9 +238,9 @@ namespace Vimeo.Player
             isSeeking = false;
         }
 
-        IEnumerator WaitForRenderTexture() 
+        IEnumerator WaitForRenderTexture()
         {
-            yield return new WaitUntil (() => videoPlayer.isPrepared);
+            yield return new WaitUntil(() => videoPlayer.isPrepared);
 
             var rend = videoScreenObject.GetComponent<MeshRenderer>();
 
@@ -252,12 +248,10 @@ namespace Vimeo.Player
                 if (is3D && stereoFormat == "mono") {
                     block.SetFloat("_Layout", 0f);
                     rend.SetPropertyBlock(block);
-                }
-                else if (is3D && stereoFormat == "top-bottom") {
+                } else if (is3D && stereoFormat == "top-bottom") {
                     block.SetFloat("_Layout", 2f);
                     rend.SetPropertyBlock(block);
-                }
-                else if (is3D && stereoFormat == "left-right") {
+                } else if (is3D && stereoFormat == "left-right") {
                     block.SetFloat("_Layout", 2f);
                     rend.SetPropertyBlock(block);
                 }
@@ -271,8 +265,8 @@ namespace Vimeo.Player
             if (videoPlayer != null) {
                 videoPlayer.Stop();
                 videoPlayer.prepareCompleted -= VideoPlayerStarted;
-                videoPlayer.errorReceived    -= VideoPlayerError;
-                videoPlayer.seekCompleted    -= VideoSeekCompleted;
+                videoPlayer.errorReceived -= VideoPlayerError;
+                videoPlayer.seekCompleted -= VideoSeekCompleted;
 
                 if (videoRT != null) {
                     videoRT.Release();

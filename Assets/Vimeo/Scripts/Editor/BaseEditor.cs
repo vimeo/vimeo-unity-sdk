@@ -8,8 +8,8 @@ using SimpleJSON;
 using System.Linq;
 
 namespace Vimeo
-{  
-    public class BaseEditor : Editor 
+{
+    public class BaseEditor : Editor
     {
         VimeoApi api;
 
@@ -19,8 +19,7 @@ namespace Vimeo
             if (api == null) {
                 if (settings.gameObject.GetComponent<VimeoApi>()) {
                     api = settings.gameObject.GetComponent<VimeoApi>();
-                }
-                else {
+                } else {
                     api = settings.gameObject.AddComponent<VimeoApi>();
                 }
             }
@@ -55,7 +54,7 @@ namespace Vimeo
             settings.vimeoVideos.Add(
                 new VimeoVideo("Loading...", null)
             );
-            
+
             api.OnRequestComplete += GetVideosComplete;
             api.OnError += OnRequestError;
 
@@ -69,7 +68,7 @@ namespace Vimeo
 
             api.OnRequestComplete -= GetVideosComplete;
             api.OnError -= OnRequestError;
-            
+
             if (!EditorApplication.isPlaying) {
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
@@ -79,8 +78,7 @@ namespace Vimeo
 
             if (videoData.Count == 0) {
                 settings.vimeoVideos.Add(new VimeoVideo("(No videos found)"));
-            }
-            else {
+            } else {
                 settings.vimeoVideos.Add(new VimeoVideo("---- Select a video ----", null));
 
                 for (int i = 0; i < videoData.Count; i++) {
@@ -131,15 +129,13 @@ namespace Vimeo
 
                 if (player.currentFolder == null || !player.currentFolder.IsValid()) {
                     if (player.vimeoVideoId != null && player.vimeoVideoId != "") {
-                        player.currentFolder = player.vimeoFolders[1];    
-                    }
-                    else {
+                        player.currentFolder = player.vimeoFolders[1];
+                    } else {
                         player.currentFolder = player.vimeoFolders[0];
                     }
                 }
                 folder_prefix = "Projects / ";
-            }
-            else {
+            } else {
                 settings.vimeoFolders.Add(new VimeoFolder("No project", null));
             }
 
@@ -158,7 +154,7 @@ namespace Vimeo
             settings.signInError = true;
         }
 
-        protected void GUIManageVideosButton() 
+        protected void GUIManageVideosButton()
         {
             var settings = target as VimeoSettings;
             if (settings.Authenticated() && settings.vimeoSignIn && GUILayout.Button("Manage videos", GUILayout.Width(100))) {
@@ -167,16 +163,16 @@ namespace Vimeo
         }
 
         protected bool GUISelectFolder()
-        {   
+        {
             var so = serializedObject;
             var settings = target as VimeoSettings;
-            
+
             // Folder selection
             GUILayout.BeginHorizontal();
             bool folderChanged = false;
 
             int cur_index = settings.GetCurrentFolderIndex();
-            int new_index = EditorGUILayout.Popup(settings is VimeoPlayer ? "Vimeo Video" : "Add to Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray()); 
+            int new_index = EditorGUILayout.Popup(settings is VimeoPlayer ? "Vimeo Video" : "Add to Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray());
 
             if (new_index != cur_index) {
                 folderChanged = true;
@@ -203,25 +199,23 @@ namespace Vimeo
 
             if (player.currentFolder.uri == "custom") {
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
-            }
-            else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
+            } else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
                 GUILayout.BeginHorizontal();
                 int cur_video_index = player.GetCurrentVideoIndex();
-                int new_video_index = EditorGUILayout.Popup(" ", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
+                int new_video_index = EditorGUILayout.Popup(" ", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray());
 
                 if (new_video_index != cur_video_index) {
                     player.currentVideo = player.vimeoVideos[new_video_index];
                     player.vimeoVideoId = player.currentVideo.id.ToString();
                 }
 
-                if (GUILayout.Button("↺", GUILayout.Width(25)) || 
-                    refreshVideos || 
+                if (GUILayout.Button("↺", GUILayout.Width(25)) ||
+                    refreshVideos ||
                     (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoApi>() == null)) {
-                        
+
                     if (player.currentFolder.uri == "recent") {
                         GetRecentVideos();
-                    }
-                    else if (player.currentFolder.id > 0) {
+                    } else if (player.currentFolder.id > 0) {
                         GetVideosInFolder(player.currentFolder);
                     }
                 }
@@ -229,7 +223,7 @@ namespace Vimeo
                 GUILayout.EndHorizontal();
             }
         }
-        
+
         protected void GUISignOutButton()
         {
             var settings = target as VimeoSettings;
@@ -242,7 +236,7 @@ namespace Vimeo
         {
             if (GUILayout.Button("Help", GUILayout.Width(50))) {
                 Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
-            } 
+            }
         }
 
         public void DrawVimeoAuth(VimeoSettings auth)
@@ -253,12 +247,11 @@ namespace Vimeo
                 GUILayout.BeginHorizontal();
 
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
-                
+
                 if (GUILayout.Button("Get token", GUILayout.Width(80))) {
                     if (auth is VimeoPlayer) {
                         Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity?scope=public%20private%20video_files");
-                    }
-                    else {
+                    } else {
                         Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity");
                     }
                 }
@@ -276,8 +269,8 @@ namespace Vimeo
                     }
                 }
                 GUI.backgroundColor = Color.white;
-                
-            } 
+
+            }
         }
 
 
