@@ -57,6 +57,8 @@ namespace Vimeo.Recorder
 
         public void BeginRecording()
         {
+            isRecording = true;
+
             if (_recorder.encoderType == EncoderType.MediaEncoder) {
 #if MEDIA_ENCODER_SUPPORT                                
                 _vimeoEncoder.BeginRecording();
@@ -70,8 +72,6 @@ namespace Vimeo.Recorder
 
         private void EncoderSetup()
         {
-            isRecording = true;
-
 #if VIMEO_LOOKING_GLASS_SUPPORT
             if (_recorder.captureLookingGlassRT) {
                 Quilt quilt = GetHoloPlayQuilt();
