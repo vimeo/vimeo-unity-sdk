@@ -56,7 +56,7 @@ namespace Vimeo
             form = new WWWForm();
         }
 
-        public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,description")
+        public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,files,description")
         {
             StartCoroutine("Request", "/videos/" + video_id + "?fields=" + fields);
         }

@@ -340,7 +340,7 @@ namespace Vimeo.Player
             api.OnRequestComplete -= VideoMetadataLoad;
             
             if (json["error"] == null) {
-                if (json["user"]["account"].Value == "basic") {
+                if (json["user"] != null && json["user"]["account"].Value == "basic") {
                     Debug.LogError("[VimeoPlayer] You do not have permission to stream videos. You must be a Vimeo Pro or Business customer. https://vimeo.com/upgrade");
                 }
 

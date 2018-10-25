@@ -103,6 +103,7 @@ namespace Vimeo.Recorder
         public bool recordOnStart = false;
         public bool openInBrowser = true;
         public bool autoUpload = true; // Controls if a video is auto uploaded upon end of recording
+        public bool captureLookingGlassRT = false;
 
         public string videoName;
         public string videoPermalink;

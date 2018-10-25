@@ -1,5 +1,4 @@
-#if UNITY_2018_1_OR_NEWER
-#if UNITY_EDITOR
+#if UNITY_EDITOR && UNITY_2018_1_OR_NEWER
 
 using UnityEngine;
 using Unity.Collections;
@@ -35,6 +34,4 @@ namespace Vimeo.Recorder
 
     }
 }
-
-#endif 
 #endif
