@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Collections;
 using System.Collections.Generic;
 using Vimeo.Player;
+using Vimeo.SimpleJSON;
 using UnityEngine;
 
 namespace Vimeo

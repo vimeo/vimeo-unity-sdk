@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using Vimeo;
+using Vimeo.SimpleJSON;
 
 namespace Vimeo.Recorder
 {

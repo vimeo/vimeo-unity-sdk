@@ -52,7 +52,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Vimeo
+namespace Vimeo.SimpleJSON
 {
     public enum JSONBinaryTag
     {
