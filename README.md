@@ -188,7 +188,9 @@ For questions and support, [ask on StackOverflow](https://stackoverflow.com/ques
 Make pull requests, file bug reports, and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
 # Let's collaborate
-Working on a cool video project? Let's talk - labs at vimeo dot com
+Working on a cool video project? Let's talk - labs at vimeo dot com. Also, be sure to [sign up for our mailing list](http://eepurl.com/dJCsmI) and we’ll keep you updated on all things Creator Lab.
+
+
 
 # Thanks
 Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader), and [DepthKit](http://www.depthkit.tv/)
