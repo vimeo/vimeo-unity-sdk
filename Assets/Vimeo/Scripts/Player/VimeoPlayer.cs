@@ -226,15 +226,19 @@ namespace Vimeo.Player
                 }
 #if VIMEO_DEPTHKIT_SUPPORT
                 // TODO
-                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
-                    // depthKitClip._moviePath = file_url;
-                    // depthKitClip._metaDataText = vimeoVideo.description;
-                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    // depthKitClip.RefreshRenderer();
+                else if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
+                    depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    depthKitClip._metaDataFile = CreateTextAssetFromJSONString(vimeoVideo.description);
+                    depthKitClip._needToRefreshMetadata = true;
                 }
     #endif  
 #endif
             }
+        }
+
+        public TextAsset CreateTextAssetFromJSONString(string json) {
+            string tmpString = json.Replace("\\n", "");
+            return new TextAsset(tmpString.Replace('"', '\"'));
         }
 
         public void Pause()

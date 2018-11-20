@@ -70,8 +70,8 @@ namespace Vimeo
                     }
 
 #if VIMEO_DEPTHKIT_SUPPORT
-                    if (player.videoPlayerType == VideoPlayerType.DepthKit) {
-                        EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("DepthKit Clip"));
+                    if (player.videoPlayerType == VideoPlayerType.Depthkit) {
+                        EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("Depthkit Clip"));
                     }
 #endif
                 }
@@ -91,7 +91,7 @@ namespace Vimeo
                 if (player.videoPlayerType != VideoPlayerType.AVProVideo 
                     && !player.IsVideoMetadataLoaded()
 #if VIMEO_DEPTHKIT_SUPPORT
-                    && player.videoPlayerType != VideoPlayerType.DepthKit
+                    && player.videoPlayerType != VideoPlayerType.Depthkit
 #endif
                     ) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));

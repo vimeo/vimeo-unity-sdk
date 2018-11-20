@@ -10,7 +10,7 @@ namespace Vimeo
     public enum PluginType {
         AVProVideo = 2,
         AVProCapture = 3,
-        DepthKit = 4,
+        Depthkit = 4,
         LookingGlass = 5
     };
 
@@ -22,7 +22,7 @@ namespace Vimeo
         AVProVideo = PluginType.AVProVideo,
 #endif
 #if VIMEO_DEPTHKIT_SUPPORT
-        DepthKit = PluginType.DepthKit,
+        Depthkit = PluginType.Depthkit,
 #endif
 #if VIMEO_LOOKING_GLASS_SUPPORT
         LookingGlass = PluginType.LookingGlass,
@@ -40,7 +40,7 @@ namespace Vimeo
         public static Dictionary<string, PluginType> DirectiveDict = new Dictionary<string, PluginType>(){
             {AVPRO_VIDEO_DEFINE,   PluginType.AVProVideo},
             {AVPRO_CAPTURE_DEFINE, PluginType.AVProCapture},
-            {DEPTHKIT_DEFINE,      PluginType.DepthKit},
+            {DEPTHKIT_DEFINE,      PluginType.Depthkit},
             {LOOKING_GLASS_DEFINE, PluginType.LookingGlass},
         };
 

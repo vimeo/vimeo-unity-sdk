@@ -18,7 +18,7 @@ namespace Vimeo.Player
         UnityPlayer,
         AVProVideo,
 #if VIMEO_DEPTHKIT_SUPPORT
-        DepthKit
+        Depthkit
 #endif 
     }
     
@@ -29,7 +29,7 @@ namespace Vimeo.Player
         public RenderHeads.Media.AVProVideo.MediaPlayer mediaPlayer;
 #endif         
 #if VIMEO_DEPTHKIT_SUPPORT
-        public DepthKit.Clip depthKitClip;
+        public Depthkit.Depthkit_Clip depthKitClip;
 #endif         
         public StreamingResolution selectedResolution = StreamingResolution.x2160p_4K; 
         public string vimeoVideoId;
