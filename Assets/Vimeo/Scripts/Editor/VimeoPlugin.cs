@@ -49,7 +49,7 @@ namespace Vimeo
         public static Dictionary<string, string> AssetSearchDict = new Dictionary<string, string>() { 
             {"MediaPlayer",     AVPRO_VIDEO_DEFINE},
             {"CaptureBase",     AVPRO_CAPTURE_DEFINE},
-            {"DepthKitPlugin",  DEPTHKIT_DEFINE},
+            {"Depthkit_Clip",   DEPTHKIT_DEFINE},
             {"Quilt",           LOOKING_GLASS_DEFINE},
         };
 
