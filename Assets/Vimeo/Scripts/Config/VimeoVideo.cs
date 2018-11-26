@@ -100,6 +100,12 @@ namespace Vimeo
             return 0;
         }
 
+        public TextAsset GetDescriptionAsTextAsset()
+        {
+            string tempMeta = description.Replace("\\n", "");
+            return new TextAsset(tempMeta.Replace('"', '\"'));
+        }
+
         public float GetHeightByWidth(float _width)
         {
             return _width * ((float)height / (float)width);

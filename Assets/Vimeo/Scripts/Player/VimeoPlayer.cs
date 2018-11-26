@@ -223,22 +223,21 @@ namespace Vimeo.Player
                 
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
-                }
+                } 
+#endif
 #if VIMEO_DEPTHKIT_SUPPORT
-                // TODO
                 else if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
-                    depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    depthKitClip._metaDataFile = CreateTextAssetFromJSONString(vimeoVideo.description);
+                    if (depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>() != null){
+                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    } else {
+                        depthKitClip.gameObject.GetComponent<VideoPlayer>().url = file_url;
+                    }
+                    
+                    depthKitClip._metaDataFile = vimeoVideo.GetDescriptionAsTextAsset();
                     depthKitClip._needToRefreshMetadata = true;
                 }
-    #endif  
 #endif
             }
-        }
-
-        public TextAsset CreateTextAssetFromJSONString(string json) {
-            string tmpString = json.Replace("\\n", "");
-            return new TextAsset(tmpString.Replace('"', '\"'));
         }
 
         public void Pause()
