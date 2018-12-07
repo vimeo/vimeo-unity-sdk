@@ -68,15 +68,15 @@ namespace Vimeo
                             EditorGUILayout.HelpBox("You need to select a MediaPlayer object.", MessageType.Warning);
                         }
                     }
+                }
+#else
+                player.videoPlayerType = VideoPlayerType.UnityPlayer;
+#endif
 
 #if VIMEO_DEPTHKIT_SUPPORT
                     if (player.videoPlayerType == VideoPlayerType.Depthkit) {
                         EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("Depthkit Clip"));
                     }
-#endif
-                }
-#else
-                player.videoPlayerType = VideoPlayerType.UnityPlayer;
 #endif
 
                 bool updated = GUISelectFolder();

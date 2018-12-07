@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Video;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -224,19 +225,27 @@ namespace Vimeo.Player
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
                 } 
-#endif
+#endif // VIMEO_AVPRO_VIDEO_SUPPORT
 #if VIMEO_DEPTHKIT_SUPPORT
-                else if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
+                if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
+#if VIMEO_AVPRO_VIDEO_SUPPORT   
                     if (depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>() != null){
                         depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    } else {
-                        depthKitClip.gameObject.GetComponent<VideoPlayer>().url = file_url;
                     }
-                    
+#endif // VIMEO_AVPRO_VIDEO_SUPPORT
+                    if (depthKitClip.gameObject.GetComponent<VideoPlayer>() != null) {
+                        if (this.selectedResolution != StreamingResolution.Adaptive) {
+                            depthKitClip.gameObject.GetComponent<VideoPlayer>().url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                        } else {
+                            Debug.LogError("[Vimeo] Unity video player does not support adaptive video try selecting a specific quality in the Vimeo Player or use AVPro video on the Depthkit clip");
+                        }
+                    }
+
+                    //Set the metadata
                     depthKitClip._metaDataFile = vimeoVideo.GetDescriptionAsTextAsset();
-                    depthKitClip._needToRefreshMetadata = true;
+                    depthKitClip._needToRefreshMetadata = true;   
                 }
-#endif
+#endif // VIMEO_DEPTHKIT_SUPPORT
             }
         }
 
