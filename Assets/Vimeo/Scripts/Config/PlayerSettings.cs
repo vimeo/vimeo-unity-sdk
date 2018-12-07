@@ -16,7 +16,9 @@ namespace Vimeo.Player
     public enum VideoPlayerType
     {
         UnityPlayer,
+#if VIMEO_AVPRO_VIDEO_SUPPORT
         AVProVideo,
+#endif
 #if VIMEO_DEPTHKIT_SUPPORT
         Depthkit
 #endif 
