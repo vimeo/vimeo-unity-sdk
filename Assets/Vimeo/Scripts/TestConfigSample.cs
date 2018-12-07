@@ -9,6 +9,7 @@ public class TestConfigSample
 {
     public const string INVALID_VIMEO_VIDEO_ID  = "1234";
     public const string VALID_VIMEO_VIDEO_ID  = "1234";
+    public const string VALID_VIMEO_VOLUMETRIC_VIDEO_ID = "1234";
     public const string VALID_STREAMING_TOKEN = "xxx";
     public const string VALID_RECORDING_TOKEN = "xxx";
     public const string TEST_PROJECT_FOLDER = "/users/xxx/projects/xxx";
