@@ -5,7 +5,6 @@ using System;
 using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo.Player;
-using Depthkit;
 using UnityEngine.Video;
 
 public class DepthkitPlayTest : TestConfig
@@ -41,17 +40,18 @@ public class DepthkitPlayTest : TestConfig
 
         //Depthkit setup
         depthkitObj = new GameObject("Depthkit Clip");
-        // depthkitClip = Depthkit.Depthkit_Clip.code
         depthkitClip = depthkitObj.AddComponent<Depthkit.Depthkit_Clip>();
-        player.depthKitClip = depthkitClip;
-
+        depthkitClip.Setup(Depthkit.AvailablePlayerType.UnityVideoPlayer, Depthkit.RenderType.Photo, new TextAsset());
+        player.depthKitClip = depthkitClip;  
         triggered = false;
         elapsed = 0;
     }
 
     [UnityTest]
     public IEnumerator Can_Playback_Volumetric_Video_With_Valid_Token_And_Unity_VideoPlayer() 
-    {    
+    {
+
+
         player.OnVideoStart += EventTriggered;
         
         player.SignIn(VALID_STREAMING_TOKEN);
@@ -61,7 +61,7 @@ public class DepthkitPlayTest : TestConfig
             if (!String.IsNullOrEmpty(depthkitObj.GetComponent<VideoPlayer>().url)) {
                 triggered = true;
             }
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForSeconds(3.25f);
             TimeoutCheck();
         }
     }
@@ -70,7 +70,13 @@ public class DepthkitPlayTest : TestConfig
     [UnityTest]
     public IEnumerator Can_Playback_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
     {
-        depthkitClip._playerType = Depthkit.AvailablePlayerType.AVProVideo;
+        depthkitClip.Setup(Depthkit.AvailablePlayerType.AVProVideo, Depthkit.RenderType.Photo, new TextAsset());
+        player.depthKitClip = depthkitClip;
+
+        //Set these so AVPro doesn't log errors about not having a file path
+        depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_AutoOpen = false;
+        depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_AutoStart = false;
+        
         depthkitClip._needToResetPlayerType = true;
 
         player.OnVideoStart += EventTriggered;
@@ -82,7 +88,35 @@ public class DepthkitPlayTest : TestConfig
             if (!String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath)) {
                 triggered = true;
             }
-            yield return new WaitForSeconds(.25f);
+            yield return new WaitForSeconds(3.25f);
+            TimeoutCheck();
+        }
+    }
+
+    [UnityTest]
+    public IEnumerator Can_Playback_Adaptive_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
+    {
+        depthkitClip.Setup(Depthkit.AvailablePlayerType.AVProVideo, Depthkit.RenderType.Photo, new TextAsset());
+        player.depthKitClip = depthkitClip;
+
+        player.selectedResolution = StreamingResolution.Adaptive;
+
+        //Set these so AVPro doesn't log errors about not having a file path
+        depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_AutoOpen = false;
+        depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_AutoStart = false;
+        
+        depthkitClip._needToResetPlayerType = true;
+
+        player.OnVideoStart += EventTriggered;
+
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
+
+        while (!triggered) {
+            if (!String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath)) {
+                triggered = true;
+            }
+            yield return new WaitForSeconds(3.25f);
             TimeoutCheck();
         }
     }
@@ -95,9 +129,10 @@ public class DepthkitPlayTest : TestConfig
         
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
+        TextAsset emptyTextAsset = new TextAsset(" ");
 
         while (!triggered) {
-            if (depthkitClip._metaDataFile != null) {
+            if (depthkitClip._metaDataFile.text != emptyTextAsset.text) {
                 triggered = true;
             }
             yield return new WaitForSeconds(.25f);
