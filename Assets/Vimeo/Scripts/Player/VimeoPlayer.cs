@@ -248,6 +248,9 @@ namespace Vimeo.Player
                         depthKitClip._needToRefreshMetadata = true;   
                     }
                     else {
+                        if (OnLoadError != null) {
+                            OnLoadError();
+                        } 
                         Debug.LogError("[Vimeo] Your volumetric video metadata is either missing or not supported");
                     }
                     

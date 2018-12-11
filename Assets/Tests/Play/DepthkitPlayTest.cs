@@ -18,6 +18,7 @@ public class DepthkitPlayTest : TestConfig
     Depthkit.Depthkit_Clip depthkitClip;
 
     bool triggered;
+    bool errored;
 
 
     float timeout = 10;
@@ -140,9 +141,26 @@ public class DepthkitPlayTest : TestConfig
         }
     }
 
+    [UnityTest]
+    public IEnumerator Vimeo_Player_Gracefully_Errors_When_Metadata_Is_Not_Valid()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, "[Vimeo] Your volumetric video metadata is either missing or not supported");
+        player.OnLoadError += ErrorTriggered;
+        
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
+
+        yield return new WaitUntil(()=> errored);
+    }
+
     private void EventTriggered()
     {
         triggered = true;
+    }
+
+    private void ErrorTriggered()
+    {
+        errored = true;
     }
 
     private void TimeoutCheck(string msg = "Test timed out")
