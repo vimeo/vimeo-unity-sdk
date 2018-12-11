@@ -38,6 +38,20 @@ public class VimeoVideoTest : TestConfig
         video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x1080p_FHD);
     }
 
+    [Test]
+    public void GetMetadata_Returns_Null_When_No_Metadata_Present_In_Description()
+    {
+        JSONNode sampleJson = video.GetMetadata();
+        Assert.IsNull(sampleJson);
+    }
+
+    [Test]
+    public void GetStringBetween_Splits_The_String_From_Description_Properly()
+    {
+        string sampleString = video.GetStringBetween("Test { hello: 1, computer: 2 } Test", "{", "}");
+        Assert.AreEqual("{ hello: 1, computer: 2 }", sampleString);
+    }
+
     [TearDown]
     public void _After()
     {
