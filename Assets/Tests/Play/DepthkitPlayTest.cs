@@ -41,14 +41,11 @@ public class DepthkitPlayTest : TestConfig
         depthkitClip.Setup(Depthkit.AvailablePlayerType.UnityVideoPlayer, Depthkit.RenderType.Photo, new TextAsset());
         player.depthKitClip = depthkitClip;  
         triggered = false;
-        elapsed = 0;
     }
 
     [UnityTest]
     public IEnumerator Can_Playback_Volumetric_Video_With_Valid_Token_And_Unity_VideoPlayer() 
     {
-
-
         player.OnVideoStart += EventTriggered;
         
         player.SignIn(VALID_STREAMING_TOKEN);
