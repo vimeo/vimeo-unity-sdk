@@ -109,7 +109,6 @@ public class DepthkitPlayTest : TestConfig
         
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
-        TextAsset emptyTextAsset = new TextAsset(" ");
 
         yield return new WaitUntil(()=> triggered);
         Assert.IsNotNull(depthkitClip._metaDataFile);
