@@ -100,10 +100,35 @@ namespace Vimeo
             return 0;
         }
 
-        public TextAsset GetDescriptionAsTextAsset()
+        public JSONNode GetMetadata()
         {
-            string tempMeta = description.Replace("\\n", "");
-            return new TextAsset(tempMeta.Replace('"', '\"'));
+            try
+            {
+                JSONNode jsonObj = JSON.Parse(GetStringBetween(description, "{", "}"));
+                return jsonObj;
+            }
+            catch (System.Exception e)
+            {
+                
+                throw new Exception("Could not read JSON file from the video description " + e);
+            }
+        }
+
+        // Thanks to https://stackoverflow.com/a/41242251
+        public string GetStringBetween(string content, string startString, string endString)
+        {
+            int Start = 0;
+            int End=0;
+            if (content.Contains(startString) && content.Contains(endString)) {
+                Start = content.IndexOf(startString, 0) + startString.Length;
+                End = content.LastIndexOf(endString);
+                content = content.Substring(Start - 1, (End - Start) + 2);
+                content = content.Replace("\\n", "");
+                return content.Replace('"', '\"');
+            }
+            else {
+                return string.Empty;
+            }
         }
 
         public float GetHeightByWidth(float _width)
