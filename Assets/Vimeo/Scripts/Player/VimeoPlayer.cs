@@ -246,6 +246,9 @@ namespace Vimeo.Player
                     if (HasValidDepthkitMetadata(metadata)) {
                         depthKitClip._metaDataFile = new TextAsset(metadata.ToString());
                         depthKitClip._needToRefreshMetadata = true;   
+                        if (OnVideoStart != null) {
+                            OnVideoStart();
+                        } 
                     }
                     else {
                         if (OnLoadError != null) {

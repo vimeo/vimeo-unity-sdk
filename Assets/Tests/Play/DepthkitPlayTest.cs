@@ -19,10 +19,6 @@ public class DepthkitPlayTest : TestConfig
 
     bool triggered;
     bool errored;
-
-
-    float timeout = 10;
-    float elapsed = 0;
     
     [SetUp]
     public void _Before()
@@ -58,13 +54,8 @@ public class DepthkitPlayTest : TestConfig
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
 
-        while (!triggered) {
-            if (!String.IsNullOrEmpty(depthkitObj.GetComponent<VideoPlayer>().url)) {
-                triggered = true;
-            }
-            yield return new WaitForSeconds(3.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> triggered);
+        Assert.IsFalse(String.IsNullOrEmpty(depthkitObj.GetComponent<VideoPlayer>().url));
     }
 
 #if VIMEO_AVPRO_VIDEO_SUPPORT
@@ -85,13 +76,8 @@ public class DepthkitPlayTest : TestConfig
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
 
-        while (!triggered) {
-            if (!String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath)) {
-                triggered = true;
-            }
-            yield return new WaitForSeconds(3.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> triggered);
+        Assert.IsFalse(String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath));
     }
 
     [UnityTest]
@@ -112,14 +98,10 @@ public class DepthkitPlayTest : TestConfig
 
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
-
-        while (!triggered) {
-            if (!String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath)) {
-                triggered = true;
-            }
-            yield return new WaitForSeconds(3.25f);
-            TimeoutCheck();
-        }
+        
+        yield return new WaitUntil(()=> triggered);
+        yield return new WaitForSeconds(1.0f);
+        Assert.IsFalse(String.IsNullOrEmpty(depthkitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().m_VideoPath));
     }
 #endif
 
@@ -132,13 +114,8 @@ public class DepthkitPlayTest : TestConfig
         player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
         TextAsset emptyTextAsset = new TextAsset(" ");
 
-        while (!triggered) {
-            if (depthkitClip._metaDataFile.text != emptyTextAsset.text) {
-                triggered = true;
-            }
-            yield return new WaitForSeconds(.25f);
-            TimeoutCheck();
-        }
+        yield return new WaitUntil(()=> triggered);
+        Assert.IsNotNull(depthkitClip._metaDataFile);
     }
 
     [UnityTest]
@@ -161,14 +138,6 @@ public class DepthkitPlayTest : TestConfig
     private void ErrorTriggered()
     {
         errored = true;
-    }
-
-    private void TimeoutCheck(string msg = "Test timed out")
-    {
-        elapsed += .25f;
-        if (elapsed >= timeout) {
-            Assert.Fail(msg);
-        }
     }
 
     [TearDown]
