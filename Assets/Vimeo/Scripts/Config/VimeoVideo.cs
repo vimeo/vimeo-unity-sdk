@@ -102,26 +102,26 @@ namespace Vimeo
 
         public JSONNode GetMetadata()
         {
-            try
-            {
-                JSONNode jsonObj = JSON.Parse(SeparateJSONObjectFromString(description));
-                return jsonObj;
-            }
-            catch (System.Exception e)
-            {
-                
-                throw new Exception("Could not read JSON file from the video description " + e);
-            }
+            return GetJsonFromString(this.description);
         }
         
-        public string SeparateJSONObjectFromString(string content)
+        public JSONNode GetJsonFromString(string content)
         {
-            var matches = Regex.Matches(content, @"({.*})");
+            var matches = Regex.Matches(content, @"(?s:\{.*\})");
+
             if (matches.Count == 0) {
-                return string.Empty;
+                Debug.LogWarning("[Vimeo] No JSON was found in the video description. ");
+                return null;
             }
-            string json = matches[0].Value.Replace("\\n", "");
-            return json.Replace('"', '\"');
+
+            try {
+                return JSON.Parse(matches[0].Value);
+            }
+            catch (System.Exception e) {
+                Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
+                return null;
+            }
+
         }
 
         public float GetHeightByWidth(float _width)
@@ -143,7 +143,6 @@ namespace Vimeo
                 case RuntimePlatform.IPhonePlayer:
                 case RuntimePlatform.tvOS:
                     return files["hls"]["link"];
-
                 default:
                     return files["dash"]["link"];
             }

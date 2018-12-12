@@ -167,13 +167,17 @@ namespace Vimeo.Player
         public void Pause()
         {
             videoPlayer.Pause();
-            if (OnPause != null) OnPause(this);
+            if (OnPause != null) {
+                OnPause(this);
+            } 
         }
 
         public void Play()
         {
             videoPlayer.Play();
-            if (OnPlay != null) OnPlay(this);
+            if (OnPlay != null) {
+                OnPlay(this);
+            }
         }
 
         public long GetCurrentFrame()

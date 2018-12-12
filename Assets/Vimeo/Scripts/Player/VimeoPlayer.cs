@@ -243,7 +243,7 @@ namespace Vimeo.Player
 
                     JSONNode metadata = vimeoVideo.GetMetadata();
 
-                    if (HasValidDepthkitMetadata(metadata)) {
+                    if (metadata != null) {
                         depthKitClip._metaDataFile = new TextAsset(metadata.ToString());
                         depthKitClip._needToRefreshMetadata = true;   
                         if (OnVideoStart != null) {
@@ -254,7 +254,6 @@ namespace Vimeo.Player
                         if (OnLoadError != null) {
                             OnLoadError();
                         } 
-                        Debug.LogError("[Vimeo] Your volumetric video metadata is either missing or not supported");
                     }
                     
                 }
@@ -395,24 +394,5 @@ namespace Vimeo.Player
                 OnLoadError();
             }
         }
-
-#if VIMEO_DEPTHKIT_SUPPORT
-        public bool HasValidDepthkitMetadata(JSONNode metadata)
-        {
-            if (metadata == null ||
-                metadata["textureWidth"] == null ||
-                metadata["textureHeight"] == null ||
-                metadata["nearClip"] == null ||
-                metadata["farClip"] == null ||
-                metadata["depthFocalLength"] == null ||
-                metadata["crop"] == null ||
-                metadata["boundsSize"] == null ||
-                metadata["boundsCenter"] == null) {
-                    return false;
-                }
-
-            return true;
-        }
-#endif
     }
 }

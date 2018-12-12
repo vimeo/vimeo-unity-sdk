@@ -44,7 +44,7 @@ public class DepthkitPlayTest : TestConfig
     }
 
     [UnityTest]
-    public IEnumerator Can_Playback_Volumetric_Video_With_Valid_Token_And_Unity_VideoPlayer() 
+    public IEnumerator Can_Play_Volumetric_Video_With_Valid_Token_And_Unity_VideoPlayer() 
     {
         player.OnVideoStart += EventTriggered;
         
@@ -57,7 +57,7 @@ public class DepthkitPlayTest : TestConfig
 
 #if VIMEO_AVPRO_VIDEO_SUPPORT
     [UnityTest]
-    public IEnumerator Can_Playback_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
+    public IEnumerator Can_Play_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
     {
         depthkitClip.Setup(Depthkit.AvailablePlayerType.AVProVideo, Depthkit.RenderType.Photo, new TextAsset());
         player.depthKitClip = depthkitClip;
@@ -78,7 +78,7 @@ public class DepthkitPlayTest : TestConfig
     }
 
     [UnityTest]
-    public IEnumerator Can_Playback_Adaptive_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
+    public IEnumerator Can_Play_Adaptive_Volumetric_Video_With_Valid_Token_And_AVPro_Video() 
     {
         depthkitClip.Setup(Depthkit.AvailablePlayerType.AVProVideo, Depthkit.RenderType.Photo, new TextAsset());
         player.depthKitClip = depthkitClip;
@@ -112,18 +112,6 @@ public class DepthkitPlayTest : TestConfig
 
         yield return new WaitUntil(()=> triggered);
         Assert.IsNotNull(depthkitClip._metaDataFile);
-    }
-
-    [UnityTest]
-    public IEnumerator Vimeo_Player_Gracefully_Errors_When_Metadata_Is_Not_Valid()
-    {
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, "[Vimeo] Your volumetric video metadata is either missing or not supported");
-        player.OnLoadError += ErrorTriggered;
-        
-        player.SignIn(VALID_STREAMING_TOKEN);
-        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
-
-        yield return new WaitUntil(()=> errored);
     }
 
     private void EventTriggered()
