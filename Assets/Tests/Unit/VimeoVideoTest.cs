@@ -46,10 +46,17 @@ public class VimeoVideoTest : TestConfig
     }
 
     [Test]
-    public void GetStringBetween_Splits_The_String_From_Description_Properly()
+    public void SeparateJSONObjectFromString_Splits_The_String_From_Description_Properly()
     {
-        string sampleString = video.GetStringBetween("Test { hello: 1, computer: 2 } Test", "{", "}");
-        Assert.AreEqual("{ hello: 1, computer: 2 }", sampleString);
+        string sampleString = video.SeparateJSONObjectFromString("Test { hello: 1, computer: { more_tests: false }} Test");
+        Assert.AreEqual("{ hello: 1, computer: { more_tests: false }}", sampleString);
+    }
+
+    [Test]
+    public void SeparateJSONObjectFromString_Returns_Empty_String_When_JSON_Is_Not_Valid()
+    {
+        string sampleString = video.SeparateJSONObjectFromString("{ hello: 1, computer:");
+        Assert.AreEqual(string.Empty, sampleString);
     }
 
     [TearDown]

@@ -104,7 +104,7 @@ namespace Vimeo
         {
             try
             {
-                JSONNode jsonObj = JSON.Parse(GetStringBetween(description, "{", "}"));
+                JSONNode jsonObj = JSON.Parse(SeparateJSONObjectFromString(description));
                 return jsonObj;
             }
             catch (System.Exception e)
@@ -113,22 +113,15 @@ namespace Vimeo
                 throw new Exception("Could not read JSON file from the video description " + e);
             }
         }
-
-        // Thanks to https://stackoverflow.com/a/41242251
-        public string GetStringBetween(string content, string startString, string endString)
+        
+        public string SeparateJSONObjectFromString(string content)
         {
-            int Start = 0;
-            int End=0;
-            if (content.Contains(startString) && content.Contains(endString)) {
-                Start = content.IndexOf(startString, 0) + startString.Length;
-                End = content.LastIndexOf(endString);
-                content = content.Substring(Start - 1, (End - Start) + 2);
-                content = content.Replace("\\n", "");
-                return content.Replace('"', '\"');
-            }
-            else {
+            var matches = Regex.Matches(content, @"({.*})");
+            if (matches.Count == 0) {
                 return string.Empty;
             }
+            string json = matches[0].Value.Replace("\\n", "");
+            return json.Replace('"', '\"');
         }
 
         public float GetHeightByWidth(float _width)
