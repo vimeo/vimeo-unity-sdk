@@ -132,7 +132,7 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
   * Adaptive video support. Vimeo supports HLS & DASH streaming. And with [Vimeo Live](https://vimeo.com/live) you can even livestream into Unity.
   * 8K video (on supported hardware)
   * VR support (mono, stereo, equirectangular and cubemap)
-*  _\***NEW**\*_ We  now support streaming volumetric video using [Depthkit](https://depthkit.tv). Wiki and tutorial coming soon!
+*  _\***NEW**\*_ We  now support streaming volumetric video using [Depthkit](https://depthkit.tv). To learn more checkout our [step by step walk-through on our wiki](https://github.com/vimeo/vimeo-unity-sdk/wiki/Streaming-volumetric-video-captured-with-Depthkit)
   
 
 ## Streaming Requirements
