@@ -245,7 +245,8 @@ namespace Vimeo.Player
 
                     if (metadata != null) {
                         depthKitClip._metaDataFile = new TextAsset(metadata.ToString());
-                        depthKitClip._needToRefreshMetadata = true;   
+                        depthKitClip._needToRefreshMetadata = true;
+                        // This is a temporary hack to trigger the OnVideoStart event once the metadata loaded and will be replaced in the future
                         if (OnVideoStart != null) {
                             OnVideoStart();
                         } 
