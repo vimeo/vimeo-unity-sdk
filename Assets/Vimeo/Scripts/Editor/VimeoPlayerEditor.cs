@@ -59,26 +59,31 @@ namespace Vimeo
             EditorGUILayout.Space();
             
             if (player.Authenticated() && player.vimeoSignIn) {
-#if VIMEO_AVPRO_VIDEO_SUPPORT
+#if VIMEO_AVPRO_VIDEO_SUPPORT || VIMEO_DEPTHKIT_SUPPORT
                 if (!player.IsVideoMetadataLoaded()) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoPlayerType"), new GUIContent("Video Player"));
+
+#if VIMEO_AVPRO_VIDEO_SUPPORT
                     if (player.videoPlayerType == VideoPlayerType.AVProVideo) {
                         EditorGUILayout.PropertyField(so.FindProperty("mediaPlayer"), new GUIContent("AVPro Media Player"));
                         if (player.mediaPlayer == null) {
                             EditorGUILayout.HelpBox("You need to select a MediaPlayer object.", MessageType.Warning);
                         }
                     }
-
+#endif //VIMEO_AVPRO_VIDEO_SUPPORT
 #if VIMEO_DEPTHKIT_SUPPORT
-                    if (player.videoPlayerType == VideoPlayerType.DepthKit) {
-                        EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("DepthKit Clip"));
+                    if (player.videoPlayerType == VideoPlayerType.Depthkit) {
+                        EditorGUILayout.PropertyField(so.FindProperty("depthKitClip"), new GUIContent("Depthkit Clip"));
+                        if (player.depthKitClip == null) {
+                            EditorGUILayout.HelpBox("You need to select a Depthkit Clip.", MessageType.Warning);
+                        }
                     }
-#endif
+#endif //VIMEO_DEPTHKIT_SUPPORT
+
                 }
 #else
                 player.videoPlayerType = VideoPlayerType.UnityPlayer;
 #endif
-
                 bool updated = GUISelectFolder();
                 GUISelectVideo(updated);
 
@@ -88,12 +93,8 @@ namespace Vimeo
                     EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
                 }
 
-                if (player.videoPlayerType != VideoPlayerType.AVProVideo 
-                    && !player.IsVideoMetadataLoaded()
-#if VIMEO_DEPTHKIT_SUPPORT
-                    && player.videoPlayerType != VideoPlayerType.DepthKit
-#endif
-                    ) {
+                if (!player.IsVideoMetadataLoaded() 
+                && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                     EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
                     EditorGUILayout.PropertyField(so.FindProperty("muteAudio"), new GUIContent("Mute Audio"));

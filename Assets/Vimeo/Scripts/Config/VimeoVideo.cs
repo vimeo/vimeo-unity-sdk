@@ -100,6 +100,30 @@ namespace Vimeo
             return 0;
         }
 
+        public JSONNode GetMetadata()
+        {
+            return GetJsonFromString(this.description);
+        }
+        
+        public JSONNode GetJsonFromString(string content)
+        {
+            var matches = Regex.Matches(content, @"(?s:\{.*\})");
+
+            if (matches.Count == 0) {
+                Debug.LogWarning("[Vimeo] No JSON was found in the video description. ");
+                return null;
+            }
+
+            try {
+                return JSON.Parse(matches[0].Value);
+            }
+            catch (System.Exception e) {
+                Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
+                return null;
+            }
+
+        }
+
         public float GetHeightByWidth(float _width)
         {
             return _width * ((float)height / (float)width);
@@ -119,7 +143,6 @@ namespace Vimeo
                 case RuntimePlatform.IPhonePlayer:
                 case RuntimePlatform.tvOS:
                     return files["hls"]["link"];
-
                 default:
                     return files["dash"]["link"];
             }

@@ -38,6 +38,45 @@ public class VimeoVideoTest : TestConfig
         video.GetVideoFileUrlByResolution(Vimeo.Player.StreamingResolution.x1080p_FHD);
     }
 
+    [Test]
+    public void GetMetadata_Returns_Null_When_No_Metadata_Present_In_Description()
+    {
+        JSONNode sampleJson = video.GetMetadata();
+        Assert.IsNull(sampleJson);
+    }
+
+    [Test]
+    public void GetMetadata_Works()
+    {
+        video.description = " { \"test\": 1 } ";
+        JSONNode json = video.GetMetadata();
+        Assert.AreEqual(json["test"].Value, "1");
+    }
+
+    [Test]
+    public void Can_Parse_Json_From_Description()
+    {
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+        JSONNode json = video.GetJsonFromString("Test !!!!! \n {\"_versionMajor\": 0,\"_versionMinor\": 2,\"boundsCenter\": \n{\"x\": 0,\"y\": 0,\"z\": 1.03093326091766},\"boundsSize\": \n{\"x\": 3.14853119850159,\"y\": 1.76878845691681,\"z\": 1.08638906478882},\"crop\": \n{\"w\": 1.02883338928223,\"x\": 0.186250150203705,\"y\": -0.0672345161437988,\"z\": 0.522190392017365},\"depthFocalLength\": \n{\"x\": 1919.83203125,\"y\": 1922.28527832031},\"depthImageSize\": \n{\"x\": 3840.0,\"y\": 2160.0},\"depthPrincipalPoint\": \n{\"x\": 1875.52282714844,\"y\": 1030.56298828125},\"extrinsics\": \n{\"e00\": 1,\"e01\": 0,\"e02\": 0,\"e03\": 0,\"e10\": 0,\"e11\": 1,\"e12\": 0,\"e13\": 0,\"e20\": 0,\"e21\": 0,\"e22\": 1,\"e23\": 0,\"e30\": 0,\"e31\": 0,\"e32\": 0,\"e33\": 1},\"farClip\": 1.57412779331207,\"format\": \"perpixel\",\"nearClip\": 0.487738698720932,\"numAngles\": 1,\"textureHeight\": 4096,\"textureWidth\": 2048} What a nice test");
+        Assert.AreEqual(json["boundsCenter"]["x"].Value, "0");
+    }
+
+    [Test]
+    public void Returns_Null_When_JSON_Is_Invalid()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("problem parsing"));
+        JSONNode json = video.GetJsonFromString("{ hello: 1, \n computer: truth }");
+        Assert.AreEqual(json, null);
+    }
+
+    [Test]
+    public void Returns_Null_When_JSON_Is_Not_Found()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, new Regex("No JSON"));
+        JSONNode json = video.GetJsonFromString("No JSON found here!");
+        Assert.AreEqual(json, null);
+    }
+
     [TearDown]
     public void _After()
     {
