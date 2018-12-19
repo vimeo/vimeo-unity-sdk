@@ -66,7 +66,7 @@ public class VimeoVideoTest : TestConfig
         Assert.AreEqual(json, null);
     }
 
-#region Progress Video Tests
+#region Progressive Video Tests
     [Test]
     public void GetVideoFileByResolution_Uses_Lowest_Resolution_If_Not_Found()
     {
@@ -95,7 +95,7 @@ public class VimeoVideoTest : TestConfig
 #endregion
 
 
-#region Adaptive Tests
+#region Adaptive Video Tests
     [Test]
     public void GetHlsUrl_Works_For_Play_Response()
     {
