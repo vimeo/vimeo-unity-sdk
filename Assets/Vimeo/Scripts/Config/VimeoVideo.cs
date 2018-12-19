@@ -86,34 +86,30 @@ namespace Vimeo
                 files = video["play"];
 
                 // Sort the progressive files quality
-                if (files != null) {
-                    for (int i = 0; i < files["progressive"].Count; i++) {
-                        progressiveFiles.Add(files["progressive"][i]);
-                    }   
-                    progressiveFiles.Sort(SortByQuality);
+                for (int i = 0; i < files["progressive"].Count; i++) {
+                    progressiveFiles.Add(files["progressive"][i]);
+                }   
+                progressiveFiles.Sort(SortByQuality);
 
-                    dashUrl = files["dash"]["link"].Value;
-                    hlsUrl  = files["hls"]["link"].Value;
-                }
+                dashUrl = files["dash"]["link"].Value;
+                hlsUrl  = files["hls"]["link"].Value;
             }
             // If no play response, fallback to legacy files. 
             else if (video["files"] != null) {
                 files = video["files"];
 
-                if (files != null) {
-                    for (int i = 0; i < files.Count; i++) {
-                        if (files[i]["height"] != null) {
-                            progressiveFiles.Add(files[i]);
-                        }
-                        else if (files[i]["quality"].Value == "hls") {
-                            hlsUrl = files[i]["link"].Value;
-                        }
-                        else if (files[i]["quality"].Value == "dash") {
-                            dashUrl = files[i]["link"].Value;
-                        }
-                    }   
-                    progressiveFiles.Sort(SortByQuality);
-                }
+                for (int i = 0; i < files.Count; i++) {
+                    if (files[i]["height"] != null) {
+                        progressiveFiles.Add(files[i]);
+                    }
+                    else if (files[i]["quality"].Value == "hls") {
+                        hlsUrl = files[i]["link"].Value;
+                    }
+                    else if (files[i]["quality"].Value == "dash") {
+                        dashUrl = files[i]["link"].Value;
+                    }
+                }   
+                progressiveFiles.Sort(SortByQuality);
             }
         }
         
