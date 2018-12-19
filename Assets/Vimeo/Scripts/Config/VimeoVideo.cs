@@ -24,6 +24,8 @@ namespace Vimeo
         public string projection;
 
         private JSONNode files;
+        private string dashUrl;
+        private string hlsUrl;
         private List<JSONNode> progressiveFiles;
         
         public VimeoVideo(string _name, string _uri = null)
@@ -77,14 +79,38 @@ namespace Vimeo
                     name = name + " (" + id + ")";
                 }
             }
+
+            progressiveFiles = new List<JSONNode>();
+
             if (video["play"] != null) {
                 files = video["play"];
 
                 // Sort the progressive files quality
-                progressiveFiles = new List<JSONNode>();
                 if (files != null) {
                     for (int i = 0; i < files["progressive"].Count; i++) {
                         progressiveFiles.Add(files["progressive"][i]);
+                    }   
+                    progressiveFiles.Sort(SortByQuality);
+
+                    dashUrl = files["dash"]["link"].Value;
+                    hlsUrl  = files["hls"]["link"].Value;
+                }
+            }
+            // If no play response, fallback to legacy files. 
+            else if (video["files"] != null) {
+                files = video["files"];
+
+                if (files != null) {
+                    for (int i = 0; i < files.Count; i++) {
+                        if (files[i]["height"] != null) {
+                            progressiveFiles.Add(files[i]);
+                        }
+                        else if (files[i]["quality"].Value == "hls") {
+                            hlsUrl = files[i]["link"].Value;
+                        }
+                        else if (files[i]["quality"].Value == "dash") {
+                            dashUrl = files[i]["link"].Value;
+                        }
                     }   
                     progressiveFiles.Sort(SortByQuality);
                 }
@@ -121,7 +147,6 @@ namespace Vimeo
                 Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
                 return null;
             }
-
         }
 
         public float GetHeightByWidth(float _width)
@@ -133,7 +158,25 @@ namespace Vimeo
         {   
             return name;
         }  
-        
+
+        public string getDashUrl()
+        {
+            if (dashUrl != null) {
+                return dashUrl;
+            }
+            else if (getHlsUrl() != null) {
+                Debug.LogWarning("[Vimeo] No DASH manfiest found. Defaulting to HLS.");
+                return getHlsUrl();
+            }
+
+            return null;
+        }
+
+        public string getHlsUrl()
+        {
+            return hlsUrl;
+        }
+
         public string GetAdaptiveVideoFileURL() 
         {
             switch (Application.platform)
@@ -142,9 +185,9 @@ namespace Vimeo
                 case RuntimePlatform.OSXEditor:
                 case RuntimePlatform.IPhonePlayer:
                 case RuntimePlatform.tvOS:
-                    return files["hls"]["link"];
+                    return getHlsUrl();
                 default:
-                    return files["dash"]["link"];
+                    return getDashUrl();
             }
             
         }  
@@ -193,7 +236,7 @@ namespace Vimeo
         
         private static int SortByQuality(JSONNode q1, JSONNode q2)
         {
-            return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
+            return int.Parse(q2["height"].Value).CompareTo(int.Parse(q1["height"].Value));
         }
     } 
 }

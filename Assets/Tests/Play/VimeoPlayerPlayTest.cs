@@ -57,6 +57,20 @@ public class VimeoPlayerPlayTest : TestConfig
     }
 
     [UnityTest]
+    [Timeout(5000)]
+    public IEnumerator Can_Stream_Video_With_Valid_Production_Token() 
+    {    
+        player.OnVideoStart += EventTriggered;
+
+        player.SignIn(VALID_PRODUCTION_STREAMING_TOKEN);
+        player.PlayVideo(VALID_PRODUCTION_VIMEO_VIDEO_ID);
+
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        yield return new WaitUntil(()=> triggered == true);
+    }    
+
+    [UnityTest]
     public IEnumerator Cant_Stream_Video_With_Invalid_Token() 
     {    
         player.OnLoadError += EventTriggered;
