@@ -43,6 +43,7 @@ public class DepthkitPlayTest : TestConfig
         triggered = false;
     }
 
+#if UNITY_2018_OR_NEWER
     [UnityTest]
     public IEnumerator Can_Play_Volumetric_Video_With_Valid_Token_And_Unity_VideoPlayer() 
     {
@@ -113,6 +114,20 @@ public class DepthkitPlayTest : TestConfig
         yield return new WaitUntil(()=> triggered);
         Assert.IsNotNull(depthkitClip._metaDataFile);
     }
+#else //Everything that is not Unity 2018 or higher
+
+    [UnityTest]
+    public IEnumerator Vimeo_Player_Logs_Error_For_Old_Unity_Versions()
+    {
+        UnityEngine.TestTools.LogAssert.Expect(LogType.Error, "[Vimeo] The Depthkit integration currently only supports Unity 2018 and higher");
+        player.OnVideoStart += EventTriggered;
+        
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(VALID_VIMEO_VOLUMETRIC_VIDEO_ID);
+        yield return new WaitForSeconds(2.0f);
+    }
+
+#endif
 
     private void EventTriggered()
     {
