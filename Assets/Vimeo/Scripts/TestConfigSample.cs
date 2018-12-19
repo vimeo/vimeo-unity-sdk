@@ -16,6 +16,6 @@ public class TestConfigSample
     public const string VALID_RECORDING_TOKEN = "xxx";
     public const string TEST_PROJECT_FOLDER = "/users/xxx/projects/xxx";
     public const string VERY_BIG_FILE_PATH = "path/to/very/big/file.mp4";
-    public string TEST_IMAGE_PATH = Application.dataPath + "/Vimeo/Images/vimeo_v_blue.png";
+    public const string TEST_IMAGE_PATH = "D:/dev/vimeo-unity-sdk/Assets/Vimeo/Images/vimeo_v_blue.png";
     
 }
