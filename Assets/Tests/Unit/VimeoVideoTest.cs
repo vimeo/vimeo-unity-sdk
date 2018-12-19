@@ -128,11 +128,18 @@ public class VimeoVideoTest : TestConfig
     }
 
     [Test]
-    public void GetDashUrl_Defaults_To_Hls_For_Files_Response()
+    public void GetDashUrl_Returns_Null_For_Files_Response()
+    {
+        video = new VimeoVideo(JSON.Parse(mockProductionJson));
+        Assert.AreEqual(video.getDashUrl(), null);
+    }
+
+    [Test]
+    public void GetAdaptiveVideoFileURL_Defaults_To_Hls_For_Files_Response()
     {
         UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, "[Vimeo] No DASH manfiest found. Defaulting to HLS.");
         video = new VimeoVideo(JSON.Parse(mockProductionJson));
-        Assert.AreEqual(video.getDashUrl(), "https://player.vimeo.com/external/xxx.m3u8?s=edab7a40157183128871d34b0794feb5f1534501&oauth2_token_id=...");
+        Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getHlsUrl());
     }
 #endregion
 

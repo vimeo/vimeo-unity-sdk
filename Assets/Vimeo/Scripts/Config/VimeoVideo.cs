@@ -157,15 +157,7 @@ namespace Vimeo
 
         public string getDashUrl()
         {
-            if (dashUrl != null) {
-                return dashUrl;
-            }
-            else if (getHlsUrl() != null) {
-                Debug.LogWarning("[Vimeo] No DASH manfiest found. Defaulting to HLS.");
-                return getHlsUrl();
-            }
-
-            return null;
+            return dashUrl;
         }
 
         public string getHlsUrl()
@@ -175,18 +167,25 @@ namespace Vimeo
 
         public string GetAdaptiveVideoFileURL() 
         {
-            switch (Application.platform)
-            {
-                case RuntimePlatform.OSXPlayer:
-                case RuntimePlatform.OSXEditor:
-                case RuntimePlatform.IPhonePlayer:
-                case RuntimePlatform.tvOS:
-                    return getHlsUrl();
-                default:
-                    return getDashUrl();
+            if (isHlsPlatform()) {
+                return getHlsUrl();
             }
-            
+            else {
+                if (getDashUrl() != null) {
+                    return getDashUrl();
+                }
+                Debug.LogWarning("[Vimeo] No DASH manfiest found. Defaulting to HLS.");
+                return getHlsUrl();
+            }
         }  
+
+        public bool isHlsPlatform()
+        {
+            return Application.platform == RuntimePlatform.OSXPlayer || 
+                   Application.platform == RuntimePlatform.OSXEditor || 
+                   Application.platform == RuntimePlatform.IPhonePlayer || 
+                   Application.platform == RuntimePlatform.tvOS;
+        }
 
         public JSONNode GetHighestResolutionVideoFileURL()
         {
