@@ -240,7 +240,7 @@ namespace Vimeo.Player
                             Debug.LogError("[Vimeo] Unity video player does not support adaptive video try selecting a specific quality in the Vimeo Player or use AVPro video on the Depthkit clip");
                         }
                     }
-
+#if UNITY_2018_OR_NEWER
                     JSONNode metadata = vimeoVideo.GetMetadata();
 
                     if (metadata != null) {
@@ -256,6 +256,9 @@ namespace Vimeo.Player
                             OnLoadError();
                         } 
                     }
+#else
+                    Debug.LogError("[Vimeo] The Depthkit integration currently only supports Unity 2018 and higher");
+#endif
                     
                 }
 #endif // VIMEO_DEPTHKIT_SUPPORT
