@@ -80,7 +80,13 @@ namespace Vimeo.Recorder
                         EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
                     }
 
-                    GUISelectFolder();
+                    EditorGUILayout.PropertyField(so.FindProperty("replaceExisting"));
+
+                    bool updated = GUISelectFolder();
+                    if (IsSelectExisting(recorder))
+                    {
+                        GUISelectVideo(updated);
+                    }
 
                     EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));
                     EditorGUILayout.PropertyField(so.FindProperty("enableDownloads"));
