@@ -1,7 +1,8 @@
 {
     "name": "ScriptsAssembly",
     "references": [
-        "UnityRecorderAssembly"
+        "UnityRecorderAssembly",
+        "JSON"
     ],
     "optionalUnityReferences": [
         "TestAssemblies"
