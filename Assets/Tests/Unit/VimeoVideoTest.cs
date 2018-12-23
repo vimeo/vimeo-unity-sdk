@@ -19,7 +19,7 @@ public class VimeoVideoTest : TestConfig
     public void _Before()
     {
         
-        video = new VimeoVideo(JSON.Parse(mockDevelopmentJson));
+        video = new VimeoVideo(JSONNode.Parse(mockDevelopmentJson));
     }
 
     [Test]
@@ -89,7 +89,7 @@ public class VimeoVideoTest : TestConfig
     public void GetVideoFileByResolution_Uses_Selected_Resolution_For_Files_Response()
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-        video = new VimeoVideo(JSON.Parse(mockProductionJson));
+        video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
         JSONNode file = video.GetVideoFileByResolution(Vimeo.Player.StreamingResolution.x720p_HD);
         Assert.AreEqual(file["height"].Value, "720");
     }
@@ -123,14 +123,14 @@ public class VimeoVideoTest : TestConfig
     public void GetHlsUrl_Works_For_Files_Response()
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-        video = new VimeoVideo(JSON.Parse(mockProductionJson));
+        video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
         Assert.AreEqual(video.getHlsUrl(), "https://player.vimeo.com/external/xxx.m3u8?s=edab7a40157183128871d34b0794feb5f1534501&oauth2_token_id=...");
     }
 
     [Test]
     public void GetDashUrl_Returns_Null_For_Files_Response()
     {
-        video = new VimeoVideo(JSON.Parse(mockProductionJson));
+        video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
         Assert.AreEqual(video.getDashUrl(), null);
     }
 
@@ -138,7 +138,7 @@ public class VimeoVideoTest : TestConfig
     public void GetAdaptiveVideoFileURL_Defaults_To_Hls_For_Files_Response()
     {
         UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, "[Vimeo] No DASH manfiest found. Defaulting to HLS.");
-        video = new VimeoVideo(JSON.Parse(mockProductionJson));
+        video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
         Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getHlsUrl());
     }
 #endregion

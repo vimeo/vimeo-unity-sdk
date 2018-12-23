@@ -364,7 +364,7 @@ namespace Vimeo.Player
         {
             loadingVideoMetadata = false;
             
-            JSONNode json = JSON.Parse(response);
+            JSONNode json = JSONNode.Parse(response);
             api.OnRequestComplete -= VideoMetadataLoad;
             
             if (json["error"] == null) {
