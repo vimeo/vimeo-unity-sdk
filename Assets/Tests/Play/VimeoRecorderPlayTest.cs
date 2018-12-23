@@ -146,7 +146,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
     private void GetFoldersComplete(string resp)
     {
-        JSONNode json = JSON.Parse(resp);
+        JSONNode json = JSONNode.Parse(resp);
         Assert.AreEqual(recorder.publisher.video.uri, json["data"][0]["uri"].Value);
         finished = true;
     }
@@ -191,7 +191,7 @@ public class VimeoRecorderPlayTest : TestConfig
     private void CheckRecentVideos(string resp)
     {
         Debug.Log("[TEST] CheckRecentVideos " + resp);
-        JSONNode json = JSON.Parse(resp);
+        JSONNode json = JSONNode.Parse(resp);
         
         Assert.AreEqual(json["data"][0]["name"].Value, "Multi Upload Test #2 " + version);
         Assert.AreEqual(json["data"][1]["name"].Value, "Multi Upload Test #1 " + version);

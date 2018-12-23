@@ -1421,14 +1421,4 @@ namespace Vimeo.SimpleJSON
             return "";
         }
     }
-
-    // End of JSONLazyCreator
-
-    public static class JSON
-    {
-        public static JSONNode Parse(string jsonString)
-        {
-            return JSONNode.Parse(jsonString);
-        }
-    }
 }
