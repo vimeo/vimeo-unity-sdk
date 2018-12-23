@@ -137,7 +137,7 @@ namespace Vimeo
             }
 
             try {
-                return JSON.Parse(matches[0].Value);
+                return JSONNode.Parse(matches[0].Value);
             }
             catch (System.Exception e) {
                 Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
