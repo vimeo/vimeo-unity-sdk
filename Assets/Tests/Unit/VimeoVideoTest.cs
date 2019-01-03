@@ -114,6 +114,7 @@ public class VimeoVideoTest : TestConfig
     
     [Test]
     // TODO somehow test different application platforms
+    // Note: this fails (correctly) when testing on Mac
     public void GetAdaptiveVideoFileURL_Returns_Dash_By_Default()
     {
         Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getDashUrl());
@@ -135,6 +136,8 @@ public class VimeoVideoTest : TestConfig
     }
 
     [Test]
+    // TODO somehow test different application platforms
+    // Note: this fails (correctly) when testing on Mac
     public void GetAdaptiveVideoFileURL_Defaults_To_Hls_For_Files_Response()
     {
         UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, "[Vimeo] No DASH manfiest found. Defaulting to HLS.");
