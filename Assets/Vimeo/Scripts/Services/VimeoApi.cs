@@ -196,7 +196,7 @@ namespace Vimeo
             {
                 using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/videos/" + videoId + "/versions", tusResourceRequestBody))
                 {
-                    PrepareTusHeaders(request, false);
+                    PrepareTusHeaders(request, true);
                     yield return VimeoApi.SendRequest(request);
                     ResponseHandler(request);
                 }
