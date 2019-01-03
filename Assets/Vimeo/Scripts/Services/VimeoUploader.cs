@@ -113,7 +113,7 @@ namespace Vimeo
             OnRequestComplete += RequestComplete;
             if (vimeoId != null)
             {
-                StartCoroutine(TusUploadReplace(vimeoId, m_file, m_fileInfo.Length));
+                StartCoroutine(TusUploadReplace(vimeoId, Path.GetFileName(m_file), m_fileInfo.Length));
             }
             else
             {
