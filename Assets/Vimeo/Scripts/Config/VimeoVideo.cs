@@ -50,23 +50,23 @@ namespace Vimeo
                 uri = video["uri"].Value;
             }
             
-            if (video["description"] != null) {
+            if (!JSONNode.IsNullNode(video["description"])) {
                 description = video["description"].Value;
             }
             
-            if (video["duration"] != null) {
+            if (!JSONNode.IsNullNode(video["duration"])) {
                 duration = int.Parse(video["duration"].Value);
             }
 
-            if (video["width"] != null) {
+            if (!JSONNode.IsNullNode(video["width"])) {
                 width = int.Parse(video["width"].Value);
             }
 
-            if (video["height"] != null) {
+            if (!JSONNode.IsNullNode(video["height"])) {
                 height = int.Parse(video["height"].Value);
             }
 
-            if (video["spatial"] != null && !video["spatial"].IsNull) {
+            if (!JSONNode.IsNullNode(video["spatial"])) {
                 is3D = true;
                 projection   = video["spatial"]["projection"].Value;
                 stereoFormat = video["spatial"]["stereo_format"].Value;

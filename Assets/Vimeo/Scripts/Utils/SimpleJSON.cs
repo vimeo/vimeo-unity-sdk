@@ -158,6 +158,11 @@ namespace Vimeo.SimpleJSON
             get { return Tag == JSONBinaryTag.Null; }
         }
 
+        public static bool IsNullNode(JSONNode node)
+        {
+           return node == null || node.Tag == JSONBinaryTag.Null;
+        }
+
         public virtual int AsInt
         {
             get
