@@ -82,7 +82,6 @@ namespace Vimeo.Recorder
 
         public RenderTexture renderTextureTarget;
 
-        public bool replaceExisting = false;
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
         public bool enableDownloads = true;

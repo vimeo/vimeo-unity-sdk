@@ -28,12 +28,6 @@ namespace Vimeo
             api.token = settings.GetVimeoToken();
         }
 
-        protected bool IsSelectExisting(VimeoSettings settings)
-        {
-            return (settings is VimeoPlayer) ||
-                (settings is RecorderSettings && (settings as RecorderSettings).replaceExisting);
-        }
-
         protected void GetRecentVideos()
         {
             var settings = target as VimeoSettings;
@@ -70,7 +64,7 @@ namespace Vimeo
 
         private void GetVideosComplete(string response)
         {
-            var settings = target as VimeoSettings;
+            var settings = target as VimeoPlayer;
             settings.vimeoVideos.Clear();
 
             api.OnRequestComplete -= GetVideosComplete;
@@ -129,8 +123,8 @@ namespace Vimeo
 
             string folder_prefix = "";
 
-            if (IsSelectExisting(settings)) { 
-                var player = target as VimeoSettings;
+            if (settings is VimeoPlayer) {
+                var player = target as VimeoPlayer;
                 player.vimeoFolders.Add(new VimeoFolder("---- Find a video ----", null));
                 player.vimeoFolders.Add(new VimeoFolder("Get video by ID or URL", "custom"));
                 player.vimeoFolders.Add(new VimeoFolder("Most recent videos", "recent"));
@@ -155,7 +149,7 @@ namespace Vimeo
             }
         }
 
-            private void OnRequestError(string error)
+        private void OnRequestError(string error)
         {
             var settings = target as VimeoSettings;
             if (!EditorApplication.isPlaying) {
@@ -172,25 +166,17 @@ namespace Vimeo
             }
         }
 
-        private bool wasSelectExisting = false;
-
         protected bool GUISelectFolder()
         {   
             var so = serializedObject;
             var settings = target as VimeoSettings;
             
-            if (IsSelectExisting(settings) != wasSelectExisting)
-            {
-                settings.vimeoFolders.Clear();
-                wasSelectExisting = IsSelectExisting(settings);
-            }
-
             // Folder selection
             GUILayout.BeginHorizontal();
             bool folderChanged = false;
 
             int cur_index = settings.GetCurrentFolderIndex();
-            int new_index = EditorGUILayout.Popup(IsSelectExisting(settings) ? "Vimeo Video" : "Add to Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray()); 
+            int new_index = EditorGUILayout.Popup(settings is VimeoPlayer ? "Vimeo Video" : "Add to Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray()); 
 
             if (new_index != cur_index) {
                 folderChanged = true;
@@ -213,7 +199,7 @@ namespace Vimeo
         protected void GUISelectVideo(bool refreshVideos = false)
         {
             var so = serializedObject;
-            var player = target as VimeoSettings;
+            var player = target as VimeoPlayer;
 
             if (player.currentFolder.uri == "custom") {
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));

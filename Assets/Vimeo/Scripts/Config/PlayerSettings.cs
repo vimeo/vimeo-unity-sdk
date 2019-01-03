@@ -34,6 +34,7 @@ namespace Vimeo.Player
         public Depthkit.Depthkit_Clip depthKitClip;
 #endif         
         public StreamingResolution selectedResolution = StreamingResolution.x2160p_4K; 
+        public string vimeoVideoId;
         public bool muteAudio = false;
         public bool autoPlay = true;
         public int startTime = 0;

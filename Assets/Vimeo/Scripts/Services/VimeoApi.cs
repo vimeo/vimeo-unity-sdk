@@ -175,28 +175,13 @@ namespace Vimeo
             }
         }
 
-        public IEnumerator TusUploadNew(long fileByteCount)
+        public IEnumerator RequestTusResource(string api_path, long fileByteCount)
         {
             string tusResourceRequestBody = "{ \"upload\": { \"approach\": \"tus\", \"size\": \"" + fileByteCount.ToString() + "\" } }";
 
             if (token != null) {
                 using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/me/videos", tusResourceRequestBody)) {
                     PrepareTusHeaders(request);
-                    yield return VimeoApi.SendRequest(request);
-                    ResponseHandler(request);
-                }
-            }
-        }
-
-        public IEnumerator TusUploadReplace(string videoId, string file_path, long fileByteCount)
-        {
-            string tusResourceRequestBody = "{ \"file_name\": \"" + file_path + "\", \"upload\": { \"status\": \"in_progress\", \"size\": \"" + fileByteCount.ToString() + "\", \"approach\": \"tus\" } }";
-
-            if (token != null)
-            {
-                using (UnityWebRequest request = UnityWebRequest.Put("https://api.vimeo.com/videos/" + videoId + "/versions", tusResourceRequestBody))
-                {
-                    PrepareTusHeaders(request, false);
                     yield return VimeoApi.SendRequest(request);
                     ResponseHandler(request);
                 }
@@ -254,20 +239,17 @@ namespace Vimeo
             }
         }
 
-        private void PrepareTusHeaders(UnityWebRequest r, bool withAuthorization = true, string apiVersion = "3.4")
+        private void PrepareTusHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
             r.method = "POST";
             r.SetRequestHeader("Content-Type", "application/json");
-            PrepareHeaders(r, withAuthorization, apiVersion);
+            PrepareHeaders(r, apiVersion);
         }
         
-        private void PrepareHeaders(UnityWebRequest r, bool withAuthorization = true, string apiVersion = "3.4")
+        private void PrepareHeaders(UnityWebRequest r, string apiVersion = "3.4")
         {
             r.chunkedTransfer = false;
-            if (withAuthorization)
-            {
-                r.SetRequestHeader("Authorization", "bearer " + token);
-            }
+            r.SetRequestHeader("Authorization", "bearer " + token);
             r.SetRequestHeader("Accept", "application/vnd.vimeo.*+json;version=" + apiVersion);
         }
 

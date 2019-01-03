@@ -85,7 +85,7 @@ namespace Vimeo.Recorder
                 publisher.OnNetworkError += NetworkError;
             }
 
-            publisher.PublishVideo(encoder.GetVideoFilePath(), replaceExisting ? vimeoVideoId : null);
+            publisher.PublishVideo(encoder.GetVideoFilePath());
         }
 
         private void UploadProgress(string status, float progress)

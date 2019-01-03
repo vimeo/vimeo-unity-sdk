@@ -93,11 +93,11 @@ namespace Vimeo.Recorder
             return null;
         }
 
-        public void PublishVideo(string filename, string vimeoId = null)
+        public void PublishVideo(string filename)
         {
             if (System.IO.File.Exists(filename)) {
                 Debug.Log("[VimeoRecorder] Uploading to Vimeo");
-                m_vimeoUploader.Upload(filename, vimeoId);
+                m_vimeoUploader.Upload(filename);
             } else {
                 Debug.LogError("File doesn't exist, try recording it again");
             }   
