@@ -112,7 +112,17 @@ namespace Vimeo
                 progressiveFiles.Sort(SortByQuality);
             }
         }
-        
+
+        internal string GetVideoName()
+        {
+            string videoIdParenthesisSuffix = " (" + id + ")";
+            if (name.EndsWith(videoIdParenthesisSuffix))
+            {
+                return name.Substring(0, name.Length - videoIdParenthesisSuffix.Length);
+            }
+            return name;
+        }
+
         public int CompareTo(VimeoVideo other)
         {
             if (other == null) {

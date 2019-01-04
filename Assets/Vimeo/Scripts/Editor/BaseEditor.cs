@@ -226,6 +226,11 @@ namespace Vimeo
                 if (new_video_index != cur_video_index) {
                     player.currentVideo = player.vimeoVideos[new_video_index];
                     player.vimeoVideoId = player.currentVideo.id.ToString();
+                    if (player is RecorderSettings)
+                    {
+                        var recorder = player as RecorderSettings;
+                        recorder.videoName = player.currentVideo.GetVideoName();
+                    }
                 }
 
                 if (GUILayout.Button("↺", GUILayout.Width(25)) || 
