@@ -33,7 +33,7 @@ namespace Vimeo
             name = _name;
             uri = _uri;
             if (_uri != null) {
-                string[] matches = Regex.Split(_uri, "/([0-9]+)$"); 
+                string[] matches = Regex.Split(_uri, "/([0-9]+)"); 
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                 }
@@ -42,11 +42,11 @@ namespace Vimeo
 
         public VimeoVideo(JSONNode video)
         {
-            if (video["name"] != null) {
+            if (!JSONNode.IsNullNode(video["name"])) {
                 name = video["name"].Value;
             }
             
-            if (video["uri"] != null) {
+            if (!JSONNode.IsNullNode(video["uri"])) {
                 uri = video["uri"].Value;
             }
             
@@ -73,7 +73,7 @@ namespace Vimeo
             }
 
             if (uri != null) {
-                string[] matches = Regex.Split(uri, "/([0-9]+)$"); 
+                string[] matches = Regex.Split(uri, "/([0-9]+)"); 
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                     name = name + " (" + id + ")";
