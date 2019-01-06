@@ -16,6 +16,7 @@ namespace Vimeo
         public delegate void UploadAction(string status, float progress);
         public event UploadAction OnUploadProgress;
         public event RequestAction OnUploadComplete;
+        public event RequestAction OnUploadError;
         public event RequestAction OnUploadInit;
 
         private List<VideoChunk> m_chunks;
@@ -171,6 +172,10 @@ namespace Vimeo
             m_isUploading = false;
             if (OnChunckUploadError != null && chunk != null) {
                 OnChunckUploadError(chunk, err);
+            }
+            if (OnUploadError != null)
+            {
+                OnUploadError(err);
             }
         }
 
