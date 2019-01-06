@@ -41,6 +41,7 @@ namespace Vimeo.Recorder
 
                 m_vimeoUploader.OnUploadProgress += UploadProgress;
                 m_vimeoUploader.OnUploadComplete += UploadComplete;
+                m_vimeoUploader.OnUploadError += UploadError;
                 m_vimeoUploader.OnNetworkError += NetworkError;
                 m_vimeoUploader.OnRequestComplete += OnUploadInit;
                 m_vimeoUploader.OnError += ApiError;
@@ -112,14 +113,26 @@ namespace Vimeo.Recorder
 
         private void UploadComplete(string video_url)
         {
-            if (recorder.openInBrowser == true) {
+            if (recorder.openInBrowser == true)
+            {
                 OpenVideo();
             }
-            if (OnUploadProgress != null) {
+            if (OnUploadProgress != null)
+            {
                 OnUploadProgress("UploadComplete", 1f);
             }
-            
+
             Debug.Log("[VimeoPublisher] Uploaded video to " + video_url);
+        }
+
+        private void UploadError(string err)
+        {
+            if (OnUploadProgress != null)
+            {
+                OnUploadProgress("UploadError", 0f);
+            }
+
+            Debug.Log("[VimeoPublisher] Upload error: " + err);
         }
 
         private void OnVideoUpdated(string response)
