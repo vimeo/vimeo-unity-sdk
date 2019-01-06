@@ -51,7 +51,7 @@ public class VimeoUploaderPlayTest : TestConfig
 
     public void UploadInit(string response)
     {
-        VimeoVideo video = new VimeoVideo(JSON.Parse(response));
+        VimeoVideo video = new VimeoVideo(JSONNode.Parse(response));
         uploader.SetVideoViewPrivacy(VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink);
         uploader.SetVideoName("Large file test (" + Application.platform + " " + Application.unityVersion + ")");
         uploader.SaveVideo(video);

@@ -90,7 +90,7 @@ namespace Vimeo
         {
             OnRequestComplete -= RequestComplete;
 
-            JSONNode rawJSON = JSON.Parse(response);
+            JSONNode rawJSON = JSONNode.Parse(response);
 
             string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
             m_vimeoUrl = rawJSON["link"].Value;

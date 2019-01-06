@@ -52,7 +52,7 @@ namespace Vimeo.Recorder
             m_vimeoUploader.OnRequestComplete -= OnUploadInit;
             m_vimeoUploader.OnRequestComplete += OnVideoUpdated;
 
-            JSONNode jsonResponse = JSON.Parse(response);
+            JSONNode jsonResponse = JSONNode.Parse(response);
             video = new VimeoVideo(jsonResponse);
             
 #if UNITY_2018_1_OR_NEWER
@@ -126,7 +126,7 @@ namespace Vimeo.Recorder
         {
             m_vimeoUploader.OnRequestComplete -= OnVideoUpdated;
 
-            JSONNode json = JSON.Parse(response);
+            JSONNode json = JSONNode.Parse(response);
             recorder.videoPermalink = json["link"];
             recorder.videoReviewPermalink = json["review_link"];
 
@@ -144,7 +144,7 @@ namespace Vimeo.Recorder
 
         private void ApiError(string response)
         {
-            JSONNode json = JSON.Parse(response);
+            JSONNode json = JSONNode.Parse(response);
 
             if (json["invalid_parameters"] != null) {
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
