@@ -113,7 +113,7 @@ namespace Vimeo
             }
         }
 
-        internal string GetVideoName()
+        public string GetVideoName()
         {
             string videoIdParenthesisSuffix = " (" + id + ")";
             if (name.EndsWith(videoIdParenthesisSuffix))
