@@ -128,6 +128,23 @@ namespace Vimeo.Recorder
 
             return input;
         }
+
+        public void ReplaceVimeoId()
+        {
+            if (!string.IsNullOrEmpty(videoName))
+            {
+                for (int i = 0; i < vimeoVideos.Count; i++)
+                {
+                    var video = vimeoVideos[i];
+                    if (video.GetVideoName() == videoName)
+                    {
+                        currentVideo = video;
+                        vimeoVideoId = video.id.ToString();
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public class AspectRatioHelper
