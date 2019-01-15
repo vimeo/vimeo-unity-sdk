@@ -88,11 +88,11 @@ namespace Vimeo
                 // Sort the progressive files quality
                 for (int i = 0; i < files["progressive"].Count; i++) {
                     progressiveFiles.Add(files["progressive"][i]);
-                }   
+                }
                 progressiveFiles.Sort(SortByQuality);
 
                 dashUrl = files["dash"]["link"].Value;
-                hlsUrl  = files["hls"]["link"].Value;
+                hlsUrl = files["hls"]["link"].Value;
             }
             // If no play response, fallback to legacy files. 
             else if (video["files"] != null) {
@@ -101,14 +101,12 @@ namespace Vimeo
                 for (int i = 0; i < files.Count; i++) {
                     if (files[i]["height"] != null) {
                         progressiveFiles.Add(files[i]);
-                    }
-                    else if (files[i]["quality"].Value == "hls") {
+                    } else if (files[i]["quality"].Value == "hls") {
                         hlsUrl = files[i]["link"].Value;
-                    }
-                    else if (files[i]["quality"].Value == "dash") {
+                    } else if (files[i]["quality"].Value == "dash") {
                         dashUrl = files[i]["link"].Value;
                     }
-                }   
+                }
                 progressiveFiles.Sort(SortByQuality);
             }
         }
@@ -126,7 +124,7 @@ namespace Vimeo
         {
             return GetJsonFromString(this.description);
         }
-        
+
         public JSONNode GetJsonFromString(string content)
         {
             var matches = Regex.Matches(content, @"(?s:\{.*\})");
@@ -138,8 +136,7 @@ namespace Vimeo
 
             try {
                 return JSONNode.Parse(matches[0].Value);
-            }
-            catch (System.Exception e) {
+            } catch (System.Exception e) {
                 Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
                 return null;
             }
@@ -153,7 +150,7 @@ namespace Vimeo
         public override string ToString()
         {
             return name;
-        }  
+        }
 
         public string getDashUrl()
         {
@@ -165,25 +162,24 @@ namespace Vimeo
             return hlsUrl;
         }
 
-        public string GetAdaptiveVideoFileURL() 
+        public string GetAdaptiveVideoFileURL()
         {
             if (isHlsPlatform()) {
                 return getHlsUrl();
-            }
-            else {
+            } else {
                 if (getDashUrl() != null) {
                     return getDashUrl();
                 }
                 Debug.LogWarning("[Vimeo] No DASH manfiest found. Defaulting to HLS.");
                 return getHlsUrl();
             }
-        }  
+        }
 
         public bool isHlsPlatform()
         {
-            return Application.platform == RuntimePlatform.OSXPlayer || 
-                   Application.platform == RuntimePlatform.OSXEditor || 
-                   Application.platform == RuntimePlatform.IPhonePlayer || 
+            return Application.platform == RuntimePlatform.OSXPlayer ||
+                   Application.platform == RuntimePlatform.OSXEditor ||
+                   Application.platform == RuntimePlatform.IPhonePlayer ||
                    Application.platform == RuntimePlatform.tvOS;
         }
 

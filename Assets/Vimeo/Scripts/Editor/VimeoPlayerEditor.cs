@@ -97,7 +97,7 @@ namespace Vimeo
                     EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
                 }
 
-                if (!player.IsVideoMetadataLoaded() 
+                if (!player.IsVideoMetadataLoaded()
                 && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                     EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
