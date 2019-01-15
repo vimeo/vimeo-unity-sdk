@@ -52,7 +52,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace SimpleJSON
+namespace Vimeo.SimpleJSON
 {
     public enum JSONBinaryTag
     {
@@ -1419,16 +1419,6 @@ namespace SimpleJSON
         public override string ToString(string aPrefix)
         {
             return "";
-        }
-    }
-
-    // End of JSONLazyCreator
-
-    public static class JSON
-    {
-        public static JSONNode Parse(string jsonString)
-        {
-            return JSONNode.Parse(jsonString);
         }
     }
 }

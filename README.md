@@ -127,11 +127,12 @@ The SDK comes with the following example Unity scenes in the `Vimeo/Scenes` fold
 * Select your preferred streaming video quality
 * Search for your Vimeo video within the Unity Editor, or manually specify via URL
 * Easy to use GUI and drag & drop components
-* _\***NEW**\*_ We are now compatible with [AVPro Video](http://renderheads.com/product/avpro-video/). You should go check out their full feature list, but here are some of the most notable improvements:
+* We are now compatible with [AVPro Video](http://renderheads.com/product/avpro-video/). You should go check out their full feature list, but here are some of the most notable improvements:
   * Versions for iOS, tvOS, macOS, Android, WebGL, Windows, Windows Phone and UWP
   * Adaptive video support. Vimeo supports HLS & DASH streaming. And with [Vimeo Live](https://vimeo.com/live) you can even livestream into Unity.
   * 8K video (on supported hardware)
   * VR support (mono, stereo, equirectangular and cubemap)
+*  _\***NEW**\*_ We  now support streaming volumetric video using [Depthkit](https://depthkit.tv). To learn more checkout our [step by step walk-through on our wiki](https://github.com/vimeo/vimeo-unity-sdk/wiki/Streaming-volumetric-video-captured-with-Depthkit)
   
 
 ## Streaming Requirements
@@ -188,7 +189,9 @@ For questions and support, [ask on StackOverflow](https://stackoverflow.com/ques
 Make pull requests, file bug reports, and make feature requests via a [GitHub issue](https://github.com/vimeo/unity-vimeo-player/issues).
 
 # Let's collaborate
-Working on a cool video project? [Let's talk!](mailto:labs@vimeo.com)
+Working on a cool video project? Let's talk - labs at vimeo dot com. Also, be sure to [sign up for our mailing list](http://eepurl.com/dJCsmI) and we’ll keep you updated on all things Creator Lab.
+
+
 
 # Thanks
 Big thanks to the Unity teams building [MediaEncoder](https://docs.unity3d.com/2018.1/Documentation/ScriptReference/Media.MediaEncoder.html), [GenericFrameRecorder](https://github.com/Unity-Technologies/GenericFrameRecorder), [SkyboxPanoramicShader](https://github.com/Unity-Technologies/SkyboxPanoramicShader), and [DepthKit](http://www.depthkit.tv/)

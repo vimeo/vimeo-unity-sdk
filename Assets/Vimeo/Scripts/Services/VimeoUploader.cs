@@ -4,8 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
-using SimpleJSON;
-using Vimeo;
+using Vimeo.SimpleJSON;
 
 namespace Vimeo
 {
@@ -105,7 +104,7 @@ namespace Vimeo
         {
             OnRequestComplete -= RequestComplete;
 
-            JSONNode rawJSON = JSON.Parse(response);
+            JSONNode rawJSON = JSONNode.Parse(response);
 
             string tusUploadLink = rawJSON["upload"]["upload_link"].Value;
             m_vimeoUrl = rawJSON["link"].Value;

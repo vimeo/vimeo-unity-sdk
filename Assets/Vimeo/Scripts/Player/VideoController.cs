@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using SimpleJSON;
 
 namespace Vimeo.Player
 {
@@ -165,13 +164,17 @@ namespace Vimeo.Player
         public void Pause()
         {
             videoPlayer.Pause();
-            if (OnPause != null) OnPause(this);
+            if (OnPause != null) {
+                OnPause(this);
+            } 
         }
 
         public void Play()
         {
             videoPlayer.Play();
-            if (OnPlay != null) OnPlay(this);
+            if (OnPlay != null) {
+                OnPlay(this);
+            }
         }
 
         public long GetCurrentFrame()

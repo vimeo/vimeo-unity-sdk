@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using Vimeo.Player;
 using Vimeo.Recorder;
-using SimpleJSON;
+using Vimeo.SimpleJSON;
 using System.Linq;
 
 namespace Vimeo
@@ -73,7 +73,7 @@ namespace Vimeo
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
 
-            var json = JSON.Parse(response);
+            var json = JSONNode.Parse(response);
             JSONNode videoData = json["data"];
 
             if (videoData.Count == 0) {
@@ -116,7 +116,7 @@ namespace Vimeo
                 DestroyImmediate(settings.gameObject.GetComponent<VimeoApi>());
             }
 
-            var json = JSON.Parse(response);
+            var json = JSONNode.Parse(response);
             var folderData = json["data"];
 
             string folder_prefix = "";

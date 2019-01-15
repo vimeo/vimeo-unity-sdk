@@ -1,9 +1,9 @@
 using System;
 using System.Text.RegularExpressions;
-using SimpleJSON;
 using System.Collections;
 using System.Collections.Generic;
 using Vimeo.Player;
+using Vimeo.SimpleJSON;
 using UnityEngine;
 
 namespace Vimeo
@@ -24,6 +24,8 @@ namespace Vimeo
         public string projection;
 
         private JSONNode files;
+        private string dashUrl;
+        private string hlsUrl;
         private List<JSONNode> progressiveFiles;
 
         public VimeoVideo(string _name, string _uri = null)
@@ -77,17 +79,37 @@ namespace Vimeo
                     name = name + " (" + id + ")";
                 }
             }
+
+            progressiveFiles = new List<JSONNode>();
+
             if (video["play"] != null) {
                 files = video["play"];
 
                 // Sort the progressive files quality
-                progressiveFiles = new List<JSONNode>();
-                if (files != null) {
-                    for (int i = 0; i < files["progressive"].Count; i++) {
-                        progressiveFiles.Add(files["progressive"][i]);
+                for (int i = 0; i < files["progressive"].Count; i++) {
+                    progressiveFiles.Add(files["progressive"][i]);
+                }   
+                progressiveFiles.Sort(SortByQuality);
+
+                dashUrl = files["dash"]["link"].Value;
+                hlsUrl  = files["hls"]["link"].Value;
+            }
+            // If no play response, fallback to legacy files. 
+            else if (video["files"] != null) {
+                files = video["files"];
+
+                for (int i = 0; i < files.Count; i++) {
+                    if (files[i]["height"] != null) {
+                        progressiveFiles.Add(files[i]);
                     }
-                    progressiveFiles.Sort(SortByQuality);
-                }
+                    else if (files[i]["quality"].Value == "hls") {
+                        hlsUrl = files[i]["link"].Value;
+                    }
+                    else if (files[i]["quality"].Value == "dash") {
+                        dashUrl = files[i]["link"].Value;
+                    }
+                }   
+                progressiveFiles.Sort(SortByQuality);
             }
         }
 
@@ -100,6 +122,29 @@ namespace Vimeo
             return 0;
         }
 
+        public JSONNode GetMetadata()
+        {
+            return GetJsonFromString(this.description);
+        }
+        
+        public JSONNode GetJsonFromString(string content)
+        {
+            var matches = Regex.Matches(content, @"(?s:\{.*\})");
+
+            if (matches.Count == 0) {
+                Debug.LogWarning("[Vimeo] No JSON was found in the video description. ");
+                return null;
+            }
+
+            try {
+                return JSONNode.Parse(matches[0].Value);
+            }
+            catch (System.Exception e) {
+                Debug.LogError("[Vimeo] There was a problem parsing the JSON. " + e);
+                return null;
+            }
+        }
+
         public float GetHeightByWidth(float _width)
         {
             return _width * ((float)height / (float)width);
@@ -108,21 +153,38 @@ namespace Vimeo
         public override string ToString()
         {
             return name;
+        }  
+
+        public string getDashUrl()
+        {
+            return dashUrl;
         }
 
-        public string GetAdaptiveVideoFileURL()
+        public string getHlsUrl()
         {
-            switch (Application.platform) {
-                case RuntimePlatform.OSXPlayer:
-                case RuntimePlatform.OSXEditor:
-                case RuntimePlatform.IPhonePlayer:
-                case RuntimePlatform.tvOS:
-                    return files["hls"]["link"];
+            return hlsUrl;
+        }
 
-                default:
-                    return files["dash"]["link"];
+        public string GetAdaptiveVideoFileURL() 
+        {
+            if (isHlsPlatform()) {
+                return getHlsUrl();
             }
+            else {
+                if (getDashUrl() != null) {
+                    return getDashUrl();
+                }
+                Debug.LogWarning("[Vimeo] No DASH manfiest found. Defaulting to HLS.");
+                return getHlsUrl();
+            }
+        }  
 
+        public bool isHlsPlatform()
+        {
+            return Application.platform == RuntimePlatform.OSXPlayer || 
+                   Application.platform == RuntimePlatform.OSXEditor || 
+                   Application.platform == RuntimePlatform.IPhonePlayer || 
+                   Application.platform == RuntimePlatform.tvOS;
         }
 
         public JSONNode GetHighestResolutionVideoFileURL()
@@ -168,7 +230,7 @@ namespace Vimeo
 
         private static int SortByQuality(JSONNode q1, JSONNode q2)
         {
-            return int.Parse(q2["height"]).CompareTo(int.Parse(q1["height"]));
+            return int.Parse(q2["height"].Value).CompareTo(int.Parse(q1["height"].Value));
         }
     }
 }

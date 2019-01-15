@@ -5,7 +5,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
-using SimpleJSON;
+using Vimeo.SimpleJSON;
 
 public class VimeoUploaderPlayTest : TestConfig
 {
@@ -51,7 +51,7 @@ public class VimeoUploaderPlayTest : TestConfig
 
     public void UploadInit(string response)
     {
-        VimeoVideo video = new VimeoVideo(JSON.Parse(response));
+        VimeoVideo video = new VimeoVideo(JSONNode.Parse(response));
         uploader.SetVideoViewPrivacy(VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink);
         uploader.SetVideoName("Large file test (" + Application.platform + " " + Application.unityVersion + ")");
         uploader.SaveVideo(video);

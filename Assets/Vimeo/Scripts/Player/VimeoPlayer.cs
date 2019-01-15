@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.Video;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using SimpleJSON;
 using System.Text.RegularExpressions;
 using Vimeo;
+using Vimeo.SimpleJSON;
 
 namespace Vimeo.Player
 {
@@ -214,17 +215,44 @@ namespace Vimeo.Player
                 
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
                     mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
-                }
+                } 
+#endif // VIMEO_AVPRO_VIDEO_SUPPORT
 #if VIMEO_DEPTHKIT_SUPPORT
-                // TODO
-                else if (videoPlayerType == VideoPlayerType.DepthKit && depthKitClip != null) {
-                    // depthKitClip._moviePath = file_url;
-                    // depthKitClip._metaDataText = vimeoVideo.description;
-                    // depthKitClip.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
-                    // depthKitClip.RefreshRenderer();
+                if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
+#if VIMEO_AVPRO_VIDEO_SUPPORT   
+                    if (depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>() != null){
+                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                    }
+#endif // VIMEO_AVPRO_VIDEO_SUPPORT
+                    if (depthKitClip.gameObject.GetComponent<VideoPlayer>() != null) {
+                        if (this.selectedResolution != StreamingResolution.Adaptive) {
+                            depthKitClip.gameObject.GetComponent<VideoPlayer>().url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                        } else {
+                            Debug.LogError("[Vimeo] Unity video player does not support adaptive video try selecting a specific quality in the Vimeo Player or use AVPro video on the Depthkit clip");
+                        }
+                    }
+#if UNITY_2018_OR_NEWER
+                    JSONNode metadata = vimeoVideo.GetMetadata();
+
+                    if (metadata != null) {
+                        depthKitClip._metaDataFile = new TextAsset(metadata.ToString());
+                        depthKitClip._needToRefreshMetadata = true;
+                        // This is a temporary hack to trigger the OnVideoStart event once the metadata loaded and will be replaced in the future
+                        if (OnVideoStart != null) {
+                            OnVideoStart();
+                        } 
+                    }
+                    else {
+                        if (OnLoadError != null) {
+                            OnLoadError();
+                        } 
+                    }
+#else
+                    Debug.LogError("[Vimeo] The Depthkit integration currently only supports Unity 2018 and higher");
+#endif
+                    
                 }
-#endif
-#endif
+#endif // VIMEO_DEPTHKIT_SUPPORT
             }
         }
 
@@ -327,8 +355,8 @@ namespace Vimeo.Player
         private void VideoMetadataLoad(string response)
         {
             loadingVideoMetadata = false;
-
-            JSONNode json = JSON.Parse(response);
+            
+            JSONNode json = JSONNode.Parse(response);
             api.OnRequestComplete -= VideoMetadataLoad;
 
             if (json["error"] == null) {

@@ -52,7 +52,7 @@ Assets/StreamingAssets*
 Assets/Plugins*
 Assets/AVPro*
 Assets/HoloPlay*
-Depthkit*
+Assets/Depthkit*
 
 # Test Suite
 Assets/Vimeo/Scripts/TestConfig.cs*

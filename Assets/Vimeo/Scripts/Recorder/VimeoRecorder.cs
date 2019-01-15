@@ -2,7 +2,6 @@
 using UnityEngine.Networking;
 using System.IO;
 using Vimeo;
-using SimpleJSON;
 
 namespace Vimeo.Recorder
 {
