@@ -121,6 +121,21 @@ public class VimeoPlayerPlayTest : TestConfig
         Assert.IsEmpty(player.controller.videoPlayer.url);
     }
 
+    [UnityTest]
+    public IEnumerator Unfurl_Makes_A_Request_And_Redirects_Sucssesfully()
+    {
+        yield return player.Unfurl(TestConfig.TEST_ADAPTIVE_LINK_TO_UNFURL);
+        Assert.AreNotEqual(player.m_file_url, TestConfig.TEST_ADAPTIVE_LINK_TO_UNFURL);
+    }
+
+    [UnityTest]
+    public IEnumerator Unfurl_Does_Not_Redirect_If_Provided_A_Link_That_Does_Not_Redirect()
+    {
+        yield return player.Unfurl(TestConfig.TEST_ADAPTIVE_MANIFEST_URL);
+        Debug.Log(TestConfig.TEST_ADAPTIVE_MANIFEST_URL);
+        Assert.AreEqual(player.m_file_url, TestConfig.TEST_ADAPTIVE_MANIFEST_URL);
+    }
+
     private void EventTriggered()
     {
         triggered = true;

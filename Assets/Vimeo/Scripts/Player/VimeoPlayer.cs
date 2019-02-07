@@ -41,7 +41,7 @@ namespace Vimeo.Player
         private bool playVideoAfterLoad = false;
         private bool videoControllerReady = false;
 
-        private string file_url;
+        public string m_file_url;
 
         public void Start()
         {
@@ -220,18 +220,18 @@ namespace Vimeo.Player
                     yield return Unfurl(vimeoVideo.GetAdaptiveVideoFileURL());
                 }
                 else {
-                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                    m_file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
                 }
                 
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
-                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, m_file_url, autoPlay || playVideoAfterLoad);
                 } 
 #endif // VIMEO_AVPRO_VIDEO_SUPPORT
 #if VIMEO_DEPTHKIT_SUPPORT
                 if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
 #if VIMEO_AVPRO_VIDEO_SUPPORT   
                     if (depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>() != null){
-                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, m_file_url, autoPlay);
                     }
 #endif // VIMEO_AVPRO_VIDEO_SUPPORT
                     if (depthKitClip.gameObject.GetComponent<VideoPlayer>() != null) {
@@ -394,7 +394,7 @@ namespace Vimeo.Player
             }
         }
 
-        private IEnumerator Unfurl(string url)
+        public IEnumerator Unfurl(string url)
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url)) {
 #if UNITY_2017_2_OR_NEWER
@@ -404,15 +404,15 @@ namespace Vimeo.Player
 #endif
 
 #if UNITY_2017_1_OR_NEWER
-                if (!www.isNetworkError)
+                if (!www.isNetworkError && www.url != url)
 #else
-                if (!www.isError)
+                if (!www.isError && www.url != url)
 #endif
                 {
-                    file_url = www.url;
+                    m_file_url = www.url;
                 } 
                 else {
-                    file_url = url;
+                    m_file_url = url;
                 }
             }
         }
