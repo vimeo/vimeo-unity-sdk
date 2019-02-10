@@ -2,6 +2,7 @@
 using UnityEngine.Networking;
 using System.IO;
 using Vimeo;
+using System;
 
 namespace Vimeo.Recorder
 {
@@ -18,6 +19,9 @@ namespace Vimeo.Recorder
         public bool isRecording = false;
         public bool isUploading = false;
         public float uploadProgress = 0;
+
+        VimeoFetcher fetcher;
+
         private int m_byteChunkSize = 1024 * 1024 * 128;
         public int byteChunkSize {
             set {
@@ -34,6 +38,11 @@ namespace Vimeo.Recorder
 
             if (recordOnStart) {
                 BeginRecording();
+            }
+            else if (replaceExisting)
+            {
+                // we want an updated video list, without a need for the editor
+                FetchVideos();
             }
         }
 
@@ -72,6 +81,37 @@ namespace Vimeo.Recorder
             Destroy(publisher);
         }
 
+        void FetchVideos()
+        {
+            if (fetcher == null)
+            {
+                fetcher = gameObject.AddComponent<VimeoFetcher>();
+                fetcher.Init(this);
+                fetcher.GetVideosInFolder(currentFolder);
+                fetcher.OnFetchComplete += OnFetchComplete;
+                fetcher.OnFetchError += OnFetchError;
+            }
+        }
+
+        private void OnFetchError(string response)
+        {
+            DestroyFetcher();
+        }
+
+        private void OnFetchComplete(string response)
+        {
+            DestroyFetcher();
+        }
+
+        private void DestroyFetcher()
+        {
+            if (fetcher != null)
+            {
+                Destroy(fetcher);
+                fetcher = null;
+            }
+        }
+
         //Used if you want to publish the latest recorded video
         public void PublishVideo()
         {
@@ -88,6 +128,12 @@ namespace Vimeo.Recorder
 
             if (replaceExisting)
             {
+                if (fetcher != null)
+                {
+                    // bad situation - need some waiting point
+                    Debug.LogError("Videos fetching is not complete before replacing publishing");
+                }
+
                 if (string.IsNullOrEmpty(vimeoVideoId) && 
                     !string.IsNullOrEmpty(videoName))
                 {
