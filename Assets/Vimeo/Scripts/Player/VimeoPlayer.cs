@@ -398,17 +398,9 @@ namespace Vimeo.Player
         public IEnumerator Unfurl(string url)
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url)) {
-#if UNITY_2017_2_OR_NEWER
-                yield return www.SendWebRequest();
-#else
-                yield return www.Send();
-#endif
+                yield return VimeoApi.SendRequest(www);
 
-#if UNITY_2017_1_OR_NEWER
-                if (!www.isNetworkError && www.url != url)
-#else
-                if (!www.isError && www.url != url)
-#endif
+                if (VimeoApi.IsNetworkError(www))
                 {
                     m_file_url = www.url;
                 } 
