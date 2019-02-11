@@ -207,7 +207,7 @@ namespace Vimeo.Player
             }
         }
 
-        private IEnumerator VideoControllerPlayVideo()
+        public IEnumerator VideoControllerPlayVideo()
         {
             videoControllerReady = true;
 
@@ -264,6 +264,7 @@ namespace Vimeo.Player
                 }
 #endif // VIMEO_DEPTHKIT_SUPPORT
             }
+            yield break;
         }
 
         public void Pause()
