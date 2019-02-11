@@ -129,7 +129,7 @@ namespace Vimeo.Recorder
             return input;
         }
 
-        public void ReplaceVimeoId()
+        public void SetVimeoIdFromName()
         {
             if (!string.IsNullOrEmpty(videoName))
             {

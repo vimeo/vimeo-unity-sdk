@@ -74,18 +74,20 @@ namespace Vimeo.Recorder
                     EditorGUI.indentLevel++;
 
                     EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
                     
-                    if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
-                        EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
-                    }
+                    bool updated = GUISelectFolder();
 
                     EditorGUILayout.PropertyField(so.FindProperty("replaceExisting"));
 
-                    bool updated = GUISelectFolder();
-                    if (IsSelectExisting(recorder))
+                    if (recorder.replaceExisting)
                     {
                         GUISelectVideo(updated);
+                    }
+
+                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+                    if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode)
+                    {
+                        EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
                     }
 
                     EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));

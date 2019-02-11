@@ -18,7 +18,7 @@ namespace Vimeo
             var settings = target as VimeoSettings;
             if (fetcher == null)
             {
-                if (settings.gameObject.GetComponent<VimeoApi>())
+                if (settings.gameObject.GetComponent<VimeoFetcher>())
                 {
                     fetcher = settings.gameObject.GetComponent<VimeoFetcher>();
                 }
@@ -65,12 +65,6 @@ namespace Vimeo
             fetcher.GetRecentVideos();
         }
 
-        protected bool IsSelectExisting(VimeoSettings settings)
-        {
-            return (settings is Vimeo.Player.PlayerSettings) ||
-                (settings is Vimeo.Recorder.RecorderSettings && (settings as Vimeo.Recorder.RecorderSettings).replaceExisting);
-        }
-
         protected void GUIManageVideosButton() 
         {
             var settings = target as VimeoSettings;
@@ -79,25 +73,17 @@ namespace Vimeo
             }
         }
 
-        private bool wasSelectExisting = false;
-
         protected bool GUISelectFolder()
         {   
             var so = serializedObject;
             var settings = target as VimeoSettings;
             
-            if (IsSelectExisting(settings) != wasSelectExisting)
-            {
-                settings.vimeoFolders.Clear();
-                wasSelectExisting = IsSelectExisting(settings);
-            }
-
             // Folder selection
             GUILayout.BeginHorizontal();
             bool folderChanged = false;
 
             int cur_index = settings.GetCurrentFolderIndex();
-            int new_index = EditorGUILayout.Popup(IsSelectExisting(settings) ? "Vimeo Video" : "Add to Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray()); 
+            int new_index = EditorGUILayout.Popup("Project", cur_index, settings.vimeoFolders.Select(folder => folder.name).ToArray()); 
 
             if (new_index != cur_index) {
                 folderChanged = true;
@@ -108,7 +94,7 @@ namespace Vimeo
                 Application.OpenURL("https://vimeo.com/manage/folders");
             }
 
-            if (GUILayout.Button("↺", GUILayout.Width(25)) || (settings.vimeoFolders.Count == 0 && settings.GetComponent<VimeoApi>() == null)) { // Refresh folders
+            if (GUILayout.Button("↺", GUILayout.Width(25)) || (settings.vimeoFolders.Count == 0 && settings.GetComponent<VimeoFetcher>() == null)) { // Refresh folders
                 FetchFolders();
             }
 
@@ -128,22 +114,15 @@ namespace Vimeo
             else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
                 GUILayout.BeginHorizontal();
                 int cur_video_index = player.GetCurrentVideoIndex();
-                int new_video_index = EditorGUILayout.Popup(" ", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
+                int new_video_index = EditorGUILayout.Popup("Selected Video", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
 
                 if (new_video_index != cur_video_index) {
                     player.currentVideo = player.vimeoVideos[new_video_index];
-                    if (new_video_index > 0)
+                    player.vimeoVideoId = new_video_index > 0 ? player.currentVideo.id.ToString() : null;
+                    if (player is RecorderSettings)
                     {
-                        player.vimeoVideoId = player.currentVideo.id.ToString();
-                        if (player is RecorderSettings)
-                        {
-                            var recorder = player as RecorderSettings;
-                            recorder.videoName = player.currentVideo.GetVideoName();
-                        }
-                    }
-                    else
-                    {
-                        player.vimeoVideoId = null;
+                        var recorder = player as RecorderSettings;
+                        recorder.videoName = new_video_index > 0 ? player.currentVideo.GetVideoName() : "";
                     }
                 }
                 else { 
@@ -152,14 +131,14 @@ namespace Vimeo
                         var recorder = player as RecorderSettings;
                         if (recorder.replaceExisting)
                         {
-                            recorder.ReplaceVimeoId();
+                            recorder.SetVimeoIdFromName();
                         }
                     }
                 }
 
                 if (GUILayout.Button("↺", GUILayout.Width(25)) || 
                     refreshVideos || 
-                    (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoApi>() == null)) {
+                    (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoFetcher>() == null)) {
                         
                     if (player.currentFolder.uri == "recent") {
                         GetRecentVideos();

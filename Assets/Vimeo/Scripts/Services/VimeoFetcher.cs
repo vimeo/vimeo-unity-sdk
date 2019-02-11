@@ -208,6 +208,13 @@ namespace Vimeo
                 VimeoFolder folder = new VimeoFolder(folder_prefix + folderData[i]["name"], folderData[i]["uri"]);
                 settings.vimeoFolders.Add(folder);
             }
+
+            if (OnFetchComplete != null)
+            {
+                OnFetchComplete.Invoke("");
+            }
+
+            Debug.Log("[VimeoFetcher] Completed with " + (settings.vimeoFolders.Count - 1) + " existing folders");
         }
 
 

@@ -137,8 +137,9 @@ namespace Vimeo.Recorder
                 if (string.IsNullOrEmpty(vimeoVideoId) && 
                     !string.IsNullOrEmpty(videoName))
                 {
-                    ReplaceVimeoId();
+                    SetVimeoIdFromName();
                 }
+
                 publisher.PublishVideo(encoder.GetVideoFilePath(), vimeoVideoId);
             }
             else
