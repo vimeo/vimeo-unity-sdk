@@ -399,8 +399,9 @@ namespace Vimeo.Player
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url)) {
                 yield return VimeoApi.SendRequest(www);
+                
 
-                if (VimeoApi.IsNetworkError(www))
+                if (!VimeoApi.IsNetworkError(www))
                 {
                     m_file_url = www.url;
                 } 
