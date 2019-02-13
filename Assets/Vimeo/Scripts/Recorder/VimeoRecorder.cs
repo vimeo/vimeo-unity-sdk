@@ -93,32 +93,28 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status == "UploadComplete") {
+            if (status != "Uploading") {
                 publisher.OnUploadProgress -= UploadProgress;
                 publisher.OnNetworkError -= NetworkError;
 
                 isUploading = false;
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
-
-                if (OnUploadComplete != null) {
-                    OnUploadComplete();
+                
+                if (status == "UploadComplete") {
+                    if (OnUploadComplete != null) {
+                        OnUploadComplete();
+                    }
+                }
+                else if (status == "UploadError") {
+                    if (OnUploadError != null)
+                    {
+                        OnUploadError();
+                    }
                 }
             }
-            else if (status == "UploadError")
-            {
-                publisher.OnUploadProgress -= UploadProgress;
-                publisher.OnNetworkError -= NetworkError;
 
-                isUploading = false;
-                encoder.DeleteVideoFile();
-                Destroy(publisher);
 
-                if (OnUploadError != null)
-                {
-                    OnUploadError();
-                }
-            }
         }
 
         private void NetworkError(string status)
