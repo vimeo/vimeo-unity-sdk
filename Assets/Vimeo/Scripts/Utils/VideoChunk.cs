@@ -121,7 +121,7 @@ namespace Vimeo
 
             yield return VimeoApi.SendRequest(m_uploadRequest);
 
-            if (m_uploadRequest.isNetworkError || m_uploadRequest.isHttpError) {
+            if (VimeoApi.IsNetworkError(m_uploadRequest)) {
                 UploadError(m_uploadRequest.responseCode + ": " + m_uploadRequest.error);
             } else {
                 m_isUploading = false;
