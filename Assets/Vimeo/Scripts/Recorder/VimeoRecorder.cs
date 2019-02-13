@@ -100,15 +100,14 @@ namespace Vimeo.Recorder
                 isUploading = false;
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
-                
+
                 if (status == "UploadComplete") {
                     if (OnUploadComplete != null) {
                         OnUploadComplete();
                     }
                 }
                 else if (status == "UploadError") {
-                    if (OnUploadError != null)
-                    {
+                    if (OnUploadError != null) {
                         OnUploadError();
                     }
                 }

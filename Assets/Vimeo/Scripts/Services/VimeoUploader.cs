@@ -173,8 +173,7 @@ namespace Vimeo
             if (OnChunckUploadError != null && chunk != null) {
                 OnChunckUploadError(chunk, err);
             }
-            if (OnUploadError != null)
-            {
+            if (OnUploadError != null) {
                 OnUploadError(err);
             }
         }

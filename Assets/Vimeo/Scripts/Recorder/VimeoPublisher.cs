@@ -113,12 +113,10 @@ namespace Vimeo.Recorder
 
         private void UploadComplete(string video_url)
         {
-            if (recorder.openInBrowser == true)
-            {
+            if (recorder.openInBrowser == true) {
                 OpenVideo();
             }
-            if (OnUploadProgress != null)
-            {
+            if (OnUploadProgress != null) {
                 OnUploadProgress("UploadComplete", 1f);
             }
 
