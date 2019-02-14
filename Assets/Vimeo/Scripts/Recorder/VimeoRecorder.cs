@@ -93,7 +93,7 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status != "Uploading") {
+            if (status == "UploadComplete" || status == "UploadError") {
                 publisher.OnUploadProgress -= UploadProgress;
                 publisher.OnNetworkError -= NetworkError;
 
