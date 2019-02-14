@@ -11,6 +11,7 @@ namespace Vimeo.Recorder
     {
         public delegate void RecordAction();
         public event RecordAction OnUploadComplete;
+        public event RecordAction OnUploadError;
 
         public VimeoPublisher publisher;
 
@@ -94,7 +95,7 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status == "UploadComplete") {
+            if (status == "UploadComplete" || status == "UploadError") {
                 publisher.OnUploadProgress -= UploadProgress;
                 publisher.OnNetworkError -= NetworkError;
 
@@ -102,10 +103,19 @@ namespace Vimeo.Recorder
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
 
-                if (OnUploadComplete != null) {
-                    OnUploadComplete();
+                if (status == "UploadComplete") {
+                    if (OnUploadComplete != null) {
+                        OnUploadComplete();
+                    }
+                }
+                else if (status == "UploadError") {
+                    if (OnUploadError != null) {
+                        OnUploadError();
+                    }
                 }
             }
+
+
         }
 
         private void NetworkError(string status)
