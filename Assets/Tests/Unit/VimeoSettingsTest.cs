@@ -5,7 +5,8 @@ using System;
 using System.Collections;
 using Vimeo.Player;
 
-public class VimeoSettingsTest : TestConfig {
+public class VimeoSettingsTest : TestConfig
+{
 
     GameObject playerObj;
     VimeoPlayer player;
@@ -42,7 +43,7 @@ public class VimeoSettingsTest : TestConfig {
         Assert.AreEqual(player.GetVimeoToken(), null);
         Assert.AreEqual(player.vimeoSignIn, false);
     }
-    
+
     [Test]
     public void GetVimeoToken_Returns_Null()
     {

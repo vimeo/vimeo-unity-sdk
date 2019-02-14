@@ -127,8 +127,7 @@ namespace Vimeo.Recorder
 
         private void UploadError(string err)
         {
-            if (OnUploadProgress != null)
-            {
+            if (OnUploadProgress != null) {
                 OnUploadProgress("UploadError", 0f);
             }
 

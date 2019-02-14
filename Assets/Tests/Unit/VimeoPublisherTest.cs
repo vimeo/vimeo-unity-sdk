@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
 
-public class VimeoPublisherTest : TestConfig 
+public class VimeoPublisherTest : TestConfig
 {
     GameObject publisherObj;
 
@@ -24,7 +24,7 @@ public class VimeoPublisherTest : TestConfig
     {
         publisherObj = new GameObject();
 
-        recorder = publisherObj.AddComponent<VimeoRecorder>();        
+        recorder = publisherObj.AddComponent<VimeoRecorder>();
         publisher = publisherObj.AddComponent<VimeoPublisher>();
         publisher.Init(recorder);
     }

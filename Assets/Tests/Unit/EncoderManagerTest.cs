@@ -7,7 +7,7 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo.Recorder;
 
-public class EncoderManagerTest : TestConfig 
+public class EncoderManagerTest : TestConfig
 {
 
 #if VIMEO_LOOKING_GLASS_SUPPORT && UNITY_2017_3_OR_NEWER
@@ -66,7 +66,7 @@ public class EncoderManagerTest : TestConfig
         encoder.Init(recorder);
     }
 
-    #if VIMEO_AVPRO_CAPTURE_SUPPORT
+#if VIMEO_AVPRO_CAPTURE_SUPPORT
     [Test]
     public void Init_LookingGlass_AVPro_Movie_Capture_Works()
     {
@@ -98,7 +98,7 @@ public class EncoderManagerTest : TestConfig
         encoder.Init(recorder);
     }
 
-    #endif //VIMEO_AVPRO_CAPTURE_SUPPORT
+#endif //VIMEO_AVPRO_CAPTURE_SUPPORT
 
     [TearDown]
     public void _After()

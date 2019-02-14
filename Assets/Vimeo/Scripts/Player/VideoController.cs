@@ -166,7 +166,7 @@ namespace Vimeo.Player
             videoPlayer.Pause();
             if (OnPause != null) {
                 OnPause(this);
-            } 
+            }
         }
 
         public void Play()

@@ -107,8 +107,7 @@ namespace Vimeo.Recorder
                     if (OnUploadComplete != null) {
                         OnUploadComplete();
                     }
-                }
-                else if (status == "UploadError") {
+                } else if (status == "UploadError") {
                     if (OnUploadError != null) {
                         OnUploadError();
                     }
