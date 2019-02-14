@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.SimpleJSON;
+using UnityEngine.Networking;
 
 namespace Vimeo.Player
 {
@@ -39,6 +40,8 @@ namespace Vimeo.Player
         public bool loadingVideoMetadata = false;
         private bool playVideoAfterLoad = false;
         private bool videoControllerReady = false;
+
+        public string m_file_url;
 
         public void Start()
         {
@@ -79,7 +82,8 @@ namespace Vimeo.Player
                 if (match.Success) {
                     vimeoVideoId = match.Groups[3].Value;
                     LoadVideo(int.Parse(vimeoVideoId));
-                } else {
+                } 
+                else {
                     Debug.LogError("[Vimeo] Invalid Vimeo URL");
                 }
             }
@@ -117,11 +121,13 @@ namespace Vimeo.Player
                     if (audioSource && audioSource is AudioSource) {
                         if (audioSource != null) {
                             controller.audioSource = audioSource;
-                        } else {
+                        } 
+                        else {
                             videoScreen.gameObject.AddComponent<AudioSource>();
                         }
                     }
-                } else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                } 
+                else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                     controller.videoScreenObject = videoScreen;
                     controller.Setup();
                 }
@@ -137,9 +143,11 @@ namespace Vimeo.Player
         {
             if (!vimeoSignIn) {
                 Debug.LogError("[Vimeo] You are not signed in.");
-            } else if (String.IsNullOrEmpty(vimeoVideoId)) {
+            } 
+            else if (String.IsNullOrEmpty(vimeoVideoId)) {
                 Debug.LogError("[Vimeo] Can't load video. No video was specificed.");
-            } else {
+            } 
+            else {
                 LoadVideo(vimeoVideoId);
             }
         }
@@ -149,7 +157,8 @@ namespace Vimeo.Player
         {
             if (IsPlayerSetup()) {
                 return controller.videoPlayer.isPlaying;
-            } else {
+            } 
+            else {
                 return false;
             }
         }
@@ -189,39 +198,40 @@ namespace Vimeo.Player
         {
             if (!IsVideoMetadataLoaded()) {
                 LoadAndPlayVideo();
-            } else if (!videoControllerReady) {
-                VideoControllerPlayVideo();
-            } else {
+            } 
+            else if (!videoControllerReady) {
+                StartCoroutine(VideoControllerPlayVideo());
+            } 
+            else {
                 controller.Play();
             }
         }
 
-        private void VideoControllerPlayVideo()
+        public IEnumerator VideoControllerPlayVideo()
         {
             videoControllerReady = true;
 
             if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                 controller.PlayVideo(vimeoVideo, selectedResolution);
             } else {
-#if VIMEO_AVPRO_VIDEO_SUPPORT
-                string file_url = null;
+#if VIMEO_AVPRO_VIDEO_SUPPORT                
 
                 if (this.selectedResolution == StreamingResolution.Adaptive) {
-                    file_url = vimeoVideo.GetAdaptiveVideoFileURL();
+                    yield return Unfurl(vimeoVideo.GetAdaptiveVideoFileURL());
                 }
                 else {
-                    file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
+                    m_file_url = vimeoVideo.GetVideoFileUrlByResolution(selectedResolution);
                 }
                 
                 if (videoPlayerType == VideoPlayerType.AVProVideo && mediaPlayer != null) {
-                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay || playVideoAfterLoad);
+                    mediaPlayer.OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, m_file_url, autoPlay || playVideoAfterLoad);
                 } 
 #endif // VIMEO_AVPRO_VIDEO_SUPPORT
 #if VIMEO_DEPTHKIT_SUPPORT
                 if (videoPlayerType == VideoPlayerType.Depthkit && depthKitClip != null) {
 #if VIMEO_AVPRO_VIDEO_SUPPORT   
                     if (depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>() != null){
-                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, file_url, autoPlay);
+                        depthKitClip.gameObject.GetComponent<RenderHeads.Media.AVProVideo.MediaPlayer>().OpenVideoFromFile(RenderHeads.Media.AVProVideo.MediaPlayer.FileLocation.AbsolutePathOrURL, m_file_url, autoPlay);
                     }
 #endif // VIMEO_AVPRO_VIDEO_SUPPORT
                     if (depthKitClip.gameObject.GetComponent<VideoPlayer>() != null) {
@@ -254,6 +264,7 @@ namespace Vimeo.Player
                 }
 #endif // VIMEO_DEPTHKIT_SUPPORT
             }
+            yield break;
         }
 
         public void Pause()
@@ -355,7 +366,7 @@ namespace Vimeo.Player
         private void VideoMetadataLoad(string response)
         {
             loadingVideoMetadata = false;
-            
+
             JSONNode json = JSONNode.Parse(response);
             api.OnRequestComplete -= VideoMetadataLoad;
 
@@ -380,6 +391,22 @@ namespace Vimeo.Player
                 }
             } else {
                 Debug.LogError("Video could not be found");
+            }
+        }
+
+        public IEnumerator Unfurl(string url)
+        {
+            using (UnityWebRequest www = UnityWebRequest.Get(url)) {
+                yield return VimeoApi.SendRequest(www);
+                
+
+                if (!VimeoApi.IsNetworkError(www))
+                {
+                    m_file_url = www.url;
+                } 
+                else {
+                    m_file_url = url;
+                }
             }
         }
 
