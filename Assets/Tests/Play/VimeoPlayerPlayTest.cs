@@ -24,6 +24,7 @@ public class VimeoPlayerPlayTest : TestConfig
         camObj = new GameObject();
         camObj.AddComponent<Camera>();
         camObj.transform.Translate(0, 0, 3);
+        camObj.AddComponent<AudioListener>();
 
         // Player Setup
         playerObj = new GameObject();
