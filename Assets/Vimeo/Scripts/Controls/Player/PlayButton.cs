@@ -4,15 +4,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using Vimeo.Player;
 
-namespace Vimeo.Controls.Player {
-    public class PlayButton : MonoBehaviour {
+namespace Vimeo.Controls.Player
+{
+    public class PlayButton : MonoBehaviour
+    {
         public VimeoPlayer vimeoPlayer;
         public GameObject playButtonText;
 
-    	void Start () {
-            vimeoPlayer.OnPlay  += VideoPlay;
+        void Start()
+        {
+            vimeoPlayer.OnPlay += VideoPlay;
             vimeoPlayer.OnPause += VideoPause;
-    	}
+        }
 
         private void VideoPlay()
         {

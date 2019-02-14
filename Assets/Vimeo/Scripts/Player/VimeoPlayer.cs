@@ -389,8 +389,7 @@ namespace Vimeo.Player
                 if (OnVideoMetadataLoad != null) {
                     OnVideoMetadataLoad();
                 }
-            } 
-            else {
+            } else {
                 Debug.LogError("Video could not be found");
             }
         }

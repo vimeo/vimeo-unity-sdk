@@ -16,7 +16,7 @@ public class VimeoPlayerPlayTest : TestConfig
 
     float timeout = 5;
     float elapsed = 0;
-    
+
     [SetUp]
     public void _Before()
     {
@@ -24,13 +24,13 @@ public class VimeoPlayerPlayTest : TestConfig
         camObj = new GameObject();
         camObj.AddComponent<Camera>();
         camObj.transform.Translate(0, 0, 3);
-        
+
         // Player Setup
         playerObj = new GameObject();
         player = playerObj.AddComponent<VimeoPlayer>();
         player.selectedResolution = StreamingResolution.x360p;
         player.autoPlay = false;
-        
+
         // Screen setup
         screenObj = GameObject.CreatePrimitive(PrimitiveType.Cube);
         player.videoScreen = screenObj;
@@ -41,8 +41,8 @@ public class VimeoPlayerPlayTest : TestConfig
     }
 
     [UnityTest]
-    public IEnumerator Can_Stream_Video_With_Valid_Token() 
-    {    
+    public IEnumerator Can_Stream_Video_With_Valid_Token()
+    {
         player.OnVideoStart += EventTriggered;
 
         player.SignIn(VALID_STREAMING_TOKEN);
@@ -58,8 +58,8 @@ public class VimeoPlayerPlayTest : TestConfig
 
     [UnityTest]
     [Timeout(5000)]
-    public IEnumerator Can_Stream_Video_With_Valid_Production_Token() 
-    {    
+    public IEnumerator Can_Stream_Video_With_Valid_Production_Token()
+    {
         player.OnVideoStart += EventTriggered;
 
         player.SignIn(VALID_PRODUCTION_STREAMING_TOKEN);
@@ -67,18 +67,18 @@ public class VimeoPlayerPlayTest : TestConfig
 
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
-        yield return new WaitUntil(()=> triggered == true);
-    }    
+        yield return new WaitUntil(() => triggered == true);
+    }
 
     [UnityTest]
-    public IEnumerator Cant_Stream_Video_With_Invalid_Token() 
-    {    
+    public IEnumerator Cant_Stream_Video_With_Invalid_Token()
+    {
         player.OnLoadError += EventTriggered;
         player.SignIn("xxxxxxxxxxxxxxx");
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
-        
+
         UnityEngine.TestTools.LogAssert.Expect(LogType.Error, new Regex("401"));
-        
+
         while (!triggered) {
             yield return new WaitForSeconds(.25f);
             TimeoutCheck();
@@ -91,7 +91,7 @@ public class VimeoPlayerPlayTest : TestConfig
         player.OnVideoMetadataLoad += EventTriggered;
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
-        
+
         Assert.IsNull(player.vimeoVideo);
 
         while (!triggered) {

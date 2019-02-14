@@ -29,17 +29,14 @@ namespace Vimeo.Recorder
             int w, h;
             GameViewSize.GetGameRenderSize(out w, out h);
 
-            switch (recorder.defaultResolution)
-            {
-                case Resolution.Window:
-                    {
+            switch (recorder.defaultResolution) {
+                case Resolution.Window: {
                         outputWidth = (w + 1) & ~1;
                         outputHeight = (h + 1) & ~1;
                         break;
                     }
 
-                default:
-                    {
+                default: {
                         outputHeight = (int)recorder.defaultResolution;
                         outputWidth = (int)(outputHeight * AspectRatioHelper.GetRealAR(recorder.defaultAspectRatio));
 
@@ -56,8 +53,7 @@ namespace Vimeo.Recorder
                 var size = GameViewSize.SetCustomSize(outputWidth, outputHeight) ?? GameViewSize.AddSize(outputWidth, outputHeight);
                 if (GameViewSize.m_ModifiedResolutionCount == 0) {
                     GameViewSize.BackupCurrentSize();
-                }
-                else {
+                } else {
                     if (size != GameViewSize.currentSize) {
                         Debug.LogError("[VimeoRecorder] Requestion a resultion change while a recorder's input has already requested one! Undefined behaviour.");
                     }
