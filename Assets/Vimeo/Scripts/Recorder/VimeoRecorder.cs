@@ -19,8 +19,10 @@ namespace Vimeo.Recorder
         public bool isUploading = false;
         public float uploadProgress = 0;
         private int m_byteChunkSize = 1024 * 1024 * 128;
-        public int byteChunkSize {
-            set {
+        public int byteChunkSize
+        {
+            set
+            {
                 m_byteChunkSize = value;
             }
         }

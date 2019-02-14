@@ -9,26 +9,30 @@ namespace Vimeo
     public class VimeoPlayerEditor : BaseEditor
     {
         [MenuItem("GameObject/Video/Vimeo Player")]
-        private static void CreatePlayerPrefab() {
+        private static void CreatePlayerPrefab()
+        {
             GameObject go = new GameObject();
             go.name = "[VimeoPlayer]";
             go.AddComponent<VimeoPlayer>();
         }
 
         [MenuItem("GameObject/Video/Vimeo Player (Canvas)")]
-        private static void CreateCanvasPrefab() {
+        private static void CreateCanvasPrefab()
+        {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
             go.name = "[VimeoPlayerCanvas]";
         }
 
         [MenuItem("GameObject/Video/Vimeo Player (Plane)")]
-        private static void CreatePlanePrefab() {
+        private static void CreatePlanePrefab()
+        {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer]") as GameObject);
             go.name = "[VimeoPlayer]";
         }
 
         [MenuItem("GameObject/Video/Vimeo Player (360)")]
-        private static void Create360Prefab() {
+        private static void Create360Prefab()
+        {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayer360]") as GameObject);
             go.name = "[VimeoPlayer360]";
         }
@@ -36,7 +40,7 @@ namespace Vimeo
         public override void OnInspectorGUI()
         {
             var player = target as VimeoPlayer;
-            DrawVimeoConfig(player); 
+            DrawVimeoConfig(player);
             EditorUtility.SetDirty(target);
         }
 
@@ -44,20 +48,20 @@ namespace Vimeo
         {
             var so = serializedObject;
 
-             // Help Nav            
+            // Help Nav            
             GUILayout.BeginHorizontal();
             var style = new GUIStyle();
-            style.border = new RectOffset(0,0,0,0);
+            style.border = new RectOffset(0, 0, 0, 0);
             GUILayout.Box("", style);
 
             GUIManageVideosButton();
             GUIHelpButton();
             GUISignOutButton();
-            
+
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
             EditorGUILayout.Space();
-            
+
             if (player.Authenticated() && player.vimeoSignIn) {
 #if VIMEO_AVPRO_VIDEO_SUPPORT || VIMEO_DEPTHKIT_SUPPORT
                 if (!player.IsVideoMetadataLoaded()) {
@@ -88,12 +92,12 @@ namespace Vimeo
                 GUISelectVideo(updated);
 
                 EditorGUILayout.PropertyField(so.FindProperty("selectedResolution"), new GUIContent("Resolution"));
-                
+
                 if (player.selectedResolution == StreamingResolution.Adaptive && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
                     EditorGUILayout.HelpBox("Adaptive video support (HLS/DASH) is only available with the AVPro Video plugin which is available in the Unity Asset Store.", MessageType.Error);
                 }
 
-                if (!player.IsVideoMetadataLoaded() 
+                if (!player.IsVideoMetadataLoaded()
                 && player.videoPlayerType == VideoPlayerType.UnityPlayer) {
                     EditorGUILayout.PropertyField(so.FindProperty("videoScreen"));
                     EditorGUILayout.PropertyField(so.FindProperty("audioSource"));
@@ -108,7 +112,7 @@ namespace Vimeo
                     GUILayout.BeginHorizontal();
                     if (GUILayout.Button("Load Video", GUILayout.Height(30), GUILayout.Width(100))) {
                         player.autoPlay = true;
-                        player.LoadVideo(player.vimeoVideoId);   
+                        player.LoadVideo(player.vimeoVideoId);
                     }
 
                     if (player.videoPlayerType == VideoPlayerType.UnityPlayer && player.IsVideoMetadataLoaded()) {

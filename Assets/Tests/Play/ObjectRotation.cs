@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ObjectRotation : MonoBehaviour 
+public class ObjectRotation : MonoBehaviour
 {
-    void Update () 
+    void Update()
     {
         gameObject.transform.Rotate(1, 1, 1);
     }

@@ -19,7 +19,8 @@ namespace Vimeo.Recorder
             return image;
         }
 
-        public override void BeginRecording(){
+        public override void BeginRecording()
+        {
             outputWidth = recorder.renderTextureTarget.width;
             outputHeight = recorder.renderTextureTarget.height;
         }
@@ -32,4 +33,4 @@ namespace Vimeo.Recorder
     }
 }
 
-#endif 
+#endif

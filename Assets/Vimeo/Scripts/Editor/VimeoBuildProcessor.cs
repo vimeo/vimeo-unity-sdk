@@ -7,7 +7,7 @@ using UnityEditor.Build.Reporting;
 #endif 
 using Vimeo;
 
-namespace Vimeo 
+namespace Vimeo
 {
 #if UNITY_2018_1_OR_NEWER
     class VimeoBuildProcessor : IProcessSceneWithReport
@@ -18,7 +18,7 @@ namespace Vimeo
         public int callbackOrder { get { return 0; } }
 
 #if UNITY_2018_1_OR_NEWER
-        public void OnProcessScene(Scene scene, BuildReport report) 
+        public void OnProcessScene(Scene scene, BuildReport report)
 #else
         public void OnProcessScene(Scene scene) 
 #endif
@@ -36,7 +36,7 @@ namespace Vimeo
             }
         }
 
-        public void EnableBuildMode(VimeoSettings[] settings) 
+        public void EnableBuildMode(VimeoSettings[] settings)
         {
             for (int i = 0; i < settings.Length; i++) {
                 settings[i].EnableBuildMode();
