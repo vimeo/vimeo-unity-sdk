@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.SimpleJSON;
 
-public class VimeoVideoTest : TestConfig 
+public class VimeoVideoTest : TestConfig
 {
     VimeoVideo video;
 
@@ -18,7 +18,7 @@ public class VimeoVideoTest : TestConfig
     [SetUp]
     public void _Before()
     {
-        
+
         video = new VimeoVideo(JSONNode.Parse(mockDevelopmentJson));
     }
 
@@ -68,7 +68,7 @@ public class VimeoVideoTest : TestConfig
         Assert.AreEqual(json, null);
     }
 
-#region Progressive Video Tests
+    #region Progressive Video Tests
     [Test]
     public void GetVideoFileByResolution_Uses_Lowest_Resolution_If_Not_Found()
     {
@@ -94,10 +94,10 @@ public class VimeoVideoTest : TestConfig
         Assert.AreEqual(file["height"].Value, "720");
     }
 
-#endregion
+    #endregion
 
 
-#region Adaptive Video Tests
+    #region Adaptive Video Tests
     [Test]
     public void GetHlsUrl_Works_For_Play_Response()
     {
@@ -111,7 +111,7 @@ public class VimeoVideoTest : TestConfig
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
         Assert.AreEqual(video.getDashUrl(), "https://player.vimeo.com/play/1046140246,1046140239,1046140237,1046140236,1046140235,1046140233/dash?s=279300468_1538085539_2e78157d9c236cc773328a5685b4dc65&context=Vimeo%5CController%5CApi%5CResources%5CVideoController.&logging=false");
     }
-    
+
     [Test]
     // TODO somehow test different application platforms
     // Note: this fails (correctly) when testing on Mac
@@ -144,7 +144,7 @@ public class VimeoVideoTest : TestConfig
         video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
         Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getHlsUrl());
     }
-#endregion
+    #endregion
 
     [TearDown]
     public void _After()

@@ -30,7 +30,7 @@ public class VimeoUploaderPlayTest : TestConfig
     public IEnumerator Can_Upload_Very_Big_File()
     {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-        
+
         //Register events
         uploader.OnUploadComplete += UploadComplete;
         uploader.OnUploadProgress += UploadProgress;
@@ -40,7 +40,7 @@ public class VimeoUploaderPlayTest : TestConfig
 
         //Upload the big file
         uploader.Upload(VERY_BIG_FILE_PATH);
-        yield return new WaitUntil(()=> uploaded == true );
+        yield return new WaitUntil(() => uploaded == true);
         Assert.IsTrue(uploaded);
     }
 

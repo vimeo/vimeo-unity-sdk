@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 using Vimeo;
 using Vimeo.Recorder;
 
-public class VimeoRecorderTest : TestConfig 
+public class VimeoRecorderTest : TestConfig
 {
     GameObject recorderObj;
 
@@ -19,11 +19,11 @@ public class VimeoRecorderTest : TestConfig
         // Recorder setup
         recorderObj = new GameObject("Recorder");
         recorder = recorderObj.AddComponent<VimeoRecorder>();
-        recorder.encoderType       = EncoderType.MediaEncoder;
+        recorder.encoderType = EncoderType.MediaEncoder;
         recorder.defaultResolution = Vimeo.Recorder.Resolution.x540p;
-        recorder.realTime          = true;
-        recorder.recordMode        = RecordMode.Duration;
-        recorder.recordDuration    = 5;
+        recorder.realTime = true;
+        recorder.recordMode = RecordMode.Duration;
+        recorder.recordDuration = 5;
 
         System.DateTime dt = System.DateTime.Now;
         recorder.videoName = "(Unity " + Application.unityVersion + ")";
@@ -78,7 +78,7 @@ public class VimeoRecorderTest : TestConfig
         recorder.SignIn(VALID_RECORDING_TOKEN);
         recorder.autoUpload = false;
         recorder.BeginRecording();
-        Assert.IsTrue(recorder.isRecording, "Recording state set to true while recording");     
+        Assert.IsTrue(recorder.isRecording, "Recording state set to true while recording");
         recorder.EndRecording();
         Assert.IsFalse(recorder.isUploading, "Recording state set to true while recording");
         Assert.IsTrue(recorder.encoder.GetVideoFilePath() != "", "A video file path exists");

@@ -130,7 +130,7 @@ public class VimeoPlayerPlayTest : TestConfig
         player.SignIn(VALID_STREAMING_TOKEN);
         player.LoadVideo(VALID_VIMEO_VIDEO_ID);
 
-        yield return new WaitUntil(()=> triggered);
+        yield return new WaitUntil(() => triggered);
 
         string linkToUnfurl = player.vimeoVideo.GetAdaptiveVideoFileURL();
         yield return player.Unfurl(linkToUnfurl);
@@ -146,7 +146,7 @@ public class VimeoPlayerPlayTest : TestConfig
         player.SignIn(VALID_STREAMING_TOKEN);
         player.LoadVideo(VALID_VIMEO_VIDEO_ID);
 
-        yield return new WaitUntil(()=> triggered);
+        yield return new WaitUntil(() => triggered);
 
         string linkToUnfurl = player.vimeoVideo.GetAdaptiveVideoFileURL();
         yield return player.Unfurl(linkToUnfurl);

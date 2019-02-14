@@ -82,8 +82,7 @@ namespace Vimeo.Player
                 if (match.Success) {
                     vimeoVideoId = match.Groups[3].Value;
                     LoadVideo(int.Parse(vimeoVideoId));
-                } 
-                else {
+                } else {
                     Debug.LogError("[Vimeo] Invalid Vimeo URL");
                 }
             }
@@ -121,13 +120,11 @@ namespace Vimeo.Player
                     if (audioSource && audioSource is AudioSource) {
                         if (audioSource != null) {
                             controller.audioSource = audioSource;
-                        } 
-                        else {
+                        } else {
                             videoScreen.gameObject.AddComponent<AudioSource>();
                         }
                     }
-                } 
-                else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
+                } else if (videoPlayerType == VideoPlayerType.UnityPlayer) {
                     controller.videoScreenObject = videoScreen;
                     controller.Setup();
                 }
@@ -143,11 +140,9 @@ namespace Vimeo.Player
         {
             if (!vimeoSignIn) {
                 Debug.LogError("[Vimeo] You are not signed in.");
-            } 
-            else if (String.IsNullOrEmpty(vimeoVideoId)) {
+            } else if (String.IsNullOrEmpty(vimeoVideoId)) {
                 Debug.LogError("[Vimeo] Can't load video. No video was specificed.");
-            } 
-            else {
+            } else {
                 LoadVideo(vimeoVideoId);
             }
         }
@@ -157,8 +152,7 @@ namespace Vimeo.Player
         {
             if (IsPlayerSetup()) {
                 return controller.videoPlayer.isPlaying;
-            } 
-            else {
+            } else {
                 return false;
             }
         }
@@ -198,11 +192,9 @@ namespace Vimeo.Player
         {
             if (!IsVideoMetadataLoaded()) {
                 LoadAndPlayVideo();
-            } 
-            else if (!videoControllerReady) {
+            } else if (!videoControllerReady) {
                 StartCoroutine(VideoControllerPlayVideo());
-            } 
-            else {
+            } else {
                 controller.Play();
             }
         }
@@ -398,13 +390,11 @@ namespace Vimeo.Player
         {
             using (UnityWebRequest www = UnityWebRequest.Get(url)) {
                 yield return VimeoApi.SendRequest(www);
-                
 
-                if (!VimeoApi.IsNetworkError(www))
-                {
+
+                if (!VimeoApi.IsNetworkError(www)) {
                     m_file_url = www.url;
-                } 
-                else {
+                } else {
                     m_file_url = url;
                 }
             }

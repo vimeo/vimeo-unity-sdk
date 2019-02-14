@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Vimeo;
 
-public class VimeoUploaderTest : TestConfig 
+public class VimeoUploaderTest : TestConfig
 {
     GameObject uploaderObj;
     FileInfo testFile;
@@ -36,7 +36,7 @@ public class VimeoUploaderTest : TestConfig
     public void Init_Works()
     {
         uploader.Init("xtokenx", 10000);
-        
+
         Assert.IsNotNull(uploader.chunks);
         Assert.AreEqual(uploader.token, "xtokenx");
         Assert.AreEqual(uploader.maxChunkSize, 10000);
