@@ -8,22 +8,19 @@ using Vimeo.Player;
 using System;
 
 namespace Vimeo
-{  
-    public class BaseEditor : Editor 
+{
+    public class BaseEditor : Editor
     {
         VimeoFetcher fetcher;
 
         private void InitFetcher()
         {
             var settings = target as VimeoSettings;
-            if (fetcher == null)
-            {
-                if (settings.gameObject.GetComponent<VimeoFetcher>())
-                {
+            if (fetcher == null) {
+                if (settings.gameObject.GetComponent<VimeoFetcher>()) {
                     fetcher = settings.gameObject.GetComponent<VimeoFetcher>();
                 }
-                else
-                {
+                else {
                     fetcher = settings.gameObject.AddComponent<VimeoFetcher>();
                 }
             }
@@ -65,7 +62,7 @@ namespace Vimeo
             fetcher.GetRecentVideos();
         }
 
-        protected void GUIManageVideosButton() 
+        protected void GUIManageVideosButton()
         {
             var settings = target as VimeoSettings;
             if (settings.Authenticated() && settings.vimeoSignIn && GUILayout.Button("Manage videos", GUILayout.Width(100))) {
@@ -74,10 +71,10 @@ namespace Vimeo
         }
 
         protected bool GUISelectFolder()
-        {   
+        {
             var so = serializedObject;
             var settings = target as VimeoSettings;
-            
+
             // Folder selection
             GUILayout.BeginHorizontal();
             bool folderChanged = false;
@@ -110,8 +107,7 @@ namespace Vimeo
 
             if (player.currentFolder.uri == "custom") {
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
-            }
-            else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
+            } else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
                 GUILayout.BeginHorizontal();
                 int cur_video_index = player.GetCurrentVideoIndex();
                 int new_video_index = EditorGUILayout.Popup("Selected Video", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
@@ -136,14 +132,13 @@ namespace Vimeo
                     }
                 }
 
-                if (GUILayout.Button("↺", GUILayout.Width(25)) || 
-                    refreshVideos || 
+                if (GUILayout.Button("↺", GUILayout.Width(25)) ||
+                    refreshVideos ||
                     (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoFetcher>() == null)) {
-                        
+
                     if (player.currentFolder.uri == "recent") {
                         GetRecentVideos();
-                    }
-                    else if (player.currentFolder.id > 0) {
+                    } else if (player.currentFolder.id > 0) {
                         GetVideosInFolder(player.currentFolder);
                     }
                 }
@@ -164,7 +159,7 @@ namespace Vimeo
         {
             if (GUILayout.Button("Help", GUILayout.Width(50))) {
                 Application.OpenURL("https://github.com/vimeo/vimeo-unity-sdk");
-            } 
+            }
         }
 
         public void DrawVimeoAuth(VimeoSettings auth)
@@ -175,12 +170,11 @@ namespace Vimeo
                 GUILayout.BeginHorizontal();
 
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoToken"));
-                
+
                 if (GUILayout.Button("Get token", GUILayout.Width(80))) {
                     if (auth is VimeoPlayer) {
                         Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity?scope=public%20private%20video_files");
-                    }
-                    else {
+                    } else {
                         Application.OpenURL("https://authy.vimeo.com/auth/vimeo/unity");
                     }
                 }
@@ -198,8 +192,8 @@ namespace Vimeo
                     }
                 }
                 GUI.backgroundColor = Color.white;
-                
-            } 
+
+            }
         }
 
 

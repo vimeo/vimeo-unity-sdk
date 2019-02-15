@@ -15,7 +15,7 @@ namespace Vimeo.Recorder
         VideoPage,
         ReviewPage
     }
-    
+
     public enum VideoInputType
     {
         Screen,
@@ -23,7 +23,7 @@ namespace Vimeo.Recorder
 #if UNITY_2018_1_OR_NEWER
         Camera360,
 #endif    
-        RenderTexture    
+        RenderTexture
     }
 
     public enum CameraType
@@ -74,7 +74,7 @@ namespace Vimeo.Recorder
 
     public class RecorderSettings : VimeoSettings
     {
-        public EncoderType encoderType          = EncoderType.MediaEncoder;
+        public EncoderType encoderType = EncoderType.MediaEncoder;
 #if VIMEO_AVPRO_CAPTURE_SUPPORT        
         public RenderHeads.Media.AVProMovieCapture.CaptureBase avproEncoder;
 #endif        
@@ -87,16 +87,16 @@ namespace Vimeo.Recorder
         public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
         public bool enableDownloads = true;
         public bool enableReviewPage = true;
-        public LinkType defaultShareLink        = LinkType.VideoPage;
+        public LinkType defaultShareLink = LinkType.VideoPage;
 
         public VideoInputType defaultVideoInput = VideoInputType.Screen;
-        public CameraType defaultCamera         = CameraType.MainCamera;
-        public Camera360Type defaultCamera360   = Camera360Type.MainCamera;
+        public CameraType defaultCamera = CameraType.MainCamera;
+        public Camera360Type defaultCamera360 = Camera360Type.MainCamera;
         public RenderMode360 defaultRenderMode360 = RenderMode360.Stereo;
-        public Resolution defaultResolution     = Resolution.Window;        
-        public AspectRatio defaultAspectRatio   = AspectRatio.x16_9;
-        public RecordMode recordMode            = RecordMode.Manual;
-        public int recordDuration               = 5;
+        public Resolution defaultResolution = Resolution.Window;
+        public AspectRatio defaultAspectRatio = AspectRatio.x16_9;
+        public RecordMode recordMode = RecordMode.Manual;
+        public int recordDuration = 5;
 
         public bool recordAudio = true;
         public bool realTime = false;
@@ -151,8 +151,7 @@ namespace Vimeo.Recorder
     {
         public static float GetRealAR(AspectRatio aspectRatio)
         {
-            switch (aspectRatio)
-            {
+            switch (aspectRatio) {
                 case AspectRatio.x16_9:
                     return 16.0f / 9.0f;
                 case AspectRatio.x16_10:

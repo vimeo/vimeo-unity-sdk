@@ -15,7 +15,8 @@ namespace Vimeo.Recorder
         static bool vimeoFold;
 
         [MenuItem("GameObject/Video/Vimeo Recorder")]
-        private static void CreateRecorderPrefab() {
+        private static void CreateRecorderPrefab()
+        {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoRecorder]") as GameObject);
             go.name = "[VimeoRecorder]";
         }
@@ -51,25 +52,25 @@ namespace Vimeo.Recorder
             // Help Nav            
             GUILayout.BeginHorizontal();
             var style = new GUIStyle();
-            style.border = new RectOffset(0,0,0,0);
+            style.border = new RectOffset(0, 0, 0, 0);
             GUILayout.Box("", style);
-            
+
             GUIManageVideosButton();
             GUIHelpButton();
             GUISignOutButton();
 
             GUILayout.EndHorizontal();
             EditorGUILayout.Space();
-    
+
             // Vimeo Settings
             if (recorder.Authenticated() && recorder.vimeoSignIn) {
-                
+
                 if (!recorder.isRecording) {
                     DrawRecorderConfig(recorder);
                 }
 
                 publishFold = EditorGUILayout.Foldout(publishFold, "Upload to Vimeo");
-                
+
                 if (publishFold) {
                     EditorGUI.indentLevel++;
 
@@ -116,7 +117,7 @@ namespace Vimeo.Recorder
             if (EditorApplication.isPlaying && recorder.encoderType == EncoderType.MediaEncoder) {
                 if (recorder.isRecording) {
                     GUI.backgroundColor = Color.green;
-                    
+
                     if (recorder.autoUpload) {
                         if (GUILayout.Button("Finish & Upload", GUILayout.Height(30))) {
                             recorder.EndRecording();
@@ -131,14 +132,12 @@ namespace Vimeo.Recorder
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
                         recorder.CancelRecording();
                     }
-                }
-                else if (recorder.isUploading) {
+                } else if (recorder.isUploading) {
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
                         recorder.CancelRecording();
                     }
-                }
-                else {
+                } else {
                     GUI.backgroundColor = Color.green;
                     if (GUILayout.Button("Start Recording", GUILayout.Height(30))) {
                         recorder.BeginRecording();
@@ -146,8 +145,7 @@ namespace Vimeo.Recorder
                 }
 
                 GUI.backgroundColor = Color.white;
-            }
-            else {
+            } else {
                 if (recorder.encoderType != EncoderType.AVProMovieCapture) {
                     GUI.backgroundColor = Color.green;
                     if (GUILayout.Button("Start Recording", GUILayout.Height(30))) {
@@ -168,7 +166,7 @@ namespace Vimeo.Recorder
 
                 int seconds = recorder.encoder.GetCurrentFrame() / recorder.frameRate;
                 float progress = recorder.encoder.GetCurrentFrame() / (float)(recorder.recordDuration * recorder.frameRate);
-                
+
                 if (recorder.recordMode != RecordMode.Duration) {
                     progress = 0;
                 }
@@ -214,8 +212,7 @@ namespace Vimeo.Recorder
 
                 if (recorder.captureLookingGlassRT) {
                     recorder.defaultVideoInput = VideoInputType.RenderTexture;
-                }
-                else {
+                } else {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultVideoInput"), new GUIContent("Input"));
                 }
 
@@ -229,17 +226,17 @@ namespace Vimeo.Recorder
                 }
 #endif
 
-                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera || 
+                if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Camera ||
                     recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.Screen) {
                     EditorGUILayout.PropertyField(so.FindProperty("defaultResolution"), new GUIContent("Resolution"));
-                    
+
                     if (recorder.defaultResolution != Vimeo.Recorder.Resolution.Window) {
                         EditorGUILayout.PropertyField(so.FindProperty("defaultAspectRatio"), new GUIContent("Aspect ratio"));
                     }
                 }
 
                 if (recorder.defaultVideoInput == Vimeo.Recorder.VideoInputType.RenderTexture && !recorder.captureLookingGlassRT) {
-                    EditorGUILayout.PropertyField(so.FindProperty("renderTextureTarget"), new GUIContent("Target"));    
+                    EditorGUILayout.PropertyField(so.FindProperty("renderTextureTarget"), new GUIContent("Target"));
                 }
 
                 EditorGUILayout.PropertyField(so.FindProperty("frameRate"));

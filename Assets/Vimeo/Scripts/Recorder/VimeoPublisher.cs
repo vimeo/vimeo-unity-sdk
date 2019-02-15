@@ -18,8 +18,10 @@ namespace Vimeo.Recorder
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
         private VimeoUploader m_vimeoUploader;
-        public VimeoUploader vimeoUploader {
-            get {
+        public VimeoUploader vimeoUploader
+        {
+            get
+            {
                 return m_vimeoUploader;
             }
         }
@@ -55,7 +57,7 @@ namespace Vimeo.Recorder
 
             JSONNode jsonResponse = JSONNode.Parse(response);
             video = new VimeoVideo(jsonResponse);
-            
+
 #if UNITY_2018_1_OR_NEWER
             if (recorder.defaultVideoInput == VideoInputType.Camera360) {
                 m_vimeoUploader.SetVideoSpatialMode("equirectangular", recorder.defaultRenderMode360 == RenderMode360.Stereo ? "top-bottom" : "mono");
@@ -101,9 +103,9 @@ namespace Vimeo.Recorder
                 m_vimeoUploader.Upload(filename, vimeoId);
             } else {
                 Debug.LogError("File doesn't exist, try recording it again");
-            }   
+            }
         }
-        
+
         void UploadProgress(string status, float progress)
         {
             if (OnUploadProgress != null) {
@@ -127,8 +129,7 @@ namespace Vimeo.Recorder
 
         private void UploadError(string err)
         {
-            if (OnUploadProgress != null)
-            {
+            if (OnUploadProgress != null) {
                 OnUploadProgress("UploadError", 0f);
             }
 
@@ -166,8 +167,7 @@ namespace Vimeo.Recorder
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
-                    } 
-                    else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
+                    } else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
                         if (OnNetworkError != null) {
                             OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }

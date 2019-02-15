@@ -11,57 +11,74 @@ namespace Vimeo
     public class VideoChunk : MonoBehaviour
     {
         private long m_startByte;
-        public long startByte {
-            get {
+        public long startByte
+        {
+            get
+            {
                 return m_startByte;
             }
         }
         private long m_lastByteUploaded;
-        public long lastByteUploaded {
-            get {
+        public long lastByteUploaded
+        {
+            get
+            {
                 return m_lastByteUploaded;
             }
-            set {
+            set
+            {
                 m_lastByteUploaded = value;
             }
         }
 
         private string m_url;
-        public string url {
-            get {
+        public string url
+        {
+            get
+            {
                 return m_url;
             }
         }
         public byte[] bytes;
         private string m_filePath;
-        public string filePath {
-            get {
+        public string filePath
+        {
+            get
+            {
                 return m_filePath;
             }
         }
-        
+
         private int m_totalBytes;
-        public int totalBytes {
-            get {
+        public int totalBytes
+        {
+            get
+            {
                 return m_totalBytes;
             }
         }
 
         private bool m_isUploading = false;
-        public bool isUploading {
-            get {
+        public bool isUploading
+        {
+            get
+            {
                 return m_isUploading;
             }
-            set {
+            set
+            {
                 m_isUploading = value;
             }
         }
         private bool m_isFinishedUploading = false;
-        public bool isFinishedUploading {
-            get {
+        public bool isFinishedUploading
+        {
+            get
+            {
                 return m_isFinishedUploading;
             }
-            set {
+            set
+            {
                 m_isFinishedUploading = value;
             }
         }
@@ -71,16 +88,20 @@ namespace Vimeo
         public event UploadEvent OnChunkUploadError;
 
         private UnityWebRequest m_uploadRequest;
-        public UnityWebRequest uploadRequest {
-            get {
+        public UnityWebRequest uploadRequest
+        {
+            get
+            {
                 return m_uploadRequest;
             }
         }
 
         private int maxRetries = 3;
         private int m_totalRetries = 0;
-        public int totalRetries {
-            get {
+        public int totalRetries
+        {
+            get
+            {
                 return m_totalRetries;
             }
         }
@@ -110,18 +131,18 @@ namespace Vimeo
         private IEnumerator SendTusRequest()
         {
             ReadBytes();
-            
+
             m_uploadRequest = UnityWebRequest.Put(m_url, bytes);
             SetupTusRequest(m_uploadRequest);
             m_uploadRequest.method = "PATCH";
             m_uploadRequest.SetRequestHeader("Upload-Offset", m_lastByteUploaded.ToString());
             m_uploadRequest.SetRequestHeader("Content-Type", "application/offset+octet-stream");
-            
+
             m_isUploading = true;
 
             yield return VimeoApi.SendRequest(m_uploadRequest);
 
-            if (m_uploadRequest.isNetworkError || m_uploadRequest.isHttpError) {
+            if (VimeoApi.IsNetworkError(m_uploadRequest)) {
                 UploadError(m_uploadRequest.responseCode + ": " + m_uploadRequest.error);
             } else {
                 m_isUploading = false;
@@ -130,21 +151,20 @@ namespace Vimeo
                     OnChunkUploadComplete(this, m_uploadRequest.GetResponseHeader("Upload-Offset"));
                 }
             }
-            
+
             DisposeBytes();
         }
 
-        public void UploadError(string msg) 
+        public void UploadError(string msg)
         {
             if (m_totalRetries >= maxRetries) {
                 m_isUploading = false;
                 Debug.LogError("[VideoChunk] " + msg);
-                
+
                 if (OnChunkUploadError != null) {
                     OnChunkUploadError(this, msg);
                 }
-            }
-            else {
+            } else {
                 Debug.LogWarning("[VideoChunk] " + msg + " - Retrying...");
                 m_totalRetries++;
                 StartCoroutine(ResumeUpload());
@@ -173,7 +193,7 @@ namespace Vimeo
             Upload();
         }
 
-        private void SetupTusRequest(UnityWebRequest r) 
+        private void SetupTusRequest(UnityWebRequest r)
         {
             r.chunkedTransfer = false;
             r.SetRequestHeader("Tus-Resumable", "1.0.0");

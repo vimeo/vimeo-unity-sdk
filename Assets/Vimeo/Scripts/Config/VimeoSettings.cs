@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 
 
-namespace Vimeo 
-{  
+namespace Vimeo
+{
     public class VimeoSettings : MonoBehaviour
     {
         public string uid;
@@ -20,9 +20,9 @@ namespace Vimeo
         [Tooltip("The token is used to give your app access to your Vimeo account.")]
         public string vimeoToken;
 
-        public bool   buildMode = false;
-        public bool   vimeoSignIn = false;
-        public bool   signInError = false;
+        public bool buildMode = false;
+        public bool vimeoSignIn = false;
+        public bool signInError = false;
         private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
 
         // Played or Overwritten video
@@ -57,7 +57,7 @@ namespace Vimeo
             if (uid == null || uid == "") {
                 uid = System.Guid.NewGuid().ToString();
             }
-            
+
             return VIMEO_TOKEN_PREFIX + this.GetType().Name + "-" + uid;
         }
 
@@ -71,8 +71,7 @@ namespace Vimeo
         {
             if (buildMode) {
                 return vimeoToken;
-            }
-            else {
+            } else {
                 string _t = PlayerPrefs.GetString(GetTokenKey());
                 return _t == "" ? null : _t;
             }
@@ -88,17 +87,16 @@ namespace Vimeo
         {
             if (val == null || val == "") {
                 PlayerPrefs.DeleteKey(key);
-            } 
-            else {
+            } else {
                 PlayerPrefs.SetString(key, val);
             }
-            PlayerPrefs.Save(); 
+            PlayerPrefs.Save();
         }
 
         public void EnableBuildMode()
         {
             vimeoToken = PlayerPrefs.GetString(GetTokenKey());
-            buildMode  = true;
+            buildMode = true;
         }
 
         public virtual void SignIn(string _token)

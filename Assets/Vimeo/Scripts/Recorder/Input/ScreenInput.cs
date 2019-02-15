@@ -11,7 +11,7 @@ namespace Vimeo.Recorder
 
         public override Texture GetFrame()
         {
-            image = ScreenCapture.CaptureScreenshotAsTexture(); 
+            image = ScreenCapture.CaptureScreenshotAsTexture();
             return image;
         }
 
@@ -23,4 +23,4 @@ namespace Vimeo.Recorder
     }
 }
 
-#endif 
+#endif

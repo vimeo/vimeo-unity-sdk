@@ -7,7 +7,7 @@ using UnityEngine.Networking;
 using System.Text.RegularExpressions;
 using Vimeo;
 
-public class VideoChunkTest : TestConfig 
+public class VideoChunkTest : TestConfig
 {
     VideoChunk chunk;
 
@@ -39,7 +39,7 @@ public class VideoChunkTest : TestConfig
     {
         chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 10000);
         chunk.ReadBytes();
-        chunk.bytes[0] = 5;   
+        chunk.bytes[0] = 5;
         chunk.DisposeBytes();
         Assert.AreNotEqual(chunk.bytes[0], 5);
     }
@@ -74,7 +74,7 @@ public class VideoChunkTest : TestConfig
     {
         chunk.Init(0, "test_tus_url", TEST_IMAGE_PATH, 1441);
         chunk.isUploading = true;
-        
+
         Assert.AreEqual(chunk.GetBytesUploaded(), 0);
     }
 

@@ -23,8 +23,10 @@ namespace Vimeo.Recorder
         VimeoFetcher fetcher;
 
         private int m_byteChunkSize = 1024 * 1024 * 128;
-        public int byteChunkSize {
-            set {
+        public int byteChunkSize
+        {
+            set
+            {
                 m_byteChunkSize = value;
             }
         }
@@ -152,7 +154,7 @@ namespace Vimeo.Recorder
         {
             uploadProgress = progress;
 
-            if (status == "UploadComplete") {
+            if (status == "UploadComplete" || status == "UploadError") {
                 publisher.OnUploadProgress -= UploadProgress;
                 publisher.OnNetworkError -= NetworkError;
 
@@ -160,8 +162,14 @@ namespace Vimeo.Recorder
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
 
-                if (OnUploadComplete != null) {
-                    OnUploadComplete();
+                if (status == "UploadComplete") {
+                    if (OnUploadComplete != null) {
+                        OnUploadComplete();
+                    }
+                } else if (status == "UploadError") {
+                    if (OnUploadError != null) {
+                        OnUploadError();
+                    }
                 }
             }
             else if (status == "UploadError")

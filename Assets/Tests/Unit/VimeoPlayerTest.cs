@@ -6,7 +6,8 @@ using System.Collections;
 using System.Text.RegularExpressions;
 using Vimeo.Player;
 
-public class VimeoPlayerTest : TestConfig {
+public class VimeoPlayerTest : TestConfig
+{
 
     GameObject playerObj;
     VimeoPlayer player;
@@ -36,7 +37,7 @@ public class VimeoPlayerTest : TestConfig {
         player.autoPlay = false;
         player.Start();
         player.SignIn("xxx");
-        
+
         Assert.IsNotNull(player.GetComponent<Vimeo.VimeoApi>());
         Assert.AreEqual(player.GetComponent<Vimeo.VimeoApi>().token, "xxx");
     }
@@ -50,7 +51,7 @@ public class VimeoPlayerTest : TestConfig {
         player.autoPlay = false;
         player.Start();
         player.SignIn("xxx");
-        
+
         Assert.AreEqual(player.autoPlay, false);
         Assert.AreEqual(player.IsVideoMetadataLoaded(), false);
         Assert.AreEqual(player.loadingVideoMetadata, false);
@@ -83,7 +84,7 @@ public class VimeoPlayerTest : TestConfig {
         player.Start();
         player.SignIn("xxx");
         player.Play();
-    }    
+    }
 
     [Test]
     public void PlayVideo_Sets_vimeoVideoId_With_String()
@@ -123,7 +124,7 @@ public class VimeoPlayerTest : TestConfig {
         UnityEngine.GameObject.DestroyImmediate(playerObj);
     }
 
-    
+
     ////////////////////////////////////////////////////////
     // Regex pattern matching tests
     // See https://regexr.com/3prh6

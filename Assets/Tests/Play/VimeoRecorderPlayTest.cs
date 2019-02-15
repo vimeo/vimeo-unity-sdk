@@ -27,7 +27,7 @@ public class VimeoRecorderPlayTest : TestConfig
     public void _Before()
     {
         version = "(" + Application.platform + " " + Application.unityVersion + ")";
-        
+
         // Setup cube
         cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.AddComponent<ObjectRotation>();
@@ -47,13 +47,13 @@ public class VimeoRecorderPlayTest : TestConfig
         // Recorder setup
         recorderObj = new GameObject("Recorder");
         recorder = recorderObj.AddComponent<VimeoRecorder>();
-        recorder.encoderType       = EncoderType.MediaEncoder;
+        recorder.encoderType = EncoderType.MediaEncoder;
         recorder.defaultResolution = Vimeo.Recorder.Resolution.x540p;
-        recorder.realTime          = true;
-        recorder.recordMode        = RecordMode.Duration;
-        recorder.recordDuration    = 5;
-        recorder.privacyMode       = VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink;
-        recorder.openInBrowser     = false;
+        recorder.realTime = true;
+        recorder.recordMode = RecordMode.Duration;
+        recorder.recordDuration = 5;
+        recorder.privacyMode = VimeoApi.PrivacyModeDisplay.OnlyPeopleWithPrivateLink;
+        recorder.openInBrowser = false;
 
         System.DateTime dt = System.DateTime.Now;
         recorder.videoName = version;
@@ -64,10 +64,10 @@ public class VimeoRecorderPlayTest : TestConfig
 
     [UnityTest]
     [Timeout(30000)]
-    public IEnumerator Can_Record_Video_From_Screen_With_Valid_Token() 
-    {    
+    public IEnumerator Can_Record_Video_From_Screen_With_Valid_Token()
+    {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
-        
+
         recorder.videoName = "Screen Test " + recorder.videoName;
         recorder.defaultVideoInput = VideoInputType.Screen;
         recorder.SignIn(VALID_RECORDING_TOKEN);
@@ -75,14 +75,14 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        yield return new WaitUntil(()=> uploaded == true);
+        yield return new WaitUntil(() => uploaded == true);
         Assert.IsTrue(uploaded);
     }
 
     [UnityTest]
     [Timeout(30000)]
-    public IEnumerator Can_Record_Video_From_MainCamera_With_Valid_Token() 
-    {    
+    public IEnumerator Can_Record_Video_From_MainCamera_With_Valid_Token()
+    {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
         recorder.videoName = "MainCamera Test " + recorder.videoName;
@@ -92,7 +92,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        yield return new WaitUntil(()=> uploaded == true);
+        yield return new WaitUntil(() => uploaded == true);
         Assert.IsTrue(uploaded);
     }
 
@@ -110,7 +110,7 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += UploadComplete;
 
-        yield return new WaitUntil(()=> uploaded == true);
+        yield return new WaitUntil(() => uploaded == true);
         Assert.IsTrue(uploaded);
     }
 
@@ -121,8 +121,8 @@ public class VimeoRecorderPlayTest : TestConfig
 
     [UnityTest]
     [Timeout(30000)]
-    public IEnumerator Uploads_Video_And_Adds_Video_To_Project() 
-    {    
+    public IEnumerator Uploads_Video_And_Adds_Video_To_Project()
+    {
         UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
 
         recorder.currentFolder = new VimeoFolder("Unity Tests", TEST_PROJECT_FOLDER);
@@ -133,8 +133,8 @@ public class VimeoRecorderPlayTest : TestConfig
 
         recorder.OnUploadComplete += FolderCheckUploadComplete;
 
-        yield return new WaitUntil(()=> finished == true);
-    }    
+        yield return new WaitUntil(() => finished == true);
+    }
 
     private void FolderCheckUploadComplete()
     {
@@ -161,7 +161,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.SignIn(VALID_RECORDING_TOKEN);
         recorder.BeginRecording();
 
-        yield return new WaitUntil(()=> finished == true);
+        yield return new WaitUntil(() => finished == true);
     }
 
     private void FirstUploadComplete()
@@ -169,7 +169,7 @@ public class VimeoRecorderPlayTest : TestConfig
         recorder.OnUploadComplete -= FirstUploadComplete;
         Debug.Log("[TEST] FirstUploadComplete");
         UnityEngine.GameObject.DestroyImmediate(cube);
-        
+
         cube = GameObject.CreatePrimitive(PrimitiveType.Capsule);
         cube.AddComponent<ObjectRotation>();
 
@@ -192,7 +192,7 @@ public class VimeoRecorderPlayTest : TestConfig
     {
         Debug.Log("[TEST] CheckRecentVideos " + resp);
         JSONNode json = JSONNode.Parse(resp);
-        
+
         Assert.AreEqual(json["data"][0]["name"].Value, "Multi Upload Test #2 " + version);
         Assert.AreEqual(json["data"][1]["name"].Value, "Multi Upload Test #1 " + version);
 
