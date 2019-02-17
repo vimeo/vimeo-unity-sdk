@@ -11,8 +11,9 @@ namespace Vimeo.Recorder
     public class VimeoRecorder : RecorderSettings
     {
         public delegate void RecordAction();
+        public delegate void RecordActionMsg(string msg);
         public event RecordAction OnUploadComplete;
-        public event RecordAction OnUploadError;
+        public event RecordActionMsg OnUploadError;
 
         public VimeoPublisher publisher;
 
@@ -125,7 +126,7 @@ namespace Vimeo.Recorder
                 publisher.Init(this, m_byteChunkSize);
 
                 publisher.OnUploadProgress += UploadProgress;
-                publisher.OnNetworkError += NetworkError;
+                publisher.OnUploadError += UploadError;
             }
 
             if (replaceExisting)
@@ -156,7 +157,7 @@ namespace Vimeo.Recorder
 
             if (status == "UploadComplete" || status == "UploadError") {
                 publisher.OnUploadProgress -= UploadProgress;
-                publisher.OnNetworkError -= NetworkError;
+                publisher.OnUploadError -= UploadError;
 
                 isUploading = false;
                 encoder.DeleteVideoFile();
@@ -168,14 +169,14 @@ namespace Vimeo.Recorder
                     }
                 } else if (status == "UploadError") {
                     if (OnUploadError != null) {
-                        OnUploadError();
+                        OnUploadError(status);
                     }
                 }
             }
             else if (status == "UploadError")
             {
                 publisher.OnUploadProgress -= UploadProgress;
-                publisher.OnNetworkError -= NetworkError;
+                publisher.OnUploadError -= UploadError;
 
                 isUploading = false;
                 encoder.DeleteVideoFile();
@@ -183,14 +184,25 @@ namespace Vimeo.Recorder
 
                 if (OnUploadError != null)
                 {
-                    OnUploadError();
+                    OnUploadError(status);
                 }
             }
         }
 
-        private void NetworkError(string status)
+        private void UploadError(string status)
         {
             Debug.LogError(status);
+            publisher.OnUploadProgress -= UploadProgress;
+            publisher.OnUploadError -= UploadError;
+
+            isUploading = false;
+            //encoder.DeleteVideoFile();
+            Destroy(publisher);
+
+            if (OnUploadError != null)
+            {
+                OnUploadError(status);
+            }
         }
 
         private void Dispose()
