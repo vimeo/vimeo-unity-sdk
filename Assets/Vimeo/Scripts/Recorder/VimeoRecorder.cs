@@ -3,6 +3,7 @@ using UnityEngine.Networking;
 using System.IO;
 using Vimeo;
 using System;
+using System.Collections;
 
 namespace Vimeo.Recorder
 {
@@ -12,11 +13,15 @@ namespace Vimeo.Recorder
     {
         public delegate void RecordAction();
         public delegate void RecordActionMsg(string msg);
+        public delegate void RecordActionVal(float val);
+        public event RecordAction OnReady;
+        public event RecordActionVal OnUploadProgress;
         public event RecordAction OnUploadComplete;
         public event RecordActionMsg OnUploadError;
 
         public VimeoPublisher publisher;
 
+        public bool isReady     = false;
         public bool isRecording = false;
         public bool isUploading = false;
         public float uploadProgress = 0;
@@ -24,10 +29,8 @@ namespace Vimeo.Recorder
         VimeoFetcher fetcher;
 
         private int m_byteChunkSize = 1024 * 1024 * 128;
-        public int byteChunkSize
-        {
-            set
-            {
+        public int byteChunkSize {
+            set {
                 m_byteChunkSize = value;
             }
         }
@@ -76,12 +79,13 @@ namespace Vimeo.Recorder
             }
         }
 
-        public void CancelRecording()
+        public void Cancel()
         {
             isRecording = false;
             isUploading = false;
-            encoder.CancelRecording();
+            //encoder.DeleteVideoFile();
             Destroy(publisher);
+            encoder.CancelRecording();
         }
 
         void FetchVideos()
@@ -90,9 +94,9 @@ namespace Vimeo.Recorder
             {
                 fetcher = gameObject.AddComponent<VimeoFetcher>();
                 fetcher.Init(this);
-                fetcher.GetVideosInFolder(currentFolder);
                 fetcher.OnFetchComplete += OnFetchComplete;
                 fetcher.OnFetchError += OnFetchError;
+                fetcher.GetVideosInFolder(currentFolder);
             }
         }
 
@@ -103,6 +107,13 @@ namespace Vimeo.Recorder
 
         private void OnFetchComplete(string response)
         {
+            isReady = true;
+
+            if (OnReady != null)
+            {
+                OnReady.Invoke();
+            }
+
             DestroyFetcher();
         }
 
@@ -118,6 +129,7 @@ namespace Vimeo.Recorder
         //Used if you want to publish the latest recorded video
         public void PublishVideo()
         {
+            Debug.Assert(isReady);
             isUploading = true;
             uploadProgress = 0;
 
@@ -137,10 +149,16 @@ namespace Vimeo.Recorder
                     Debug.LogError("Videos fetching is not complete before replacing publishing");
                 }
 
-                if (string.IsNullOrEmpty(vimeoVideoId) &&
-                    !string.IsNullOrEmpty(videoName))
+                if (string.IsNullOrEmpty(vimeoVideoId))
                 {
-                    SetVimeoIdFromName();
+                    if (!string.IsNullOrEmpty(videoName))
+                    {
+                        SetVimeoIdFromName();
+                    }
+                }
+                else
+                {
+                    SetVimeoVideoFromId();
                 }
 
                 publisher.PublishVideo(encoder.GetVideoFilePath(), vimeoVideoId);
@@ -151,11 +169,19 @@ namespace Vimeo.Recorder
             }
         }
 
+        internal IEnumerator WaitForReady()
+        {
+            while (!isReady)
+            {
+                yield return null;
+            }
+        }
+
         private void UploadProgress(string status, float progress)
         {
             uploadProgress = progress;
 
-            if (status == "UploadComplete" || status == "UploadError") {
+            if (status == "UploadComplete") {
                 publisher.OnUploadProgress -= UploadProgress;
                 publisher.OnUploadError -= UploadError;
 
@@ -163,14 +189,8 @@ namespace Vimeo.Recorder
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
 
-                if (status == "UploadComplete") {
-                    if (OnUploadComplete != null) {
-                        OnUploadComplete();
-                    }
-                } else if (status == "UploadError") {
-                    if (OnUploadError != null) {
-                        OnUploadError(status);
-                    }
+                if (OnUploadComplete != null) {
+                    OnUploadComplete();
                 }
             }
             else if (status == "UploadError")
@@ -185,6 +205,13 @@ namespace Vimeo.Recorder
                 if (OnUploadError != null)
                 {
                     OnUploadError(status);
+                }
+            }
+            else
+            {
+                if (OnUploadProgress != null)
+                {
+                    OnUploadProgress(progress);
                 }
             }
         }
@@ -207,12 +234,9 @@ namespace Vimeo.Recorder
 
         private void Dispose()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Cancel();
             Destroy(encoder);
-            Destroy(publisher);
-            DestroyFetcher();
+            Destroy(fetcher);
         }
 
         void OnDisable()

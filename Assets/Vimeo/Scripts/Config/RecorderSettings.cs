@@ -160,8 +160,14 @@ namespace Vimeo.Recorder
                     if (video.id.ToString() == vimeoVideoId)
                     {
                         currentVideo = video;
-                        videoName = video.GetVideoName();
-                        description = video.description;
+                        if (string.IsNullOrEmpty(videoName))
+                        {
+                            videoName = video.GetVideoName();
+                        }
+                        if (string.IsNullOrEmpty(description))
+                        {
+                            description = video.description;
+                        }
                         break;
                     }
                 }

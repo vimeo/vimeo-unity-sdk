@@ -132,12 +132,12 @@ namespace Vimeo.Recorder
 
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
-                        recorder.CancelRecording();
+                        recorder.Cancel();
                     }
                 } else if (recorder.isUploading) {
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
-                        recorder.CancelRecording();
+                        recorder.Cancel();
                     }
                 } else {
                     GUI.backgroundColor = Color.green;
