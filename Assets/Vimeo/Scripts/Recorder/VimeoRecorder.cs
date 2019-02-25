@@ -137,7 +137,7 @@ namespace Vimeo.Recorder
                     Debug.LogError("Videos fetching is not complete before replacing publishing");
                 }
 
-                if (string.IsNullOrEmpty(vimeoVideoId) && 
+                if (string.IsNullOrEmpty(vimeoVideoId) &&
                     !string.IsNullOrEmpty(videoName))
                 {
                     SetVimeoIdFromName();
@@ -212,6 +212,7 @@ namespace Vimeo.Recorder
             }
             Destroy(encoder);
             Destroy(publisher);
+            DestroyFetcher();
         }
 
         void OnDisable()

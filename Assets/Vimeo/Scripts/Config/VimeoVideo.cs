@@ -51,7 +51,7 @@ namespace Vimeo
             }
             
             if (!JSONNode.IsNullNode(video["description"])) {
-                description = video["description"].Value;
+                description = UnescapeNewLines(video["description"].Value);
             }
             
             if (!JSONNode.IsNullNode(video["duration"])) {
@@ -109,6 +109,11 @@ namespace Vimeo
                 }
                 progressiveFiles.Sort(SortByQuality);
             }
+        }
+
+        private static string UnescapeNewLines(string text)
+        {
+            return text.Replace("\\n", "\n");
         }
 
         public string GetVideoName()

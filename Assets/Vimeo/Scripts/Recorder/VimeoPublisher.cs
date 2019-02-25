@@ -64,7 +64,15 @@ namespace Vimeo.Recorder
             }
 #endif
 
-            m_vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            if (string.IsNullOrEmpty(recorder.description))
+            {
+                m_vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            }
+            else
+            {
+            m_vimeoUploader.SetVideoDescription(recorder.description);
+            }
+
             if (recorder.enableDownloads == false) {
                 m_vimeoUploader.SetVideoDownload(recorder.enableDownloads);
             }

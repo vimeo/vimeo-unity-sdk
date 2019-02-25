@@ -57,7 +57,7 @@ namespace Vimeo
             api.OnRequestComplete += GetVideosComplete;
             api.OnError += OnRequestError;
 
-            api.GetVideosInFolder(folder);
+            api.GetVideosInFolder(folder, "name,uri,description"); // conserve description
         }
 
         public void GetRecentVideos()
@@ -132,12 +132,12 @@ namespace Vimeo
                 }
             }
 
+            Debug.Log("[VimeoFetcher] Completed with " + (settings.vimeoVideos.Count - 1) + " existing videos");
+
             if (OnFetchComplete != null)
             {
-                OnFetchComplete.Invoke("");
+                OnFetchComplete.Invoke(response);
             }
-
-            Debug.Log("[VimeoFetcher] Completed with " + (settings.vimeoVideos.Count - 1) + " existing videos");
         }
 
         private void OnRequestError(string error)

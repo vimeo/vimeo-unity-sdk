@@ -75,7 +75,9 @@ namespace Vimeo.Recorder
                     EditorGUI.indentLevel++;
 
                     EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                    
+
+                    EditorGUILayout.PropertyField(so.FindProperty("description"));
+
                     bool updated = GUISelectFolder();
 
                     EditorGUILayout.PropertyField(so.FindProperty("replaceExisting"));
@@ -183,6 +185,12 @@ namespace Vimeo.Recorder
                 GUILayout.Box("", GUILayout.Height(20));
                 EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
                 GUILayout.EndHorizontal();
+
+                if (recorder.uploadProgress == 1)
+                {
+                    UpdateVideosList();
+                }
+
             }
         }
 

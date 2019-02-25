@@ -82,6 +82,9 @@ namespace Vimeo.Recorder
 
         public RenderTexture renderTextureTarget;
 
+        [TextArea(2, 5)]
+        public string description;
+
         public bool replaceExisting = false;
         public VimeoApi.PrivacyModeDisplay privacyMode = VimeoApi.PrivacyModeDisplay.Anyone;
         public VimeoApi.CommentMode commentMode = VimeoApi.CommentMode.Anyone;
@@ -140,6 +143,25 @@ namespace Vimeo.Recorder
                     {
                         currentVideo = video;
                         vimeoVideoId = video.id.ToString();
+                        description = video.description;
+                        break;
+                    }
+                }
+            }
+        }
+
+        public void SetVimeoVideoFromId()
+        {
+            if (!string.IsNullOrEmpty(vimeoVideoId))
+            {
+                for (int i = 0; i < vimeoVideos.Count; i++)
+                {
+                    var video = vimeoVideos[i];
+                    if (video.id.ToString() == vimeoVideoId)
+                    {
+                        currentVideo = video;
+                        videoName = video.GetVideoName();
+                        description = video.description;
                         break;
                     }
                 }

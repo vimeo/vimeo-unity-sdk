@@ -103,47 +103,47 @@ namespace Vimeo
         protected void GUISelectVideo(bool refreshVideos = false)
         {
             var so = serializedObject;
-            var player = target as VimeoSettings;
+            var settings = target as VimeoSettings;
 
-            if (player.currentFolder.uri == "custom") {
+            if (settings.currentFolder.uri == "custom") {
                 EditorGUILayout.PropertyField(so.FindProperty("vimeoVideoId"), new GUIContent("Vimeo Video URL"));
-            } else if (player.currentFolder.uri != null && player.currentFolder.uri != "") {
+            } else if (settings.currentFolder.uri != null && settings.currentFolder.uri != "") {
                 GUILayout.BeginHorizontal();
-                int cur_video_index = player.GetCurrentVideoIndex();
-                int new_video_index = EditorGUILayout.Popup("Selected Video", cur_video_index, player.vimeoVideos.Select(v => v.name).ToArray()); 
+                int cur_video_index = settings.GetCurrentVideoIndex();
+                int new_video_index = EditorGUILayout.Popup("Selected Video", cur_video_index, settings.vimeoVideos.Select(v => v.name).ToArray()); 
 
                 if (new_video_index != cur_video_index) {
-                    player.currentVideo = player.vimeoVideos[new_video_index];
-                    player.vimeoVideoId = new_video_index > 0 ? player.currentVideo.id.ToString() : null;
-                    if (player is RecorderSettings)
+                    settings.currentVideo = settings.vimeoVideos[new_video_index];
+                    settings.vimeoVideoId = new_video_index > 0 ? settings.currentVideo.id.ToString() : null;
+                    if (settings is RecorderSettings)
                     {
-                        var recorder = player as RecorderSettings;
-                        recorder.videoName = new_video_index > 0 ? player.currentVideo.GetVideoName() : "";
-                    }
-                }
-                else { 
-                    if (player is RecorderSettings)
-                    {
-                        var recorder = player as RecorderSettings;
-                        if (recorder.replaceExisting)
-                        {
-                            recorder.SetVimeoIdFromName();
-                        }
+                        var recorder = settings as RecorderSettings;
+                        recorder.videoName = new_video_index > 0 ? settings.currentVideo.GetVideoName() : "";
+                        recorder.description = new_video_index > 0 ? settings.currentVideo.description : "";
                     }
                 }
 
                 if (GUILayout.Button("↺", GUILayout.Width(25)) ||
                     refreshVideos ||
-                    (player.vimeoVideos.Count == 0 && player.GetComponent<VimeoFetcher>() == null)) {
-
-                    if (player.currentFolder.uri == "recent") {
-                        GetRecentVideos();
-                    } else if (player.currentFolder.id > 0) {
-                        GetVideosInFolder(player.currentFolder);
-                    }
+                    (settings.vimeoVideos.Count == 0 && settings.GetComponent<VimeoFetcher>() == null)) {
+                    UpdateVideosList();
                 }
 
                 GUILayout.EndHorizontal();
+            }
+        }
+
+        protected void UpdateVideosList()
+        {
+            var settings = target as VimeoSettings;
+
+            if (settings.currentFolder.uri == "recent")
+            {
+                GetRecentVideos();
+            }
+            else if (settings.currentFolder.id > 0)
+            {
+                GetVideosInFolder(settings.currentFolder);
             }
         }
 
