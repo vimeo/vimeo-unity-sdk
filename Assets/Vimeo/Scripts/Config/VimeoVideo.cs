@@ -22,6 +22,7 @@ namespace Vimeo
         public bool is3D = false;
         public string stereoFormat = "mono";
         public string projection;
+        private string playLoggingLink;
 
         private JSONNode files;
         private string dashUrl;
@@ -87,6 +88,9 @@ namespace Vimeo
 
                 // Sort the progressive files quality
                 for (int i = 0; i < files["progressive"].Count; i++) {
+                    if (!files["progressive"][i]["log"].IsNull) {
+                        playLoggingLink = files["progressive"][i]["log"].Value;
+                    }
                     progressiveFiles.Add(files["progressive"][i]);
                 }
                 progressiveFiles.Sort(SortByQuality);
@@ -123,6 +127,14 @@ namespace Vimeo
         public JSONNode GetMetadata()
         {
             return GetJsonFromString(this.description);
+        }
+
+        public string GetPlayLoggingLink() 
+        {
+            if (playLoggingLink != null) {
+                return playLoggingLink;
+            }
+            return null;
         }
 
         public JSONNode GetJsonFromString(string content)

@@ -116,6 +116,7 @@ namespace Vimeo.Player
                     controller.OnPlay += VideoPlay;
                     controller.OnPause += VideoPaused;
                     controller.OnFrameReady += VideoFrameReady;
+                    controller.OnPlayLogging += LogPlay;
 
                     if (audioSource && audioSource is AudioSource) {
                         if (audioSource != null) {
@@ -384,6 +385,11 @@ namespace Vimeo.Player
             } else {
                 Debug.LogError("Video could not be found");
             }
+        }
+
+        public void LogPlay(float watchLength)
+        {
+            Debug.Log("Logging playback of video with watch duration of " + watchLength + " seconds");
         }
 
         public IEnumerator Unfurl(string url)

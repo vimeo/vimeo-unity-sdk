@@ -16,6 +16,9 @@ namespace Vimeo.Player
         public event PlaybackAction OnPlay;
         public event PlaybackAction OnFrameReady;
 
+        public delegate void PlaybackEvent(float progress);
+        public event PlaybackEvent OnPlayLogging;
+
         public GameObject videoScreenObject;
         public int width;
         public int height;
@@ -67,6 +70,7 @@ namespace Vimeo.Player
                     videoPlayer.errorReceived += VideoPlayerError;
                     videoPlayer.prepareCompleted += VideoPlayerStarted;
                     videoPlayer.seekCompleted += VideoSeekCompleted;
+                    videoPlayer.loopPointReached += VideoEnded;
                     videoPlayer.frameReady += VideoFrameReady;
 
                     videoPlayer.isLooping = true;
@@ -241,6 +245,15 @@ namespace Vimeo.Player
             isSeeking = false;
         }
 
+        private void VideoEnded(VideoPlayer source) 
+        {
+            if (videoPlayer != null) {
+                if (OnPlayLogging != null) {
+                    OnPlayLogging((float)GetDuration());
+                }
+            }
+        }
+
         IEnumerator WaitForRenderTexture()
         {
             yield return new WaitUntil(() => videoPlayer.isPrepared);
@@ -263,9 +276,18 @@ namespace Vimeo.Player
             if (OnVideoStart != null) OnVideoStart(this);
         }
 
-        private void OnDisable()
+        private void OnApplicationQuit()
         {
             if (videoPlayer != null) {
+                if (OnPlayLogging != null) {
+                    OnPlayLogging((float)videoPlayer.time);
+                }
+            }
+        }
+
+        private void OnDisable()
+        {
+            if (videoPlayer != null) {                
                 videoPlayer.Stop();
                 videoPlayer.prepareCompleted -= VideoPlayerStarted;
                 videoPlayer.errorReceived -= VideoPlayerError;
