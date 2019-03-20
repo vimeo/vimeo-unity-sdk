@@ -175,8 +175,8 @@ namespace Vimeo
 
         public void UpdatePlayLogging(string playLoggingLink, float watchLength)
         {
-            string playLoggingBody = "{ \"session_id\": \"" + sessionId + "\", \"furthest_watched_time_code\": \"" + watchLength +  "\", \"exit_watched_time_code\": \"" + watchLength + "\", \"vuid\": \"" + vuid + "\", \"locale\": \"en_US\" }";
-            StartCoroutine(Post(playLoggingLink, playLoggingBody));
+            PlayLogJSON playLogBody = new PlayLogJSON(sessionId, watchLength, watchLength, vuid);
+            StartCoroutine(Post(playLoggingLink, JsonUtility.ToJson(playLogBody)));
         }
 
         public IEnumerator Patch(string url)
