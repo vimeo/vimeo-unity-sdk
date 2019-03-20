@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
+using Vimeo;
 
 namespace Vimeo
 {
@@ -42,6 +43,10 @@ namespace Vimeo
         public event RequestAction OnError;
         public event RequestAction OnNetworkError;
 
+        private UUIDGenerator uuidGenerator;
+        private string sessionId = null;
+        private string vuid = null;
+
         private string video_file_path;
 
         [HideInInspector]
@@ -51,6 +56,12 @@ namespace Vimeo
 
         public void Start()
         {
+            if (uuidGenerator == null) {
+                uuidGenerator = new UUIDGenerator();
+                sessionId = uuidGenerator.Generate(40);
+                vuid = uuidGenerator.Generate(255);
+            }
+
             this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
         }
@@ -162,6 +173,12 @@ namespace Vimeo
             StartCoroutine(Patch(API_URL + "/videos/" + video.id));
         }
 
+        public void UpdatePlayLogging(string playLoggingLink, float watchLength)
+        {
+            string playLoggingBody = "{ \"session_id\": \"" + sessionId + "\", \"furthest_watched_time_code\": \"" + watchLength +  "\", \"exit_watched_time_code\": \"" + watchLength + "\", \"vuid\": \"" + vuid + "\", \"locale\": \"en_US\" }";
+            StartCoroutine(Post(playLoggingLink, playLoggingBody));
+        }
+
         public IEnumerator Patch(string url)
         {
             using (UnityWebRequest request = UnityWebRequest.Post(url, form)) {
@@ -200,9 +217,21 @@ namespace Vimeo
             }
         }
 
+        IEnumerator Post(string api_path, string body="")
+        {
+            if (token != null) {
+                using (UnityWebRequest request = UnityWebRequest.Put(api_path, body)) {
+                    PrepareTusHeaders(request);
+                    yield return VimeoApi.SendRequest(request);
+                    ResponseHandler(request);
+                }
+            }
+        }
+
         private void ResponseHandler(UnityWebRequest request)
         {
             if (request.error != null) {
+                Debug.Log(request.error);
                 if (request.responseCode == 401) {
                     SendError("401 Unauthorized request. Are you using a valid token?", request.downloadHandler.text);
                 } else if (IsNetworkError(request)) {

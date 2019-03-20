@@ -389,7 +389,7 @@ namespace Vimeo.Player
 
         public void LogPlay(float watchLength)
         {
-            Debug.Log("Logging playback of video with watch duration of " + watchLength + " seconds");
+            api.UpdatePlayLogging(vimeoVideo.GetPlayLoggingLink(), watchLength);
         }
 
         public IEnumerator Unfurl(string url)

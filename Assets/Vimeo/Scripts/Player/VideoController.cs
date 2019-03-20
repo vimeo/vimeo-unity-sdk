@@ -171,6 +171,9 @@ namespace Vimeo.Player
             if (OnPause != null) {
                 OnPause(this);
             }
+            if (OnPlayLogging != null) {
+                OnPlayLogging((float)videoPlayer.time);
+            }
         }
 
         public void Play()
