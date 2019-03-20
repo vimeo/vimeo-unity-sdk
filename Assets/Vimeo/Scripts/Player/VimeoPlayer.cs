@@ -389,7 +389,9 @@ namespace Vimeo.Player
 
         public void LogPlay(float watchLength)
         {
-            api.UpdatePlayLogging(vimeoVideo.GetPlayLoggingLink(), watchLength);
+            if (!Application.isEditor) {
+                api.UpdatePlayLogging(vimeoVideo.GetPlayLoggingLink(), watchLength);
+            }
         }
 
         public IEnumerator Unfurl(string url)
