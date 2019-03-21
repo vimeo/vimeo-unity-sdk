@@ -42,6 +42,7 @@ namespace Vimeo
         public event RequestAction OnRequestComplete;
         public event RequestAction OnError;
         public event RequestAction OnNetworkError;
+        public event RequestAction OnPlayLoggingComplete;
 
         private UUIDGenerator uuidGenerator;
         private string sessionId = null;
@@ -223,6 +224,7 @@ namespace Vimeo
                 using (UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, body)) {
                     PrepareTusHeaders(request);
                     yield return VimeoApi.SendRequest(request);
+                    Debug.Log(request.responseCode);
                     ResponseHandler(request);
                 }
             }
@@ -242,9 +244,17 @@ namespace Vimeo
                 } else {
                     SendError(request.url + " - " + request.downloadHandler.text, request.downloadHandler.text);
                 }
-            } else if (OnRequestComplete != null) {
-                OnRequestComplete(request.downloadHandler.text);
-            }
+            } else {
+                if (request.responseCode == 202) {
+                    if (OnPlayLoggingComplete != null) {
+                        OnPlayLoggingComplete(request.responseCode.ToString());
+                    }
+                } else {
+                    if (OnRequestComplete != null) {
+                        OnRequestComplete(request.downloadHandler.text);
+                    }
+                }
+            } 
         }
 
         private void SendError(string msg, string error)

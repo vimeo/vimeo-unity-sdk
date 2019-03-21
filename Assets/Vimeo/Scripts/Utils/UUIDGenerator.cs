@@ -6,7 +6,7 @@ namespace Vimeo
     public class UUIDGenerator
     {
 
-        static string glyphs = "abcdefghijklmnopqrstuvwxyz0123456789";
+        public static string glyphs = "abcdefghijklmnopqrstuvwxyz0123456789";
 
         public string Generate(int length)
         {

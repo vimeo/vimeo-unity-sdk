@@ -51,6 +51,7 @@ namespace Vimeo.Player
                 api = gameObject.AddComponent<VimeoApi>();
                 api.token = GetVimeoToken();
                 api.OnError += ApiError;
+                api.OnPlayLoggingComplete += PlayLoggingComplete;
             }
 
             SetupVideoController();
@@ -385,6 +386,11 @@ namespace Vimeo.Player
             } else {
                 Debug.LogError("Video could not be found");
             }
+        }
+
+        public void PlayLoggingComplete(string responseCode)
+        {
+            Debug.Log("Play logging complete and returned with response code " + responseCode);
         }
 
         public void LogPlay(float watchLength)
