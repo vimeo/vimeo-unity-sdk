@@ -22,6 +22,7 @@ namespace Vimeo.Player
         public event VimeoEvent OnPlay;
         public event VimeoEvent OnFrameReady;
         public event VimeoEvent OnLoadError;
+        public event VimeoEvent OnPlayLoggingComplete;
 
         public GameObject videoScreen;
         public AudioSource audioSource;
@@ -388,14 +389,18 @@ namespace Vimeo.Player
             }
         }
 
-        public void PlayLoggingComplete(string responseCode)
+        private void PlayLoggingComplete(string responseCode)
         {
-            Debug.Log("Play logging complete and returned with response code " + responseCode);
+            if (OnPlayLoggingComplete != null) {
+                OnPlayLoggingComplete();
+            } else {
+                Debug.Log("Play logging complete and returned with response code " + responseCode);
+            }
         }
 
-        public void LogPlay(float watchLength)
+        public void LogPlay(float watchLength, bool isEditor)
         {
-            if (!Application.isEditor) {
+            if (!isEditor) {
                 api.UpdatePlayLogging(vimeoVideo.GetPlayLoggingLink(), watchLength);
             }
         }

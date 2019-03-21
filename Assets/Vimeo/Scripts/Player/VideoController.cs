@@ -16,7 +16,7 @@ namespace Vimeo.Player
         public event PlaybackAction OnPlay;
         public event PlaybackAction OnFrameReady;
 
-        public delegate void PlaybackEvent(float progress);
+        public delegate void PlaybackEvent(float progress, bool condition);
         public event PlaybackEvent OnPlayLogging;
 
         public GameObject videoScreenObject;
@@ -172,7 +172,7 @@ namespace Vimeo.Player
                 OnPause(this);
             }
             if (OnPlayLogging != null) {
-                OnPlayLogging((float)videoPlayer.time);
+                OnPlayLogging((float)videoPlayer.time, Application.isEditor);
             }
         }
 
@@ -252,7 +252,7 @@ namespace Vimeo.Player
         {
             if (videoPlayer != null) {
                 if (OnPlayLogging != null) {
-                    OnPlayLogging((float)GetDuration());
+                    OnPlayLogging((float)GetDuration(), Application.isEditor);
                 }
             }
         }
@@ -283,7 +283,7 @@ namespace Vimeo.Player
         {
             if (videoPlayer != null) {
                 if (OnPlayLogging != null) {
-                    OnPlayLogging((float)videoPlayer.time);
+                    OnPlayLogging((float)videoPlayer.time, Application.isEditor);
                 }
             }
         }

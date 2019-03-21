@@ -158,6 +158,22 @@ public class VimeoPlayerPlayTest : TestConfig
         Assert.AreEqual(player.m_file_url, unfurledLink);
     }
 
+    [UnityTest]
+    public IEnumerator LogPlay_Triggers_Event_When_Logs_Play_And_Not_In_Editor()
+    {
+        player.OnPlayLoggingComplete += EventTriggered;
+
+        player.SignIn(VALID_STREAMING_TOKEN);
+        player.PlayVideo(VALID_VIMEO_VIDEO_ID);
+
+        yield return new WaitForSeconds(1.0f);
+        player.LogPlay(1.0f, false);
+
+        UnityEngine.TestTools.LogAssert.NoUnexpectedReceived();
+
+        yield return new WaitUntil(() => triggered);
+    }
+
     private void EventTriggered()
     {
         triggered = true;
