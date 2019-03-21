@@ -175,7 +175,7 @@ namespace Vimeo
 
         public void UpdatePlayLogging(string playLoggingLink, float watchLength)
         {
-            PlayLogJSON playLogBody = new PlayLogJSON(sessionId, watchLength, watchLength, vuid);
+            PlayLogging playLogBody = new PlayLogging(sessionId, watchLength, watchLength, vuid);
             StartCoroutine(Post(playLoggingLink, JsonUtility.ToJson(playLogBody)));
         }
 
@@ -220,7 +220,7 @@ namespace Vimeo
         IEnumerator Post(string api_path, string body="")
         {
             if (token != null) {
-                using (UnityWebRequest request = UnityWebRequest.Put(api_path, body)) {
+                using (UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, body)) {
                     PrepareTusHeaders(request);
                     yield return VimeoApi.SendRequest(request);
                     ResponseHandler(request);

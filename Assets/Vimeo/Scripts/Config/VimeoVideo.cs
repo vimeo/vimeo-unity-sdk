@@ -89,7 +89,7 @@ namespace Vimeo
                 // Sort the progressive files quality
                 for (int i = 0; i < files["progressive"].Count; i++) {
                     if (!files["progressive"][i]["log"].IsNull) {
-                        playLoggingLink = files["progressive"][i]["log"].Value;
+                        playLoggingLink = GetPathFromUrl(files["progressive"][i]["log"].Value);
                     }
                     progressiveFiles.Add(files["progressive"][i]);
                 }
@@ -113,6 +113,11 @@ namespace Vimeo
                 }
                 progressiveFiles.Sort(SortByQuality);
             }
+        }
+
+        public string GetPathFromUrl(string query)
+        {
+            return Regex.Split(query, @"\/\/(.+?)(\/.*)")[2];
         }
 
         public int CompareTo(VimeoVideo other)

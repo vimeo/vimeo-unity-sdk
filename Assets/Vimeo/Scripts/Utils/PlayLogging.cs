@@ -5,7 +5,7 @@ using System;
 namespace Vimeo
 {
     [Serializable]
-    public class PlayLogJSON
+    public class PlayLogging
     {
       public string session_id;
       public float furthest_watched_time_code;
@@ -13,7 +13,7 @@ namespace Vimeo
       public string vuid;
       public string locale;
 
-      public PlayLogJSON(string _session_id,
+      public PlayLogging(string _session_id,
           float _furthest_watched_time_code,
           float _exit_watched_time_code,
           string _vuid,
