@@ -3,6 +3,7 @@ using System.IO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -233,7 +234,7 @@ namespace Vimeo
                     SendError(request.url + " - " + request.downloadHandler.text, request.downloadHandler.text);
                 }
             } else {
-                if (request.responseCode == 202) {
+                if (request.responseCode == 202 && Regex.IsMatch(request.url, @"\/log\/")) {
                     if (OnPlayLoggingComplete != null) {
                         OnPlayLoggingComplete(request.responseCode.ToString());
                     }
@@ -244,7 +245,7 @@ namespace Vimeo
                 }
             } 
         }
-
+        
         private void SendError(string msg, string error)
         {
             Debug.LogError("[VimeoApi] " + msg);
