@@ -224,7 +224,6 @@ namespace Vimeo
                 using (UnityWebRequest request = UnityWebRequest.Put(API_URL + api_path, body)) {
                     PrepareTusHeaders(request);
                     yield return VimeoApi.SendRequest(request);
-                    Debug.Log(request.responseCode);
                     ResponseHandler(request);
                 }
             }
@@ -233,7 +232,6 @@ namespace Vimeo
         private void ResponseHandler(UnityWebRequest request)
         {
             if (request.error != null) {
-                Debug.Log(request.error);
                 if (request.responseCode == 401) {
                     SendError("401 Unauthorized request. Are you using a valid token?", request.downloadHandler.text);
                 } else if (IsNetworkError(request)) {
