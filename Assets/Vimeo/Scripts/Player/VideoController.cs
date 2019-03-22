@@ -28,6 +28,7 @@ namespace Vimeo.Player
         public AudioSource audioSource;
         private RenderTexture videoRT;
 
+        public bool isPlayLogging = false;
         private bool is3D;
         private string stereoFormat;
         private MaterialPropertyBlock block;
@@ -171,7 +172,7 @@ namespace Vimeo.Player
             if (OnPause != null) {
                 OnPause(this);
             }
-            if (OnPlayLogging != null) {
+            if (isPlayLogging && OnPlayLogging != null) {
                 OnPlayLogging((float)videoPlayer.time, Application.isEditor);
             }
         }
@@ -250,7 +251,7 @@ namespace Vimeo.Player
 
         private void VideoEnded(VideoPlayer source) 
         {
-            if (videoPlayer != null && OnPlayLogging != null) {
+            if (isPlayLogging && videoPlayer != null && OnPlayLogging != null) {
                 OnPlayLogging((float)GetDuration(), Application.isEditor);
             }
         }
@@ -279,10 +280,8 @@ namespace Vimeo.Player
 
         private void OnApplicationQuit()
         {
-            if (videoPlayer != null) {
-                if (OnPlayLogging != null) {
-                    OnPlayLogging((float)videoPlayer.time, Application.isEditor);
-                }
+            if (isPlayLogging && videoPlayer != null && OnPlayLogging != null) {
+                OnPlayLogging((float)videoPlayer.time, Application.isEditor);
             }
         }
 
@@ -293,6 +292,7 @@ namespace Vimeo.Player
                 videoPlayer.prepareCompleted -= VideoPlayerStarted;
                 videoPlayer.errorReceived -= VideoPlayerError;
                 videoPlayer.seekCompleted -= VideoSeekCompleted;
+                videoPlayer.loopPointReached -= VideoEnded;
 
                 if (videoRT != null) {
                     videoRT.Release();

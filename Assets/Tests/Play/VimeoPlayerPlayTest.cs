@@ -165,6 +165,7 @@ public class VimeoPlayerPlayTest : TestConfig
 
         player.SignIn(VALID_STREAMING_TOKEN);
         player.PlayVideo(VALID_VIMEO_VIDEO_ID);
+        player.controller.isPlayLogging = true;
 
         yield return new WaitForSeconds(1.0f);
         player.LogPlay(1.0f, false);
