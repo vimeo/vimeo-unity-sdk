@@ -44,10 +44,6 @@ namespace Vimeo
         public event RequestAction OnNetworkError;
         public event RequestAction OnPlayLoggingComplete;
 
-        private UUIDGenerator uuidGenerator;
-        private string sessionId = null;
-        private string vuid = null;
-
         private string video_file_path;
 
         [HideInInspector]
@@ -57,12 +53,6 @@ namespace Vimeo
 
         public void Start()
         {
-            if (uuidGenerator == null) {
-                uuidGenerator = new UUIDGenerator();
-                sessionId = uuidGenerator.Generate(40);
-                vuid = uuidGenerator.Generate(255);
-            }
-
             this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
         }
@@ -176,7 +166,7 @@ namespace Vimeo
 
         public void UpdatePlayLogging(string playLoggingLink, float watchLength)
         {
-            PlayLogging playLogBody = new PlayLogging(sessionId, watchLength, watchLength, vuid);
+            PlayLogging playLogBody = new PlayLogging(watchLength);
             StartCoroutine(Post(playLoggingLink, JsonUtility.ToJson(playLogBody)));
         }
 

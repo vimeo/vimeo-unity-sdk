@@ -12,6 +12,7 @@ namespace Vimeo
       public float exit_watched_time_code;
       public string vuid;
       public string locale;
+      public static UUIDGenerator uuidGenerator;
 
       public PlayLogging(string _session_id,
           float _furthest_watched_time_code,
@@ -23,6 +24,17 @@ namespace Vimeo
         exit_watched_time_code = _exit_watched_time_code;
         vuid = _vuid;
         locale = _locale;
+      }
+
+      public PlayLogging(float _furthest_watched_time_code) {
+        if (PlayLogging.uuidGenerator == null) {
+          PlayLogging.uuidGenerator = new UUIDGenerator();
+        }
+        session_id = PlayLogging.uuidGenerator.Generate(40);
+        furthest_watched_time_code = _furthest_watched_time_code;
+        exit_watched_time_code = _furthest_watched_time_code;
+        vuid = PlayLogging.uuidGenerator.Generate(255);
+        locale = "en_US";
       }
     }
 }

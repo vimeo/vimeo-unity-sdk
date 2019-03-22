@@ -393,9 +393,7 @@ namespace Vimeo.Player
         {
             if (OnPlayLoggingComplete != null) {
                 OnPlayLoggingComplete();
-            } else {
-                Debug.Log("Play logging complete and returned with response code " + responseCode);
-            }
+            } 
         }
 
         public void LogPlay(float watchLength, bool isEditor)
