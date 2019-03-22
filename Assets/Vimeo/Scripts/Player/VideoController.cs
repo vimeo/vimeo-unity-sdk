@@ -250,10 +250,8 @@ namespace Vimeo.Player
 
         private void VideoEnded(VideoPlayer source) 
         {
-            if (videoPlayer != null) {
-                if (OnPlayLogging != null) {
-                    OnPlayLogging((float)GetDuration(), Application.isEditor);
-                }
+            if (videoPlayer != null && OnPlayLogging != null) {
+                OnPlayLogging((float)GetDuration(), Application.isEditor);
             }
         }
 
