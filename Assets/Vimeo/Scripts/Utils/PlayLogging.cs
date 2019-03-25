@@ -4,6 +4,7 @@ using System;
 
 namespace Vimeo
 {
+
     [Serializable]
     public class PlayLogging
     {
@@ -12,6 +13,9 @@ namespace Vimeo
       public float exit_watched_time_code;
       public string vuid;
       public string locale;
+      public string context;
+      public string context_uri;
+
       public static UUIDGenerator uuidGenerator;
 
       public PlayLogging(string _session_id,
@@ -24,6 +28,8 @@ namespace Vimeo
         exit_watched_time_code = _exit_watched_time_code;
         vuid = _vuid;
         locale = _locale;
+        context = "off_site";
+        context_uri ="Vimeo Unity SDK";
       }
 
       public PlayLogging(float _furthest_watched_time_code) {
@@ -35,6 +41,8 @@ namespace Vimeo
         exit_watched_time_code = _furthest_watched_time_code;
         vuid = PlayLogging.uuidGenerator.Generate(255);
         locale = "en_US";
+        context = "off_site";
+        context_uri ="Vimeo Unity SDK";
       }
     }
 }
