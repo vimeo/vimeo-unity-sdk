@@ -23,7 +23,7 @@ public class PlayLoggingTest : TestConfig
         sessionId = uuid.Generate(40);
         vuid = uuid.Generate(255);
 
-        testConcatString = "{\"session_id\":\"" + sessionId +  "\",\"furthest_watched_time_code\":15.0,\"exit_watched_time_code\":15.0,\"vuid\":\"" + vuid + "\",\"locale\":\"en_US\"}";
+        testConcatString = "{\"session_id\":\"" + sessionId +  "\",\"furthest_watched_time_code\":15.0,\"exit_watched_time_code\":15.0,\"vuid\":\"" + vuid + "\",\"locale\":\"en_US\",\"context\":\"off_site\",\"context_uri\":\"Vimeo Unity SDK\"}";
 
         log = new PlayLogging(sessionId, 15.0f, 15.0f, vuid);
     }
