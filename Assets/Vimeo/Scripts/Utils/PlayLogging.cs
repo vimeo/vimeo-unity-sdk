@@ -44,5 +44,11 @@ namespace Vimeo
         context = "off_site";
         context_uri ="Vimeo Unity SDK";
       }
+
+      public void Update(float _furthest_watched_time_code)
+      {
+        furthest_watched_time_code = _furthest_watched_time_code;
+        exit_watched_time_code = _furthest_watched_time_code;
+      }
     }
 }

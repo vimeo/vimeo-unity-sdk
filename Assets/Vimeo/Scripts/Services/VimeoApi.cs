@@ -51,11 +51,16 @@ namespace Vimeo
         public string token;
         public static string API_URL = "https://api.vimeo.com";
         private WWWForm form;
+        private PlayLogging playLogBody;
 
         public void Start()
         {
             this.hideFlags = HideFlags.HideInInspector;
             form = new WWWForm();
+
+            if (playLogBody == null) {
+                 playLogBody = new PlayLogging(0.0f);
+            }
         }
 
         public void GetVideoFileUrlByVimeoId(int video_id, string fields = "name,uri,duration,width,height,spatial,play,files,description")
@@ -167,7 +172,8 @@ namespace Vimeo
 
         public void UpdatePlayLogging(string playLoggingLink, float watchLength)
         {
-            PlayLogging playLogBody = new PlayLogging(watchLength);
+            playLogBody.Update(watchLength);
+            Debug.Log(JsonUtility.ToJson(playLogBody));
             StartCoroutine(Post(playLoggingLink, JsonUtility.ToJson(playLogBody)));
         }
 
