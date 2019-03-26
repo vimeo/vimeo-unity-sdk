@@ -173,7 +173,6 @@ namespace Vimeo
         public void UpdatePlayLogging(string playLoggingLink, float watchLength)
         {
             playLogBody.Update(watchLength);
-            Debug.Log(JsonUtility.ToJson(playLogBody));
             StartCoroutine(Post(playLoggingLink, JsonUtility.ToJson(playLogBody)));
         }
 
