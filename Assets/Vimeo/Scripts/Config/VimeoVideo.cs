@@ -33,7 +33,7 @@ namespace Vimeo
             name = _name;
             uri = _uri;
             if (_uri != null) {
-                string[] matches = Regex.Split(_uri, "/([0-9]+)$");
+                string[] matches = Regex.Split(_uri, "/([0-9]+)"); 
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                 }
@@ -42,38 +42,38 @@ namespace Vimeo
 
         public VimeoVideo(JSONNode video)
         {
-            if (video["name"] != null) {
+            if (!JSONNode.IsNullNode(video["name"])) {
                 name = video["name"].Value;
             }
-
-            if (video["uri"] != null) {
+            
+            if (!JSONNode.IsNullNode(video["uri"])) {
                 uri = video["uri"].Value;
             }
-
-            if (video["description"] != null) {
-                description = video["description"].Value;
+            
+            if (!JSONNode.IsNullNode(video["description"])) {
+                description = UnescapeNewLines(video["description"].Value);
             }
-
-            if (video["duration"] != null) {
+            
+            if (!JSONNode.IsNullNode(video["duration"])) {
                 duration = int.Parse(video["duration"].Value);
             }
 
-            if (video["width"] != null) {
+            if (!JSONNode.IsNullNode(video["width"])) {
                 width = int.Parse(video["width"].Value);
             }
 
-            if (video["height"] != null) {
+            if (!JSONNode.IsNullNode(video["height"])) {
                 height = int.Parse(video["height"].Value);
             }
 
-            if (video["spatial"] != null && !video["spatial"].IsNull) {
+            if (!JSONNode.IsNullNode(video["spatial"])) {
                 is3D = true;
                 projection = video["spatial"]["projection"].Value;
                 stereoFormat = video["spatial"]["stereo_format"].Value;
             }
 
             if (uri != null) {
-                string[] matches = Regex.Split(uri, "/([0-9]+)$");
+                string[] matches = Regex.Split(uri, "/([0-9]+)"); 
                 if (matches.Length > 1) {
                     id = int.Parse(matches[1]);
                     name = name + " (" + id + ")";
@@ -109,6 +109,20 @@ namespace Vimeo
                 }
                 progressiveFiles.Sort(SortByQuality);
             }
+        }
+
+        private static string UnescapeNewLines(string text)
+        {
+            return text.Replace("\\n", "\n");
+        }
+
+        public string GetVideoName()
+        {
+            string videoIdParenthesisSuffix = " (" + id + ")";
+            if (name.EndsWith(videoIdParenthesisSuffix)) {
+                return name.Substring(0, name.Length - videoIdParenthesisSuffix.Length);
+            }
+            return name;
         }
 
         public int CompareTo(VimeoVideo other)

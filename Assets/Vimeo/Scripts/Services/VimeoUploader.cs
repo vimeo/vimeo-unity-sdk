@@ -120,13 +120,20 @@ namespace Vimeo
             }
         }
 
-        public void Upload(string _file)
+        public void Upload(string _file, string vimeoId = null)
         {
             m_file = _file;
             m_fileInfo = new FileInfo(m_file);
 
             OnRequestComplete += RequestComplete;
-            StartCoroutine(RequestTusResource("me/videos", m_fileInfo.Length));
+            if (!string.IsNullOrEmpty(vimeoId))
+            {
+                StartCoroutine(TusUploadReplace(vimeoId, Path.GetFileName(m_file), m_fileInfo.Length));
+            }
+            else
+            {
+                StartCoroutine(TusUploadNew(m_fileInfo.Length));
+            }
             m_isUploading = true;
         }
 

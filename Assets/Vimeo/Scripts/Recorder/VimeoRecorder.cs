@@ -2,6 +2,8 @@
 using UnityEngine.Networking;
 using System.IO;
 using Vimeo;
+using System;
+using System.Collections;
 
 namespace Vimeo.Recorder
 {
@@ -10,19 +12,25 @@ namespace Vimeo.Recorder
     public class VimeoRecorder : RecorderSettings
     {
         public delegate void RecordAction();
+        public delegate void RecordActionMsg(string msg);
+        public delegate void RecordActionVal(float val);
+        public event RecordAction OnReady;
+        public event RecordActionVal OnUploadProgress;
         public event RecordAction OnUploadComplete;
-        public event RecordAction OnUploadError;
+        public event RecordActionMsg OnUploadError;
 
         public VimeoPublisher publisher;
 
+        public bool isReady     = false;
         public bool isRecording = false;
         public bool isUploading = false;
         public float uploadProgress = 0;
+
+        VimeoFetcher fetcher;
+
         private int m_byteChunkSize = 1024 * 1024 * 128;
-        public int byteChunkSize
-        {
-            set
-            {
+        public int byteChunkSize {
+            set {
                 m_byteChunkSize = value;
             }
         }
@@ -36,6 +44,11 @@ namespace Vimeo.Recorder
 
             if (recordOnStart) {
                 BeginRecording();
+            }
+            else if (replaceExisting)
+            {
+                // we want an updated video list, without a need for the editor
+                FetchVideos();
             }
         }
 
@@ -66,17 +79,57 @@ namespace Vimeo.Recorder
             }
         }
 
-        public void CancelRecording()
+        public void Cancel()
         {
             isRecording = false;
             isUploading = false;
-            encoder.CancelRecording();
+            //encoder.DeleteVideoFile();
             Destroy(publisher);
+            encoder.CancelRecording();
+        }
+
+        void FetchVideos()
+        {
+            if (fetcher == null)
+            {
+                fetcher = gameObject.AddComponent<VimeoFetcher>();
+                fetcher.Init(this);
+                fetcher.OnFetchComplete += OnFetchComplete;
+                fetcher.OnFetchError += OnFetchError;
+                fetcher.GetVideosInFolder(currentFolder);
+            }
+        }
+
+        private void OnFetchError(string response)
+        {
+            DestroyFetcher();
+        }
+
+        private void OnFetchComplete(string response)
+        {
+            isReady = true;
+
+            if (OnReady != null)
+            {
+                OnReady.Invoke();
+            }
+
+            DestroyFetcher();
+        }
+
+        private void DestroyFetcher()
+        {
+            if (fetcher != null)
+            {
+                Destroy(fetcher);
+                fetcher = null;
+            }
         }
 
         //Used if you want to publish the latest recorded video
         public void PublishVideo()
         {
+            Debug.Assert(isReady);
             isUploading = true;
             uploadProgress = 0;
 
@@ -85,50 +138,105 @@ namespace Vimeo.Recorder
                 publisher.Init(this, m_byteChunkSize);
 
                 publisher.OnUploadProgress += UploadProgress;
-                publisher.OnNetworkError += NetworkError;
+                publisher.OnUploadError += UploadError;
             }
 
-            publisher.PublishVideo(encoder.GetVideoFilePath());
+            if (replaceExisting)
+            {
+                if (fetcher != null)
+                {
+                    // bad situation - need some waiting point
+                    Debug.LogError("Videos fetching is not complete before replacing publishing");
+                }
+
+                if (string.IsNullOrEmpty(vimeoVideoId))
+                {
+                    if (!string.IsNullOrEmpty(videoName))
+                    {
+                        SetVimeoIdFromName();
+                    }
+                }
+                else
+                {
+                    SetVimeoVideoFromId();
+                }
+
+                publisher.PublishVideo(encoder.GetVideoFilePath(), vimeoVideoId);
+            }
+            else
+            {
+                publisher.PublishVideo(encoder.GetVideoFilePath());
+            }
+        }
+
+        internal IEnumerator WaitForReady()
+        {
+            while (!isReady)
+            {
+                yield return null;
+            }
         }
 
         private void UploadProgress(string status, float progress)
         {
             uploadProgress = progress;
 
-            if (status == "UploadComplete" || status == "UploadError") {
+            if (status == "UploadComplete") {
                 publisher.OnUploadProgress -= UploadProgress;
-                publisher.OnNetworkError -= NetworkError;
+                publisher.OnUploadError -= UploadError;
 
                 isUploading = false;
                 encoder.DeleteVideoFile();
                 Destroy(publisher);
 
-                if (status == "UploadComplete") {
-                    if (OnUploadComplete != null) {
-                        OnUploadComplete();
-                    }
-                } else if (status == "UploadError") {
-                    if (OnUploadError != null) {
-                        OnUploadError();
-                    }
+                if (OnUploadComplete != null) {
+                    OnUploadComplete();
                 }
             }
+            else if (status == "UploadError")
+            {
+                publisher.OnUploadProgress -= UploadProgress;
+                publisher.OnUploadError -= UploadError;
 
+                isUploading = false;
+                encoder.DeleteVideoFile();
+                Destroy(publisher);
 
+                if (OnUploadError != null)
+                {
+                    OnUploadError(status);
+                }
+            }
+            else
+            {
+                if (OnUploadProgress != null)
+                {
+                    OnUploadProgress(progress);
+                }
+            }
         }
 
-        private void NetworkError(string status)
+        private void UploadError(string status)
         {
             Debug.LogError(status);
+            publisher.OnUploadProgress -= UploadProgress;
+            publisher.OnUploadError -= UploadError;
+
+            isUploading = false;
+            //encoder.DeleteVideoFile();
+            Destroy(publisher);
+
+            if (OnUploadError != null)
+            {
+                OnUploadError(status);
+            }
         }
 
         private void Dispose()
         {
-            if (isRecording) {
-                CancelRecording();
-            }
+            Cancel();
             Destroy(encoder);
-            Destroy(publisher);
+            Destroy(fetcher);
         }
 
         void OnDisable()

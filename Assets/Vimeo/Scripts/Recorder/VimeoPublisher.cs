@@ -13,7 +13,7 @@ namespace Vimeo.Recorder
         public event UploadAction OnUploadProgress;
 
         public delegate void RequestAction(string error_message);
-        public event RequestAction OnNetworkError;
+        public event RequestAction OnUploadError;
 
         [HideInInspector] public VimeoRecorder recorder; // recorder contains all the settings
 
@@ -64,7 +64,15 @@ namespace Vimeo.Recorder
             }
 #endif
 
-            m_vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            if (string.IsNullOrEmpty(recorder.description))
+            {
+                m_vimeoUploader.SetVideoDescription("Recorded and uploaded with the Vimeo Unity SDK: https://github.com/vimeo/vimeo-unity-sdk");
+            }
+            else
+            {
+            m_vimeoUploader.SetVideoDescription(recorder.description);
+            }
+
             if (recorder.enableDownloads == false) {
                 m_vimeoUploader.SetVideoDownload(recorder.enableDownloads);
             }
@@ -96,11 +104,11 @@ namespace Vimeo.Recorder
             return null;
         }
 
-        public void PublishVideo(string filename)
+        public void PublishVideo(string filename, string vimeoId = null)
         {
             if (System.IO.File.Exists(filename)) {
                 Debug.Log("[VimeoRecorder] Uploading to Vimeo");
-                m_vimeoUploader.Upload(filename);
+                m_vimeoUploader.Upload(filename, vimeoId);
             } else {
                 Debug.LogError("File doesn't exist, try recording it again");
             }
@@ -115,10 +123,12 @@ namespace Vimeo.Recorder
 
         private void UploadComplete(string video_url)
         {
-            if (recorder.openInBrowser == true) {
+            if (recorder.openInBrowser == true)
+            {
                 OpenVideo();
             }
-            if (OnUploadProgress != null) {
+            if (OnUploadProgress != null)
+            {
                 OnUploadProgress("UploadComplete", 1f);
             }
 
@@ -149,8 +159,8 @@ namespace Vimeo.Recorder
 
         private void NetworkError(string error_message)
         {
-            if (OnNetworkError != null) {
-                OnNetworkError("It seems like you are not connected to the internet or are having connection problems.");
+            if (OnUploadError != null) {
+                OnUploadError("It seems like you are not connected to the internet or are having connection problems.");
             }
         }
 
@@ -158,20 +168,29 @@ namespace Vimeo.Recorder
         {
             JSONNode json = JSONNode.Parse(response);
 
-            if (json["invalid_parameters"] != null) {
+            if (!string.IsNullOrEmpty(json["error"]))
+            {
+                Debug.LogError("Vimeo Upload Error: " + json["error"]);
+                Debug.LogError("Vimeo Upload Error: " + json["developer_message"]);
+                if (OnUploadError != null)
+                {
+                    OnUploadError("Vimeo Upload Error " + json["error_code"] + ": " + json["error"]);
+                }
+            }
+            else if (json["invalid_parameters"] != null) {
                 for (int i = 0; i < json["invalid_parameters"].Count; i++) {
                     // TODO use .Value
                     if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.download\"") {
-                        if (OnNetworkError != null) {
-                            OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        if (OnUploadError != null) {
+                            OnUploadError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
                     } else if (json["invalid_parameters"][i]["field"].ToString() == "\"privacy.view\"") {
-                        if (OnNetworkError != null) {
-                            OnNetworkError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
+                        if (OnUploadError != null) {
+                            OnUploadError("You must upgrade your Vimeo account in order to access this privacy feature. https://vimeo.com/upgrade");
                         }
                     } else {
-                        if (OnNetworkError != null) {
-                            OnNetworkError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
+                        if (OnUploadError != null) {
+                            OnUploadError(json["invalid_parameters"][i]["field"] + ": " + json["invalid_parameters"][i]["error"]);
                         }
                     }
                 }

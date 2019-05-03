@@ -75,13 +75,23 @@ namespace Vimeo.Recorder
                     EditorGUI.indentLevel++;
 
                     EditorGUILayout.PropertyField(so.FindProperty("videoName"));
-                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
 
-                    if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode) {
-                        EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
+                    EditorGUILayout.PropertyField(so.FindProperty("description"));
+
+                    bool updated = GUISelectFolder();
+
+                    EditorGUILayout.PropertyField(so.FindProperty("replaceExisting"));
+
+                    if (recorder.replaceExisting)
+                    {
+                        GUISelectVideo(updated);
                     }
 
-                    GUISelectFolder();
+                    EditorGUILayout.PropertyField(so.FindProperty("privacyMode"));
+                    if (VimeoApi.PrivacyModeDisplay.OnlyPeopleWithAPassword == recorder.privacyMode)
+                    {
+                        EditorGUILayout.PropertyField(so.FindProperty("videoPassword"), new GUIContent("Password"));
+                    }
 
                     EditorGUILayout.PropertyField(so.FindProperty("commentMode"), new GUIContent("Comments"));
                     EditorGUILayout.PropertyField(so.FindProperty("enableDownloads"));
@@ -122,12 +132,12 @@ namespace Vimeo.Recorder
 
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
-                        recorder.CancelRecording();
+                        recorder.Cancel();
                     }
                 } else if (recorder.isUploading) {
                     GUI.backgroundColor = Color.red;
                     if (GUILayout.Button("Cancel", GUILayout.Height(30))) {
-                        recorder.CancelRecording();
+                        recorder.Cancel();
                     }
                 } else {
                     GUI.backgroundColor = Color.green;
@@ -175,6 +185,12 @@ namespace Vimeo.Recorder
                 GUILayout.Box("", GUILayout.Height(20));
                 EditorGUI.ProgressBar(rect, recorder.uploadProgress, "Uploading to Vimeo...");
                 GUILayout.EndHorizontal();
+
+                if (recorder.uploadProgress == 1)
+                {
+                    UpdateVideosList();
+                }
+
             }
         }
 

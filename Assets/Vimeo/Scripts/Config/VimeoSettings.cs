@@ -25,6 +25,9 @@ namespace Vimeo
         public bool signInError = false;
         private const string VIMEO_TOKEN_PREFIX = "vimeo-token-";
 
+        // Played or Overwritten video
+        public string vimeoVideoId;
+
         public int GetCurrentFolderIndex()
         {
             if (currentFolder != null) {
