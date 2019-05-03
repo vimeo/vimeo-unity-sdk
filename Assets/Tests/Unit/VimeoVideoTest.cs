@@ -113,11 +113,13 @@ public class VimeoVideoTest : TestConfig
     }
 
     [Test]
-    // TODO somehow test different application platforms
-    // Note: this fails (correctly) when testing on Mac
-    public void GetAdaptiveVideoFileURL_Returns_Dash_By_Default()
+    public void GetAdaptiveVideoFileURL_Returns_Correct_Adaptive_Manifest_Based_On_Platform()
     {
-        Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getDashUrl());
+        if (isApple()) {
+            Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getHlsUrl());
+        } else {
+            Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getDashUrl());
+        }
     }
 
     [Test]
@@ -135,20 +137,19 @@ public class VimeoVideoTest : TestConfig
         Assert.AreEqual(video.getDashUrl(), null);
     }
 
-    [Test]
-    // TODO somehow test different application platforms
-    // Note: this fails (correctly) when testing on Mac
-    public void GetAdaptiveVideoFileURL_Defaults_To_Hls_For_Files_Response()
-    {
-        UnityEngine.TestTools.LogAssert.Expect(LogType.Warning, "[Vimeo] No DASH manfiest found. Defaulting to HLS.");
-        video = new VimeoVideo(JSONNode.Parse(mockProductionJson));
-        Assert.AreEqual(video.GetAdaptiveVideoFileURL(), video.getHlsUrl());
-    }
     #endregion
 
     [TearDown]
     public void _After()
     {
 
+    }
+
+    public bool isApple()
+    {
+        return Application.platform == RuntimePlatform.OSXPlayer ||
+                Application.platform == RuntimePlatform.OSXEditor ||
+                Application.platform == RuntimePlatform.IPhonePlayer ||
+                Application.platform == RuntimePlatform.tvOS;
     }
 }

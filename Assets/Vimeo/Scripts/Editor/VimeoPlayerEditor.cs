@@ -21,6 +21,7 @@ namespace Vimeo
         {
             GameObject go = Instantiate(Resources.Load("Prefabs/[VimeoPlayerCanvas]") as GameObject);
             go.name = "[VimeoPlayerCanvas]";
+            go.GetComponent<VimeoPlayer>().audioSource = Camera.main.gameObject.AddComponent<AudioSource>();
         }
 
         [MenuItem("GameObject/Video/Vimeo Player (Plane)")]

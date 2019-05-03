@@ -62,7 +62,6 @@ namespace Vimeo
             BuildTargetGroup.Nintendo3DS,
 #endif
             BuildTargetGroup.PS4,
-            BuildTargetGroup.PSP2,
             BuildTargetGroup.Standalone,
             BuildTargetGroup.tvOS,
             BuildTargetGroup.XboxOne
