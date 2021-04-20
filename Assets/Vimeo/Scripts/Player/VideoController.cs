@@ -12,6 +12,7 @@ namespace Vimeo.Player
 
         public delegate void PlaybackAction(VideoController controller);
         public event PlaybackAction OnVideoStart;
+        public event PlaybackAction OnVideoFinish;
         public event PlaybackAction OnPause;
         public event PlaybackAction OnPlay;
         public event PlaybackAction OnFrameReady;
@@ -68,6 +69,7 @@ namespace Vimeo.Player
                     videoPlayer.prepareCompleted += VideoPlayerStarted;
                     videoPlayer.seekCompleted += VideoSeekCompleted;
                     videoPlayer.frameReady += VideoFrameReady;
+                    videoPlayer.loopPointReached += VideoPlayerFinished;
 
                     videoPlayer.isLooping = true;
 
@@ -234,6 +236,13 @@ namespace Vimeo.Player
             }
 
             StartCoroutine("WaitForRenderTexture");
+        }
+
+        private void VideoPlayerFinished(VideoPlayer source)
+        {
+            if (OnVideoFinish != null) {
+                OnVideoFinish(this);
+            }
         }
 
         private void VideoSeekCompleted(VideoPlayer source)

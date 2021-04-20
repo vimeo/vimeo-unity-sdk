@@ -18,6 +18,7 @@ namespace Vimeo.Player
         public event VimeoEvent OnStart;
         public event VimeoEvent OnVideoMetadataLoad;
         public event VimeoEvent OnVideoStart;
+        public event VimeoEvent OnVideoFinish;
         public event VimeoEvent OnPause;
         public event VimeoEvent OnPlay;
         public event VimeoEvent OnFrameReady;
@@ -113,6 +114,7 @@ namespace Vimeo.Player
                     controller.videoScreenObject = videoScreen;
 
                     controller.OnVideoStart += VideoStarted;
+                    controller.OnVideoFinish += VideoFinished;
                     controller.OnPlay += VideoPlay;
                     controller.OnPause += VideoPaused;
                     controller.OnFrameReady += VideoFrameReady;
@@ -331,6 +333,13 @@ namespace Vimeo.Player
 
             if (OnVideoStart != null) {
                 OnVideoStart();
+            }
+        }
+
+        private void VideoFinished(VideoController controller)
+        {
+            if (OnVideoFinish != null) {
+                OnVideoFinish();
             }
         }
 
